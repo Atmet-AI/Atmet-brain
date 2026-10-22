@@ -66,3 +66,19 @@ npm trusted-publisher settings belong to an existing package, so configure them 
 Configure it when ready to use it; npm currently requires the first successful use of a new configuration within two days. Future release tags can use the workflow's `publish_npm=true` switch. It selects Node 24 and npm 11.17.0 for OIDC publication with automatic provenance. No PyPI job or registry-token secret is required. [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
 Do not republish version 0.2.3 from CI after uploading it locally. Published package versions and Git tags are immutable; ship a new version for corrections. A standalone Atmet package on PyPI can be added later as an independent distribution route.
+
+## Saved approval through npm staging
+
+If a terminal publishing approval expires before the owner finishes browser verification, first check `npm view` and `npm stage list` to establish whether an upload happened. Do not blindly retry an accepted or already staged version.
+
+To save an exact reviewed archive for later website approval:
+
+```bash
+npm stage publish /path/to/atmet-brain-VERSION.tgz --access public --tag latest
+npm stage list atmet-brain
+npm stage view STAGE_ID
+```
+
+Replace `VERSION` and `STAGE_ID` with the reviewed release and returned stage ID. Check the package, version, actor, tag and digest before approval. Staging saves the archive but does not make it publicly installable. The owner can sign in to npm, open **Staged Packages**, select the release and approve it with private 2FA. This avoids depending on a waiting terminal authentication request. A staged version shares the published version namespace; do not upload it again. [npm's staged publication instructions](https://docs.npmjs.com/staged-publishing/).
+
+After approval, verify public version/latest/integrity and a fresh install before updating availability claims. The prepared GitHub workflow currently uses direct OIDC publication; switching that workflow to staged publishing would be a separate explicit change.
