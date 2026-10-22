@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Clarify that task-report integrations must provide complete provenance; reference validation does not attest undisclosed data sources or business success.
+
 ## 0.4.0 - task history and reviewed skill learning, 2026-10-23
 
 ### Added

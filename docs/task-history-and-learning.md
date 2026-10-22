@@ -2,7 +2,7 @@
 
 Atmet Brain can retain selected task outcomes, search them and assemble a skill draft from their steps and corrections. Your agent or application explicitly submits reports through CLI, REST or MCP. The Brain does not automatically observe external conversations, verify business success or run the reported steps.
 
-Reports are operational history, separate from ordinary document search and approved instructions. A report defaults to the submitting principal's private audience. Choose a department audience deliberately when its members should be able to learn from that work. Every read also checks access to all original source evidence.
+Reports are operational history, separate from ordinary document search and approved instructions. A report defaults to the submitting principal's private audience. Choose a department audience deliberately when its members should be able to learn from that work. Every read also checks access to all cited original source evidence.
 
 ## Before you start
 
@@ -55,7 +55,7 @@ atmet-brain task-report task-report.json --space "$SALES_SPACE"
 
 The returned report ID identifies an immutable report. `recorded_by` and the credential ID come from authentication, not model-supplied names. `outcome` can be `succeeded`, `failed` or `corrected`; all are client-reported, with `outcome_verified=false`. Original evidence is required and must be current when first recording. Task reports cannot cite one another as original business evidence.
 
-Omit audience to make the report private to its submitting principal. `["space"]` allows eligible members of this workspace; source audiences can narrow that further. Group/principal selectors use the existing permission model. Do not submit credentials or unnecessary conversation logs. No automatic secret-removal or external transcript-capture guarantee is provided.
+Omit audience to make the report private to its submitting principal. `["space"]` allows eligible members of this workspace; source audiences can narrow that further. Group/principal selectors use the existing permission model. The integration must supply complete provenance. Brain validates supplied references and permissions; it cannot detect an undisclosed dependency on other sources or external data. Do not submit credentials or unnecessary conversation logs. No automatic secret-removal or external transcript-capture guarantee is provided.
 
 A report key is unique for its authenticated reporter within a space. Retrying the exact request acknowledges the same report; different content under that key is a conflict. Only a hash of the report key is retained. Use a new key for a corrected follow-up, preserving the original history. Replays recheck current access and cannot restore erased reports.
 
