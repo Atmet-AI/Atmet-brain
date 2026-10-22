@@ -68,3 +68,5 @@ Task envelopes include a manifest ID. `context.manifest` returns referenced arti
 ## Schema 2 upgrade
 
 Engine 0.4.0 introduces schema 2 for explicit task reporting and separate report-source classification. Supported schema-1 installations upgrade in one transaction while retaining existing identity/source/artifact records. Unknown schemas are rejected. Back up before opening an existing Brain with the new engine, stop old local processes, and restart all local services with the compatible runtime. Older engines cannot open schema 2; there is no in-place downgrade. Restore an old snapshot into a separate home if an older-engine recovery path is needed. Schema-1 backups can also be restored with the current engine, upgraded and quarantined before normal recovery.
+
+For the pre-upgrade snapshot, use your currently installed schema-1-compatible engine. If using npx, pin atmet-brain@0.3.1 for those backup/journal commands rather than @latest. The first 0.4.0 command that opens an existing Brain already performs the migration. Follow the [backup procedure](backup-and-recovery.md) before that first open; use a fresh home when restoring an older snapshot.

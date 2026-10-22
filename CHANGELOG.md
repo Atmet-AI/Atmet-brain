@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Clarify that pre-upgrade backups use the existing schema-1 engine before opening the Brain with 0.4.0.
 - Clarify that task-report integrations must provide complete provenance; reference validation does not attest undisclosed data sources or business success.
 
 ## 0.4.0 - task history and reviewed skill learning, 2026-10-23
