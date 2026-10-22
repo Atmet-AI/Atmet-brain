@@ -1,37 +1,47 @@
-# Documentation
+# Use Atmet Brain
 
-Start with the [quickstart](quickstart.md), then read the pages for the part you are changing. The [implementation status](implementation-status.md) separates working behavior from the wider roadmap.
+Atmet Brain stores company sources, learned memory and reviewed procedures that your agents can retrieve. Start with a small company example, then connect your own agent or team. The [support matrix](implementation-status.md) marks implemented, fixture-tested and planned features.
 
-| Topic | Guide |
+## Start here
+
+1. [Install the CLI](install.md): use npx or install the command for regular use.
+2. [Create your first Brain](quickstart.md): initialize a company, ingest a source, run learning and request context.
+3. [Build a company workflow](use-for-your-company.md): add departments, publish instructions and give an agent its own credential.
+4. [Connect an agent with MCP](mcp.md) or [use Python/REST](api.md).
+5. [Keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
+6. [Share a company server](team-server.md) when several people need the same Brain.
+
+The examples use the installed `atmet-brain` command. Install it globally as shown in installation, or substitute `npx atmet-brain@latest` before the same arguments. JSON blocks labeled as files must be saved before a command refers to them. Replace uppercase IDs and example paths with values returned by your own installation; no source checkout is needed unless a page explicitly uses repository examples.
+
+## Task guides and reference
+
+| What you want to do | Guide |
 | --- | --- |
-| Choose an installation route | [Installation](install.md) |
-| Setup and first task | [Quickstart](quickstart.md) |
-| Use it in a company | [Company walkthrough](use-for-your-company.md) |
-| Shared core and storage | [Architecture](architecture.md) |
-| Business knowledge | [Memory and learning](memory-and-learning.md) |
-| Processes and observed activity | [Workflows](workflows.md) |
-| Reusable methods | [Skills](skills.md) |
-| Repeated work and scripts | [Automations](automations.md) |
-| Identity and access | [Permissions](permissions.md) |
-| Settings and precedence | [Configuration](configuration.md) |
-| View history, compare versions and restore instructions | [History walkthrough](history-walkthrough.md) |
-| Revision concepts, time and rollback rules | [Versioning](versioning.md) |
-| Snapshots and restoration | [Backup and recovery](backup-and-recovery.md) |
-| Python and REST | [API](api.md) |
-| Agent integration | [MCP](mcp.md) |
-| Ingestion adapters | [Connectors](connectors.md) |
-| Running a service | [Deployment](deployment.md) |
-| Checks and fixtures | [Testing](testing.md) |
-| Publish to npm | [Account setup](package-publishing.md), [releasing](releasing.md) |
-| Release numbers and tags | [Release versioning](release-versioning.md) |
-| Keep guides and diagrams current | [Documentation maintenance](documentation.md) |
-| Current support | [Implementation status](implementation-status.md) |
-| Next development | [Roadmap](roadmap.md) |
-| Design rationale | [Architecture decisions](adr/0001-local-core.md) |
-| Prior work and protocol references | [References](references.md) |
+| Use terminal commands or a saved remote connection | [Terminal](terminal.md) |
+| Add information and understand learning/review | [Memory and learning](memory-and-learning.md) |
+| Create and update a business procedure | [Workflows](workflows.md) |
+| Create a portable reusable task method | [Skills](skills.md) |
+| Turn supported repeated work into reviewed Python | [Automations](automations.md) |
+| Give a person or service limited access | [Permissions](permissions.md) |
+| Configure budgets and remote processing | [Configuration](configuration.md) |
+| Inspect, compare and restore revisions | [History walkthrough](history-walkthrough.md), [revision rules](versioning.md) |
+| Back up and recover a lost installation | [Backup and recovery](backup-and-recovery.md) |
+| Import files or selected Gmail labels | [Connectors](connectors.md) |
+| Run background processes or a private company server | [Deployment](deployment.md), [team setup](team-server.md) |
+| Fix a setup or usage problem | [Troubleshooting](troubleshooting.md) |
+| Understand the core modules, data and trust boundaries | [Architecture](architecture.md) |
 
-Diagrams are Mermaid source so they remain editable and render directly on GitHub. The README has seven diagrams covering company spaces, the shared core, learning, task retrieval, pure scripts change handling and company-server access. The architecture guide maps the current modules, data records and trust boundaries. [Standalone chart sources](diagrams) are generated from Markdown by `scripts/generate_diagrams.py`; the project checker rejects missing, stale or obsolete copies.
+## Development and maintenance
 
-## Terminal and private teams
+| Goal | Guide |
+| --- | --- |
+| See what changed between releases | [Changelog](../CHANGELOG.md) |
+| Check supported behavior and evidence | [Support matrix](implementation-status.md), [validation](validation.md) |
+| Contribute and run checks | [Contributing](../CONTRIBUTING.md), [testing](testing.md) |
+| Keep guides accurate as behavior changes | [Documentation maintenance](documentation.md) |
+| Prepare software versions and release artifacts | [Release versioning](release-versioning.md), [releasing](releasing.md) |
+| Configure or operate npm publishing | [Publishing](package-publishing.md) |
+| Inspect earlier test records | [Historical validation](release-validation.md) |
+| Explore future work and design choices | [Roadmap](roadmap.md), [architecture decision](adr/0001-local-core.md), [references](references.md) |
 
-[Terminal guide](terminal.md) covers guided setup, JSON output and explicit remote connections. [Company server](team-server.md) covers individual credentials, SSH/HTTPS access, MCP bridging and background services.
+Mermaid diagrams live in the README and relevant guides. Their [standalone sources](diagrams) are generated from Markdown; see documentation maintenance before changing them.

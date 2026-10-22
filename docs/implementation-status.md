@@ -1,12 +1,12 @@
 # Implementation status
 
-This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.6 (published on npm with verified OIDC release checks). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
+Atmet Brain 0.2.6 is a local/private-pilot alpha using database schema 1. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
 | Organizations/spaces | Local provisioning, stable IDs and tested company/space isolation |
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
-| Registry distribution | npm launcher includes the matching checksum-verified core wheel and private runtime bootstrap; published on npm as 0.2.6 with a fresh anonymous public install/setup/MCP check on macOS arm64. Linux packed-archive CI passed; GitHub OIDC, public provenance/integrity/latest and fresh public CLI checks passed in the 0.2.6 release workflow; fresh anonymous setup/MCP/runtime checks passed on macOS arm64. No Atmet PyPI release needed. |
+| Registry distribution | npm includes the matching checksum-verified Python core and isolated runtime bootstrap; public Ubuntu CLI and anonymous macOS arm64 setup/MCP checks passed. See [installation](install.md) and [validation](validation.md). |
 | Terminal setup | Guided create/connect choices, company/department setup, orange pixel welcome, compact command headers, responsive/plain fallbacks and JSON for scripts; no AI onboarding interview |
 | Background services | Explicit per-user launchd/systemd API and worker definitions plus controls; templates/dispatch tested, actual OS-manager lifecycle needs deployment validation |
 | Source ingestion | Working UTF-8 text/Markdown/CSV/JSON capture with revisions and current audience |

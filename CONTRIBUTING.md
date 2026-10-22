@@ -24,7 +24,7 @@ Use plain documentation with concrete examples. Avoid unsupported production/per
 
 ## Documentation impact
 
-Every change includes a documentation-impact review. Update the README when purpose, installation, primary commands or the overall architecture changes. Update the affected guides, examples, supported scope and changelog alongside the implementation. For internal changes with no reader-facing effect, explain why no documentation edit is needed in the pull request. [Documentation maintenance](docs/documentation.md) maps changes to the relevant guides.
+Every change includes a documentation-impact review. Keep guides written as current setup/use instructions; add release changes to CHANGELOG.md under Unreleased instead of appending an update log to each guide. Update the README when purpose, installation, primary commands or the overall architecture changes. Update the affected guides, examples, supported scope and changelog alongside the implementation. For internal changes with no reader-facing effect, explain why no documentation edit is needed in the pull request. [Documentation maintenance](docs/documentation.md) maps changes to the relevant guides.
 
 Mermaid blocks in Markdown are the diagram sources. After editing them, run `python scripts/generate_diagrams.py`; CI rejects missing, stale or extra generated copies through the project checker. Review rendered changed diagrams for readability. API changes must also regenerate `docs/openapi.json`.
 

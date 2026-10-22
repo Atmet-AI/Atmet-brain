@@ -1,6 +1,6 @@
 # Roadmap
 
-The first release proves one shared core through local source capture, authorized learning, reviewed operating context, agent retrieval and recovery. Future work follows evidence and supported deployment needs; no dates are promised.
+The local core supports local source capture, authorized learning, reviewed operating context, agent retrieval and recovery. Future work follows evidence and supported deployment needs; no dates are promised.
 
 ## Core hardening
 

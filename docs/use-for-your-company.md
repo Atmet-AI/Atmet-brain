@@ -123,3 +123,5 @@ For mechanical steps, a trusted runtime can report accepted task inputs/outputs 
 Create an encryption key, keep it separately from backups, and mirror the recovery journal outside the installation's failure domain. Restore into a fresh directory and reconcile current revocations/deletions before granting access again. The local data owner remains responsible for host access, retention and any external model/tool data flows. [Backup and recovery](backup-and-recovery.md).
 
 Your first success should be small: the right agent retrieves the current quotation procedure and company facts, an unauthorized identity is denied, a changed source is reprocessed, and a reviewed workflow revision becomes the one used for later tasks.
+
+For a failed step, use [troubleshooting](troubleshooting.md). To inspect an approved workflow changing over time, continue with the [complete history walkthrough](history-walkthrough.md).

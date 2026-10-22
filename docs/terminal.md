@@ -2,7 +2,7 @@
 
 Open `atmet-brain` for a welcome screen, then run `atmet-brain setup`. On a supported color terminal, welcome and interactive setup show a large orange pixel wordmark, clear setup choices and spaced next steps. Other commands use a compact orange header and wrapped results. Narrow terminals, plain mode, unsupported encodings and terminals without color use a compact title. Redirected output remains JSON. Use `--json` to request JSON in a terminal, or `--plain` / `NO_COLOR=1` to disable styling. Imported text cannot emit terminal control characters through the human renderer. This is a command-line interface, not an AI chat application.
 
-The wordmark uses the terminal UI orange (#F55315 in true color, with 256-color/ANSI fallbacks). It is a terminal display treatment, not a replacement for the brand SVG. There are no new terminal dependencies or animations. Setup prompts are written to stderr so redirected stdout stays JSON.
+For unstyled output, use `atmet-brain --plain status`. For machine-readable output, use `atmet-brain --json status`. Setup prompts go to stderr so redirected stdout remains JSON.
 
 Global options go before the command. No model key is needed for setup or the local line extractor. Setting up a remote connection does not enable model-based extraction or send company data to a model.
 

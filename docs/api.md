@@ -47,6 +47,49 @@ The response has `result`. Failures have `error.code` and `error.message` with a
 
 Use [the Python HTTP client](../examples/rest_client.py) to read a private token file without placing it in a URL. The local reference server rejects browser-origin requests and limits request sizes. Non-loopback deployment requires an explicit network flag and trusted private ingress. It does not supply TLS, SSO or a public production gateway.
 
+## Call the same operation from the terminal
+
+For CLI RPC, supply only the inner params object. With SALES_SPACE set to a space ID you may read:
+
+```bash
+cat > context-params.json <<JSON
+{"space_id":"$SALES_SPACE","query":"What are the support hours?"}
+JSON
+atmet-brain rpc identity.me
+atmet-brain rpc context.get --params @context-params.json
+```
+
+These commands use the selected home's owner credential unless you supply a dedicated token file or saved remote connection. The result is the same operation payload exposed by REST, without its outer result wrapper. Unknown methods/parameters are rejected. [Troubleshooting](troubleshooting.md) explains common error codes.
+
+## Read REST without a source checkout
+
+Start serve in one terminal. In another, use a dedicated [scoped reader credential](permissions.md), set ATMET_TOKEN_FILE to its absolute file path and save the following as reader.py. This client uses standard Python 3 libraries and does not require importing the Brain package:
+
+```python
+import json
+import os
+from pathlib import Path
+from urllib.request import Request, urlopen
+
+token = Path(os.environ["ATMET_TOKEN_FILE"]).read_text().strip()
+request = Request(
+    "http://127.0.0.1:7310/v1/rpc",
+    data=json.dumps({"method": "identity.me", "params": {}}).encode(),
+    headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+)
+with urlopen(request, timeout=10) as response:
+    print(json.load(response))
+```
+
+Run it from a terminal with Python 3 available:
+
+```bash
+export ATMET_TOKEN_FILE="/absolute/path/to/scoped-reader.token"
+python3 reader.py
+```
+
+The result identifies that credential's current principal. The token is read from a file and is not printed or placed in a URL. For remote use, select the administrator's trusted HTTPS endpoint as described in [team setup](team-server.md). Only a trusted local Python application should instantiate Brain directly; an untrusted agent should use an authenticated interface.
+
 ## Operation groups
 
 | Group | Methods |

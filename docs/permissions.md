@@ -2,6 +2,29 @@
 
 The core authorizes each operation before it returns content. A client supplies a credential; it cannot supply its own privileged identity.
 
+## Give a reader access and verify it
+
+An administrator first initializes the company and creates its spaces through [setup](quickstart.md). Save a permitted Sales ID as SALES_SPACE. Create a separate expiring reader credential:
+
+```bash
+atmet-brain team-add "Sales reader" --space "$SALES_SPACE" --role reader --output "$HOME/.atmet-brain/sales-reader.token"
+atmet-brain --token-file "$HOME/.atmet-brain/sales-reader.token" rpc identity.me
+atmet-brain --token-file "$HOME/.atmet-brain/sales-reader.token" space
+atmet-brain --token-file "$HOME/.atmet-brain/sales-reader.token" context "What are the support hours?" --space "$SALES_SPACE"
+```
+
+Use a new private output path if that file already exists, and adapt the path for a custom data home. `team-add` prints the principal, credential ID, scope and saved file location instead of the raw key. Save the credential ID for revocation. The reader can retrieve permitted Sales information, but cannot ingest documents, publish procedures or access Finance without further grants. Source audiences can narrow this access further.
+
+Test a known Finance ID with that reader: the request should be denied. For an agent, use `--kind service` and choose a role/scope deliberately. The [company walkthrough](use-for-your-company.md) shows a narrower read/contribute service credential; [team setup](team-server.md) covers secure delivery and remote access.
+
+As the administrator, revoke the returned credential ID when it should no longer work:
+
+```bash
+atmet-brain rpc credentials.revoke --params '{"credential_id":"CREDENTIAL_ID"}'
+```
+
+Replace CREDENTIAL_ID with the issued ID. The next request using that file is denied even if the client already authenticated earlier. Removing a local connection file is not server-side revocation.
+
 ## Principals and credentials
 
 Humans and services have separate principals. A credential resolves to a principal and can narrow operations, spaces and expiry. Tokens are random and only their hashes are stored. Current database state is checked on each call, including parent credentials. A child cannot widen or outlive its issuer; revoking an issuer invalidates its descendants.

@@ -8,7 +8,7 @@ This directory is the public core project. Keep company/client data, credentials
 - Add meaningful regression tests for access, revisions, review, connector and recovery changes.
 - Preserve exact supported/fixture/planned distinctions in documentation.
 - For every change, assess documentation impact. Update affected README text, guides, commands, architecture diagrams, support matrix and release notes in the same change. If no documentation change is needed, explain why in the change description. Follow docs/documentation.md.
-- Keep the root README focused on purpose, architecture, setup and usage. Put release history in CHANGELOG.md and publishing/account details in their maintainer guide; do not turn the README into a progress log.
+- Keep the README and user guides focused on current purpose, architecture, setup and usage. Updating docs means correcting affected instructions/examples/support scope when versions change, not appending progress notes. Keep release history in CHANGELOG.md with an Unreleased section; publishing/account details belong in their maintainer guide.
 - Mermaid blocks in README.md and top-level docs/*.md are the diagram sources. Regenerate docs/diagrams/ after edits; do not hand-edit generated copies. The project checker must pass without stale generated diagrams or API schemas.
 - Use plain English. Do not use the Unicode em dash character in repository text.
 - Run `python -m unittest discover -s tests -v` and `python scripts/check_project.py` before a release.

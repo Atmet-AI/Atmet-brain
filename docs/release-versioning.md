@@ -1,8 +1,6 @@
 # Release versions
 
-The first public source release is **v0.1.0**, a local alpha. Package versions use `0.1.0`; Git tags add the `v` prefix. The changelog records the scope and date of each release.
-
-The current feature release is **v0.2.0**, adding guided terminal setup, private remote connections, a stdio-to-REST MCP bridge, bounded team provisioning and user-session service management. Schema version 1 is unchanged. Agent profile/release bundles remain a separate design; these are engine software versions. Previous release tags remain immutable.
+Software versions identify the engine you install. Business source/workflow revisions identify information inside a Brain; see [history](versioning.md) for those. Package versions use `MAJOR.MINOR.PATCH`, and Git tags add the `v` prefix. The [changelog](../CHANGELOG.md) records each release's user-visible changes.
 
 ## Version numbers
 
@@ -27,28 +25,13 @@ Database schema, source revisions, workflow versions and recipe-runtime versions
 4. Push main and its annotated tag atomically. The tag automatically runs the npm workflow after one-time [activation](package-publishing.md). Mark alpha releases as GitHub prereleases and describe their supported limits.
 5. Verify the remote tag, release and CI results. Never move a published version tag; ship a new version for corrections.
 
-See [releasing](releasing.md) for commands. PyPI upload is a separate publishing step.
+See [releasing](releasing.md) for commands and [publishing](package-publishing.md) for the configured npm flow. An Atmet PyPI upload is not required.
 
-## Registry preparation
+## Maintain the changelog and guides
 
-Version 0.2.1 prepares registry packaging without changing the Brain API/schema. The npm launcher version and its exact Python engine pin match the Python package/runtime version. The project checker enforces this parity. GitHub assets, PyPI publication and npm publication have separate availability states; preparation is not a successful registry upload. [Publishing/account steps](package-publishing.md).
+1. Add a concise user-visible entry under Unreleased in CHANGELOG.md. Use Added, Changed, Fixed, Security or Breaking changes when they apply; omit empty headings.
+2. Update the affected setup/use/reference pages so they describe the resulting behavior, including changed commands, prerequisites and expected results. Do not append a release diary to them.
+3. At release, move the Unreleased items into the new version/date heading. Include migration or compatibility steps when users must act.
+4. Keep older release entries as history. Preserve preparation-time evidence in [historical validation](release-validation.md), not current instructions.
 
-
-Version 0.2.2 replaces the initial registry preparation with npm-only distribution. The matching core wheel is built from the same tag and included in the npm archive with a digest manifest. An Atmet PyPI project is not needed. First npm upload remains a separate owner login/publication step; do not move the previous v0.2.1 preparation tag.
-
-
-Version 0.2.3 is the first npm publication candidate, with the same npm-only runtime as 0.2.2 and final package-page instructions. Older preparation tags remain unchanged. Public upload and fresh registry validation are recorded separately from the source tag.
-
-
-Version 0.2.3 is now published on npm. Public metadata and fresh anonymous version-pinned/unversioned npx installs were verified. The immutable source tag retains its preparation-time status notes; this documentation follow-up records actual availability without replacing the tag or npm archive. Runtime behavior and schema are unchanged.
-
-
-Version 0.2.4 adds terminal presentation and stderr-only setup prompts. The same core version is included in its npm archive; schema, permissions and API contracts are unchanged. The terminal wordmark has compact/no-color/encoding fallbacks. Prior tags and npm versions remain immutable.
-
-Version 0.2.4 is now live on npm. Exact registry integrity/latest and fresh anonymous pinned/unversioned installs, setup and MCP were checked on macOS arm64.
-
-Version 0.2.5 adds tag-triggered npm releases, annotated-tag/main-history guards, duplicate/downgrade protection and post-publication integrity/install checks. Initial account trust and activation are required before its first OIDC upload; source preparation alone does not establish npm availability.
-
-Version 0.2.6 fixes the public-registry propagation timeout observed after the first accepted OIDC upload. The metadata verifier can wait ten minutes, with no duplicate upload or integrity-check relaxation.
-
-Version 0.2.6 is now public on npm, with a successful OIDC release workflow, matching public integrity/latest, provenance and fresh public Ubuntu/macOS checks. Account trust and the publishing switch are active. Public GitHub alpha assets are tied to the immutable tag. Use a new version for any future release; no further npm account approval is needed for the configured GitHub flow.
+Documentation-only source-guide changes can stay on main without a new npm engine version when runtime, schemas and the published launcher files are unaffected. Record them in Unreleased for the next release. Never create a new version solely to announce that a guide was edited.

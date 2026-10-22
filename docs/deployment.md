@@ -1,6 +1,6 @@
 # Deployment
 
-Start locally, run the acceptance tests and choose a bounded company workflow before handling sensitive information. Version 0.2 is a local/private-pilot alpha, without a production security or availability claim.
+Start locally, run the acceptance tests and choose a bounded company workflow before handling sensitive information. The core is a local/private-pilot alpha, without a production security or availability claim.
 
 ## Processes
 
@@ -22,6 +22,8 @@ The REST adapter binds loopback by default and uses scoped bearer credentials. I
 Use `--allow-network` only behind a controlled private ingress. TLS termination, SSO, delegated user authentication, stronger admission/rate controls, monitoring and public production hardening remain deployment work. The Docker example publishes only a loopback host port and does not make this a public SaaS server.
 
 ## Containers
+
+Use a source checkout containing the Dockerfile and a separately installed container engine. These are developer/operator examples, not prerequisites for npm installation:
 
 ```bash
 docker build -t atmet-brain:local .

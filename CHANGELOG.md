@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-- Refocus the root README on architecture, setup and usage. Keep release history and publishing procedures in their dedicated guides, clarify global versus npx commands, and refresh the terminal example.
+### Added
+
+- A task-based documentation index and troubleshooting guide for setup, retrieval, agents, access, synchronization and upgrades.
+- Installed-CLI walkthroughs for memory updates, workflow publication, portable skills, scoped access and task configuration; historical validation has its own archive page.
+
+### Changed
+
+- Refocus the root README and user guides on architecture, setup and usage. Keep release history and publishing procedures in their dedicated guides.
+- Correct old installation pins, require an explicit version for the legacy GitHub installer, and clarify npx versus global CLI commands, source-only examples and existing-data upgrades.
+- Require affected guides and examples to stay accurate when versions change, with user-visible release entries maintained here.
 
 ## 0.2.6 - registry propagation handling, 2026-10-22
 

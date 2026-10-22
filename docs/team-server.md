@@ -2,7 +2,7 @@
 
 One installation owns the canonical database. Each employee or agent connects using an individual credential with explicit grants. Do not share the database directory, owner token or an operating-system account that can read the Brain files. Host administrators remain trusted with the whole installation.
 
-Version 0.2 is an alpha for local use and controlled private pilots. These instructions are not a public-production security assessment. Network reachability and application authorization are separate checks.
+The core is an alpha for local use and controlled private pilots. These instructions are not a public-production security assessment. Network reachability and application authorization are separate checks.
 
 ```mermaid
 flowchart TB

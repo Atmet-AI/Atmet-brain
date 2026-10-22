@@ -11,6 +11,39 @@ allow_remote_processing = false
 
 Unknown keys and invalid types are rejected. Context characters range from 500 to 100000. Result counts range from 1 to 100. Configuration does not accept permission or role definitions; those are separate grant operations.
 
+## Apply a space/task limit
+
+The default file is `~/.atmet-brain/config.toml`, or `config.toml` under your selected `--home`/ATMET_HOME. Edit it as the local operator, preserving other valid settings. Restart running API/worker processes after deployment-file changes; each new CLI invocation loads the file again.
+
+For a reviewed limit on Sales quotations, set SALES_SPACE and create:
+
+```bash
+cat > quotation-budget.json <<JSON
+{
+  "space_id": "$SALES_SPACE",
+  "kind": "config",
+  "name": "quotation-budget",
+  "instruction_path": "departments/sales/quotations",
+  "body": {"max_context_chars":8000,"max_results":5,"allow_remote_processing":false},
+  "expected_revision": 0,
+  "reason": "Limit the quotation task's retrieved context",
+  "idempotency_key": "quotation-budget-initial"
+}
+JSON
+atmet-brain propose quotation-budget.json
+```
+
+Copy the returned ID as CONFIG_ID, inspect its pending body, then publish and request the matching task path:
+
+```bash
+export CONFIG_ID="PASTE_ARTIFACT_ID"
+atmet-brain rpc artifacts.get --params "{\"artifact_id\":\"$CONFIG_ID\",\"revision\":1}"
+atmet-brain review "$CONFIG_ID" --revision 1 --approve --reason "Owner reviewed context and remote-processing limits"
+atmet-brain context "Prepare a quotation" --space "$SALES_SPACE" --task-path departments/sales/quotations --max-chars 6000
+```
+
+With the default deployment settings, `budget_chars` is 6000: the request may narrow the 8000-character reviewed limit. Inspect the returned manifest ID with `context.manifest` to see effective settings under `revisions.settings` and exact artifact/source versions. A lower budget can produce `incomplete_context` if required instructions do not fit; it does not authorize their omission. Update a configuration through the same expected-revision/review process as a [workflow](workflows.md).
+
 ## Precedence
 
 ```mermaid

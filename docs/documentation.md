@@ -10,6 +10,16 @@ Describe current behavior directly: "Run atmet-brain to see setup and status com
 
 Keep required platform/support boundaries visible, but put installer internals and version-pinning details in install.md. A terminal preview illustrates usage; it is not a release announcement. Documentation-only README edits do not require a runtime version bump or a new npm release when the published launcher README and behavior are unaffected.
 
+## Keep guides useful when versions change
+
+Updating documentation means keeping the current setup steps, examples, expected results, architecture and supported boundaries accurate. It does not mean appending what the team just changed to every page. Review all affected guides when behavior changes; leave unrelated guides alone.
+
+A task guide should identify its prerequisites, files/IDs the user supplies, commands in order, expected results, common failures and the next useful page. A concept/reference page can link to a complete walkthrough instead of duplicating it. Distinguish installed commands from repository-only examples and operator steps from ordinary member access.
+
+Use one canonical CHANGELOG.md for release history. Add meaningful user-visible items under Unreleased, grouped as Added, Changed, Fixed, Security or Breaking changes where useful. At a release, move those entries into its version/date section and include migration steps if needed. Keep current user guides in the present tense; keep dated evidence in release-validation.md. Changelog entries complement working instructions, rather than replacing them.
+
+Check versioned install URLs, explicit installer arguments, schemas, protocol/config examples and cross-links when preparing a release. Preserve historical version references in changelog/evidence/ADRs. A new version does not require a paragraph announcing it on every page.
+
 ## Which files to review
 
 | Change | Documentation to review |

@@ -1,6 +1,6 @@
 # Automatic npm releases
 
-Atmet Brain 0.2.6 is live on [npm](https://www.npmjs.com/package/atmet-brain), including the orange terminal and the matching Python core. GitHub OIDC publishing is active and the first upload is verified. Version 0.2.6 includes the longer propagation wait, and its publication/integrity/fresh-install workflow passed. An npm account is the only registry account needed; no Atmet PyPI publication is required.
+This maintainer guide explains how to release the npm launcher and its bundled Python core. Users installing the Brain need only the [installation guide](install.md). Publishing uses GitHub OIDC after one-time package-owner trust setup; no Atmet PyPI account or stored npm publishing token is required.
 
 ## Everyday updates
 
@@ -15,9 +15,9 @@ Ask the maintainer or coding agent to make the change and release it. They handl
 
 Ordinary branch commits do not publish. This lets documentation work and unfinished changes remain separate from releases. Immutable version tags are the release signal. Existing installations do not update themselves: users run `npx atmet-brain@latest setup`, or update a global install with `npm install --global atmet-brain@latest`.
 
-## One-time npm trust setup
+## One-time npm trust setup for a new publisher
 
-The repository has an environment named `npm`, without a required-reviewer gate. The workflow needs npm to trust that exact repository/workflow/environment. This account setting requires the package owner's private npm verification. No password, token, recovery code, one-time code or .npmrc contents should be shared in chat.
+Skip this section when the existing trusted publisher already works. The repository has an environment named `npm`, without a required-reviewer gate. The workflow needs npm to trust that exact repository/workflow/environment. This account setting requires the package owner's private npm verification. No password, token, recovery code, one-time code or .npmrc contents should be shared in chat.
 
 With Node 24 and npm 11.17.0 or newer, signed in as the package owner:
 
@@ -39,21 +39,21 @@ Run this command in your own terminal and keep it open until npm reports that tr
 
 Direct publishing is required for releases without individual staged approvals. Do not select stage-only publishing for this flow. npm requires the first successful use of a new trusted publisher within two days. Configure it when ready to publish the next version. [npm trust CLI](https://docs.npmjs.com/cli/v11/commands/npm-trust/) and [trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
-After trust is configured, activate the repository switch and publish the reviewed new tag:
+After trust is configured, prepare a new unused release with the [release procedure](releasing.md). Set RELEASE_VERSION to that package version, then activate the repository switch and publish its reviewed tag:
 
 ```bash
 gh variable set NPM_PUBLISH_ENABLED --body true --repo anashamad9/Atmet-brain
-gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag=v0.2.5 -f publish_npm=true
+gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=true
 ```
 
-The manual command above records the first 0.2.5 activation. That version is now published and must not be uploaded again; use the next unused version for future releases. Manual dispatch remains for build-only checks or recovery before an upload has been accepted. Subsequent new tag pushes publish automatically. No npm publishing secret or PyPI job is used. The workflow uses GitHub-hosted Ubuntu, Node 24, npm 11.17.0 and a job-scoped OIDC identity. Keep the workflow filename/environment consistent with npm trust.
+Manual dispatch is for activation or recovery before an upload has been accepted. Never select a version npm already accepted. Subsequent new tag pushes publish automatically. No npm publishing secret or PyPI job is used. The workflow uses GitHub-hosted Ubuntu, Node 24, npm 11.17.0 and a job-scoped OIDC identity. Keep the workflow filename/environment consistent with npm trust.
 
 ## Build-only validation
 
-Before account setup, leave NPM_PUBLISH_ENABLED absent or false. Tag pushes still build/test the exact release but skip the npm job. A manual build-only run works with an existing reviewed tag:
+Before account setup, leave NPM_PUBLISH_ENABLED absent or false. Tag pushes still build/test the exact release but skip the npm job. A manual build-only run works with an existing reviewed tag. Set RELEASE_VERSION to that tag's version:
 
 ```bash
-gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag=v0.2.5 -f publish_npm=false
+gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=false
 ```
 
 Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete checked tgz). Successful publication additionally saves `npm-publication-receipt`. A delayed registry response never triggers another upload; a digest/identity mismatch fails immediately. Generated vendor files stay out of Git; [local build commands](releasing.md#npm-distribution) describe preparing the exact archive.

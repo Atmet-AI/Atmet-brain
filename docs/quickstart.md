@@ -31,7 +31,7 @@ atmet-brain context "Prepare a product quotation" --space "$SALES_SPACE"
 
 Authoritative source classification requires the corresponding management authority. Use it only for genuinely approved company material. Eligible ordinary `Fact[key]: statement` lines can activate through the bounded local extractor. Inferences and rule-like text still require their review path.
 
-`context` returns structured facts, evidence and approved instructions to a caller. It does not generate a customer-facing reply. An external agent/runtime uses that context and its separately authorized tools.
+A successful context result includes `approved_context`, `reference_evidence`, `manifest_id` and `external_actions_authorized: false`. `context` returns structured facts, evidence and approved instructions to a caller. It does not generate a customer-facing reply. An external agent/runtime uses that context and its separately authorized tools.
 
 ## Add a workflow or agent
 
@@ -51,3 +51,5 @@ The first demo covers ingestion, learning, a policy, skill and workflow, scoped 
 ## Before keeping real data
 
 Keep the data directory private, create dedicated scoped credentials and read the [backup/recovery guide](backup-and-recovery.md). Record the current recovery journal independently of the disk holding your Brain and test a restoration. The selected-directory connector is validated on POSIX; Windows and live Gmail/model accounts need separate checks.
+
+For command-not-found, existing-installation, missing-memory or permission errors, follow [troubleshooting](troubleshooting.md).

@@ -22,13 +22,36 @@ Only `.txt`, `.md`, `.json` and `.csv` files are accepted. Roots and imported fi
 
 Changed files create revisions. Missing files are revoked from serving while retained content follows explicit erasure policy. A permanent tombstone prevents a replay from reviving that source. A failed scan does not revoke every prior source. Connector workers need explicit management/contribution grants for the binding and its configured authority in this first implementation.
 
-## Gmail labels
+## Check synchronization and changes
 
-Create an operator-managed access token with an appropriate read scope, then expose it privately:
+Use a dedicated selected directory and save the returned binding ID as CONNECTOR_ID. After the first sync, inspect imported source IDs and process jobs:
 
 ```bash
-export ATMET_GMAIL_TOKEN=your-private-access-token
+atmet-brain rpc connectors.list --params "{\"space_id\":\"$SALES_SPACE\"}"
+atmet-brain rpc sources.list --params "{\"space_id\":\"$SALES_SPACE\"}"
+atmet-brain rpc jobs.list --params "{\"space_id\":\"$SALES_SPACE\"}"
 ```
+
+The SPACE_ID in the earlier registration example is your SALES_SPACE value. Edit an existing file in that selected directory, then run sync with the same CONNECTOR_ID and worker with the same space. The matching file becomes a new source revision, not a second independent document. Check sources.list and context again to verify the new state. Missing supported files are excluded from serving after a successful reconciliation.
+
+To stop a binding deliberately:
+
+```bash
+atmet-brain rpc connectors.disable --params '{"connector_id":"CONNECTOR_ID"}'
+```
+
+Replace the ID. `serve` does not schedule synchronization: run sync explicitly or through an operator-managed scheduler. [Deployment](deployment.md) explains the separate API, sync and learning processes.
+
+## Gmail labels
+
+Create an operator-managed access token with an appropriate read scope through your approved Google account/application setup. The connector does not provide that login flow. Supply it through your private secret environment. For a private Bash session, the following reads it without echoing it or placing the value in the command text:
+
+```bash
+read -r -s ATMET_GMAIL_TOKEN
+export ATMET_GMAIL_TOKEN
+```
+
+Paste the token at the waiting input and press Enter. Do not save it inside gmail.json. Restart/re-authorize the adapter through the operator process when that access token expires.
 
 Binding configuration:
 

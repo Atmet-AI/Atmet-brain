@@ -2,6 +2,20 @@
 
 This release implements MCP over stdio using the 2025-11-25 protocol version. The client launches a local subprocess, which can use a local Brain or bridge to an explicitly selected remote REST service. Messages are newline-delimited JSON-RPC and stdout contains only protocol messages. No remote MCP HTTP/OAuth transport is claimed.
 
+## Set up a client
+
+1. [Create a company Brain](quickstart.md), then create a dedicated service credential as shown in the [company walkthrough](use-for-your-company.md). Keep its token file private and use absolute paths.
+2. Generate the local client configuration:
+
+```bash
+atmet-brain --json --token-file /absolute/path/to/scoped-worker.token mcp-config
+```
+
+3. Copy the returned MCP server entry into your agent application's MCP settings and restart/reconnect that client. It records the installed interpreter, data home and credential-file path so a desktop app does not need your terminal's PATH. Do not remove that interpreter environment while the client uses it.
+4. Ask the client to list available Brain spaces, then request context for a permitted space and task. A successful response contains sourced context, not a final business action. If the subprocess fails, check [troubleshooting](troubleshooting.md).
+
+For an existing remote company Brain, save a personal connection first and use the remote configuration command below. For a different local home, include `--home /absolute/path/to/brain-data` before mcp-config. The owner credential is for administration, not an ordinary agent.
+
 ## Configuration
 
 Create a dedicated scoped credential, then adapt the [client configuration example](../examples/mcp-client-config.json):

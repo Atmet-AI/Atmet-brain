@@ -1,13 +1,13 @@
 # Installation
 
-Version 0.2.6 is [published on npm](https://www.npmjs.com/package/atmet-brain). The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. A fresh public install, setup, MCP exchange and persistent service interpreter were verified on macOS arm64. [Publisher checklist](package-publishing.md).
+Install the CLI with Node.js 22.14+ and npm on macOS or glibc Linux x64/arm64. The launcher includes the matching Python core and prepares its runtime on first use. Company data is stored separately from that runtime. Windows is not validated.
 
 ## npm and npx
 
 With Node.js 22.14+ and npm:
 
 ```bash
-npx atmet-brain setup
+npx atmet-brain@latest setup
 ```
 
 For regular use:
@@ -23,25 +23,25 @@ Runtime storage is separate from company data; [launcher details](../npm/atmet-b
 
 ## Python and platform scope
 
-A standalone Atmet package on PyPI is deferred. The npm launcher installs its included wheel locally and uses the public Python index only for declared dependencies such as `cryptography`. A PyPI publishing account is unnecessary for maintainers or users of this route. Python applications can use existing release wheels or source instructions below.
+A standalone Atmet package on PyPI is deferred. The npm launcher installs its included wheel locally and uses the public Python index only for declared dependencies such as `cryptography`. Users need no Python package-index account. Python applications can use existing release wheels or source instructions below.
 
 The core is locally validated on macOS and Ubuntu CI. Automatic uv bootstrap has pinned assets for macOS/glibc Linux x64/arm64; the non-local/non-CI targets need deployment checks. Windows is not validated.
 
 ## GitHub release fallback
 
-Existing v0.2.0 GitHub release wheels remain an alternative installation route. The following paths are alternatives, not prerequisites for the registry route. An npm install does not require Git or a source checkout.
+Versioned GitHub release wheels are an alternative for Python/uv users. The following paths are alternatives, not prerequisites for the registry route. An npm install does not require Git or a source checkout.
 
 ## Guided release installer
 
 With [uv installed](https://docs.astral.sh/uv/getting-started/installation/) and curl available, download the versioned installer, inspect it if desired, then run it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.2.0/install.sh -o install-atmet.sh
-sh install-atmet.sh
+curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.2.6/install.sh -o install-atmet.sh
+sh install-atmet.sh 0.2.6
 atmet-brain setup
 ```
 
-The script downloads the selected GitHub wheel and release checksum manifest, checks the SHA-256 digest, then installs it into the current user's isolated uv tool environment. No sudo or repository clone is needed. The checksum protects release download consistency; authenticity still depends on trusting the repository/release and HTTPS. The script does not install uv, initialize company data, open network ports or start a service. If uv is missing, it exits with its official installation link. `sh install-atmet.sh 0.2.0` selects an explicit version; review schema compatibility and back up before changing versions.
+The script downloads the selected GitHub wheel and release checksum manifest, checks the SHA-256 digest, then installs it into the current user's isolated uv tool environment. No sudo or repository clone is needed. The checksum protects release download consistency; authenticity still depends on trusting the repository/release and HTTPS. The script does not install uv, initialize company data, open network ports or start a service. If uv is missing, it exits with its official installation link. Always pass the chosen version, as in `sh install-atmet.sh 0.2.6`; the legacy installer has an older default. Review schema compatibility and back up before changing versions.
 
 ## Regular CLI use
 
@@ -49,7 +49,7 @@ First [install uv](https://docs.astral.sh/uv/getting-started/installation/). The
 
 ```bash
 uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.6/atmet_brain-0.2.6-py3-none-any.whl"
 atmet-brain --help
 ```
 
@@ -59,7 +59,7 @@ uv installs the tool into an isolated environment and exposes its executable. If
 
 ```bash
 uvx --python 3.12 \
-  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl" \
+  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.6/atmet_brain-0.2.6-py3-none-any.whl" \
   atmet-brain --help
 ```
 
@@ -69,7 +69,7 @@ To use a Git source instead, this also works with Git installed:
 
 ```bash
 uvx --python 3.12 \
-  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.2.0" \
+  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.2.6" \
   atmet-brain --help
 ```
 
@@ -81,7 +81,7 @@ Inside your own Python 3.11+ project:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.6/atmet_brain-0.2.6-py3-none-any.whl"
 ```
 
 The package provides `from atmet_brain import Brain` and the `atmet-brain` executable. Keep this environment activated when using its CLI. On Windows, the activation command is `.venv\Scripts\activate`; Windows support still needs validation.
@@ -89,7 +89,7 @@ The package provides `from atmet_brain import Brain` and the `atmet-brain` execu
 ## Source, examples and contributions
 
 ```bash
-git clone --branch v0.2.0 https://github.com/anashamad9/Atmet-brain.git
+git clone https://github.com/anashamad9/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate
@@ -98,10 +98,20 @@ python examples/demo.py
 python examples/automation_demo.py
 ```
 
-A tagged clone is a detached checkout of a reproducible release. Contributors can create a branch before changing files, or clone the default branch for current development. Editable installation uses your checkout. The demo scripts and fixture files belong to the repository and are not installed as wheel data.
+This uses the default branch for current development. For a reproducible release, add `--branch v0.2.6` to git clone and create a branch before editing its detached checkout. Editable installation uses your checkout. The demo scripts and fixture files belong to the repository and are not installed as wheel data.
 
 ## Data and upgrades
 
 Installation and company initialization are separate. Installing a package does not create a company or import company information. Run `atmet-brain setup` for guided initialization, or continue with the [quickstart](quickstart.md) / [company walkthrough](use-for-your-company.md). For a shared installation, follow [team server setup](team-server.md).
 
 For an upgrade, read the release notes, back up the installation and check schema compatibility. Install a deliberate new release URL rather than assuming a pinned Git tag or wheel URL follows future releases. Never assume a package upgrade also approves new workflow instructions. [Release versioning](release-versioning.md) and [recovery](backup-and-recovery.md) describe these boundaries.
+
+To update an npm installation:
+
+```bash
+npm install --global atmet-brain@latest
+atmet-brain --version
+atmet-brain status
+```
+
+For npx, use `npx atmet-brain@latest --version`. Do not rerun `init` or `setup` to upgrade an existing company. Its data home and credentials remain separate from the installed software. If a saved MCP/service configuration points at the old runtime executable, regenerate that configuration and reinstall the service through its normal lifecycle. [Terminal](terminal.md) and [team services](team-server.md) explain those steps.

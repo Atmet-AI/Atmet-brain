@@ -89,7 +89,7 @@ atmet-brain review ARTIFACT_ID --revision 1 --approve --reason "Reviewed code, e
 atmet-brain rpc tasks.run --params @next-task.json
 ```
 
-Files passed to `--params` contain the inner `params` object, without the REST `method` wrapper.
+Create the named JSON files before running these commands. Files passed to `--params` contain the inner `params` object from the examples, without the REST `method` wrapper. Report at least three distinct accepted supported inputs before expecting a candidate. Inspect the candidate ID/revision returned by discovery, then use that exact revision in review; task recording does not publish it automatically.
 
 ## Changes, permissions and recovery
 
@@ -100,6 +100,8 @@ A reported failure or conflicting output for an input the recipe accepts pauses 
 Training data and compiled artifacts remain within their Brain space and current evidence restrictions. Permissioned lists, raw test inspection, artifact history and audit metadata honor those restrictions. Source erasure clears dependent retained task inputs/outputs and retracts affected recipe bodies. Encrypted whole-installation backups include task observations, blocks and execution hashes; recovery journal replay clears erased training data before reauthorization. Portable space exports include permitted approved automation artifacts, not the entire operational training set.
 
 ## Trying it
+
+For the complete disposable scenario below, first use the [source checkout installation](install.md#source-examples-and-contributions). The examples directory is not installed with the wheel or npm launcher. From that checkout and its Python environment:
 
 ```bash
 python examples/automation_demo.py

@@ -16,10 +16,51 @@ prepare-quotation/
 
 Importing a package creates a pending artifact. Paths must remain inside the selected directory. Parent traversal and symlink reads are rejected. Only listed resources are imported. Resources are text in this release, with a total artifact limit of 200000 characters.
 
+## Create and install your own package
+
+Use an initialized Brain and a space you may contribute to. In a fresh private working directory, create these files; no source checkout is required:
+
 ```bash
-atmet-brain skill-install examples/skills/prepare-quotation --space SPACE_ID
-atmet-brain review ARTIFACT_ID --revision 1 --approve --reason "Checked method, boundaries and template"
+mkdir -p quotation-skill/templates
+cat > quotation-skill/SKILL.md <<'MD'
+# Prepare a quotation
+Check the customer, items and quantities. Use current permitted price evidence.
+List missing inputs and ask for manager review before any send action.
+Use the quotation template to structure the draft.
+MD
+cat > quotation-skill/manifest.json <<'JSON'
+{
+  "name": "prepare-quotation",
+  "description": "Prepare a quotation draft from permitted current evidence.",
+  "inputs": ["Customer", "Items", "Quantities"],
+  "outputs": ["Quotation draft", "Evidence references"],
+  "required_tools": ["Authorized price lookup"],
+  "resources": ["templates/quotation.md"],
+  "checks": ["Prices have evidence", "Manager review is requested"]
+}
+JSON
+cat > quotation-skill/templates/quotation.md <<'MD'
+# Quotation draft
+Customer:
+Items and quantities:
+Prices and evidence:
+Missing information:
+Required approval:
+MD
+atmet-brain skill-install quotation-skill --space "$SALES_SPACE"
 ```
+
+Set SALES_SPACE to your permitted space ID. Save the returned artifact ID as SKILL_ID. Check the pending body before an authorized publisher approves it:
+
+```bash
+export SKILL_ID="PASTE_ARTIFACT_ID"
+atmet-brain rpc artifacts.get --params "{\"artifact_id\":\"$SKILL_ID\",\"revision\":1}"
+atmet-brain review "$SKILL_ID" --revision 1 --approve --reason "Checked method, boundaries and template"
+atmet-brain context "Prepare a quotation" --space "$SALES_SPACE" --artifact "$SKILL_ID"
+atmet-brain rpc skills.resource --params "{\"artifact_id\":\"$SKILL_ID\",\"path\":\"templates/quotation.md\"}"
+```
+
+Context includes the selected approved method and resource names. The resource call returns the template text with `executable: false`. Your agent uses that text through its own authorized tools. Repository contributors can also try the complete package under `examples/skills/`; that directory is not installed by the wheel.
 
 ## Retrieval
 
@@ -33,7 +74,14 @@ The context envelope contains resource names rather than loading every resource.
 
 ## Updating a skill
 
-Use its stable ID and current head revision when submitting an update. The result remains pending until publication. A changed dependency blocks task assembly until the skill is revalidated. Retiring a skill adds a retirement revision. Rollback adds a new proposal; it does not erase history.
+Edit the local package, then import it with its stable artifact ID and current head revision:
+
+```bash
+atmet-brain skill-install quotation-skill --space "$SALES_SPACE" --artifact-id "$SKILL_ID" --expected-revision 1
+atmet-brain review "$SKILL_ID" --revision 2 --approve --reason "Checked the revised method and dependencies"
+```
+
+These revision numbers assume exactly one prior approved revision. Reload the head before a real update; do not overwrite a newer draft. Inspect the proposed body before publication; importing alone leaves it pending. A changed dependency blocks task assembly until the skill is revalidated. Retiring a skill adds a retirement revision. Rollback adds a new proposal; it does not erase history.
 
 ## Learning a skill
 

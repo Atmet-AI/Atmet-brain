@@ -1,6 +1,6 @@
 # Use history: inspect, compare and restore
 
-This walkthrough changes one fictional workflow, inspects its history and restores its earlier instructions. It works with the released 0.2.0 CLI. You do not need a checkout, model key or running HTTP server. Run the commands in order in a private working directory. JSON files below are files you create there, outside the source repository.
+This walkthrough changes one fictional workflow, inspects its history and restores its earlier instructions. Use the installed CLI from the [installation guide](install.md). You do not need a checkout, model key or running HTTP server. Run the commands in order in a private working directory. JSON files below are files you create there, outside the source repository.
 
 History is already stored when you change supported sources or artifacts; there is no switch to enable it. Access to old content still depends on your current credentials, grants and source audience.
 
