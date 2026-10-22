@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atmet-brain"
+version = "0.1.0"
+description = "A local-first company memory, workflow and skills core for AI agents."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "Atmet"}]
+dependencies = ["cryptography>=43,<52"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.scripts]
+atmet-brain = "atmet_brain.cli:main"
+
+[project.urls]
+Repository = "https://github.com/anashamad9/Atmet-brain"
+Issues = "https://github.com/anashamad9/Atmet-brain/issues"
+Changelog = "https://github.com/anashamad9/Atmet-brain/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+atmet_brain = ["schema.sql", "py.typed"]

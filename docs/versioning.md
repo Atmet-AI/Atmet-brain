@@ -1,0 +1,50 @@
+# Versions and history
+
+Several independent versions describe a Brain:
+
+| Version | Tracks |
+| --- | --- |
+| Engine | Software release |
+| Schema | Database representation |
+| Source revision | Captured business information |
+| Memory revision | Extraction or review state |
+| Artifact revision | Policy, workflow, skill, instruction or configuration body |
+| Extractor generation | How memory was derived |
+| Context manifest | References actually used by one task |
+
+Re-extracting information does not approve an operating policy.
+
+## Artifact lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Approved: authorized exact-revision review
+    Pending --> Rejected: reject
+    Approved --> Scheduled: effective time is in the future
+    Scheduled --> Current: effective time arrives
+    Approved --> Current: effective now
+    Current --> Superseded: newer eligible approved revision
+    Current --> Retired: explicit retirement revision
+    Current --> Retracted: supporting evidence erased
+```
+
+Scheduled/current/superseded describe time-based interpretation; approval state is stored separately. The resolver chooses the highest approved eligible revision by revision number. A later retirement or rollback cannot be undone just because an older scheduled revision reaches its date.
+
+Every proposal requires an expected head revision and an idempotency key. Reusing a key with the same request returns the original result. Reusing it with different content is a conflict. Publication rejects a review if another proposal changed the head.
+
+## Effective time and recorded time
+
+`submitted_at` and `reviewed_at` describe what the system recorded. `effective_at` describes when business behavior applies. `artifacts.get` supports `at` for business-effective time and `known_at` for what had been approved by a system time. Historical access requires `history` permission and today's source access.
+
+This temporal API applies to artifacts. Full historical reconstruction of every extraction/index/permission state is outside this first release. Source revisions and memory review metadata remain inspectable through their supported paths. Current task retrieval excludes future-effective source heads. It does not automatically reconstruct an earlier source head for that task; use an explicit historical inspection when needed.
+
+## Rollback
+
+Call `artifacts.rollback` with the retained approved revision to restore, the expected current head, a reason and an idempotency key. It creates a new pending revision. An authorized publisher reviews it before activation. Retained earlier bodies allow exact before/after comparison. The `artifacts.diff` operation returns a unified JSON-body diff between two accessible revisions; it does not invent a prose explanation.
+
+Rollback checks current evidence and dependencies. It cannot restore erased evidence, old credentials or former grants. If a dependency changed, the skill/workflow needs a new reviewed version rather than silently using incompatible instructions.
+
+## Traceability
+
+Task envelopes include a manifest ID. `context.manifest` returns referenced artifact/source versions, hashes, effective settings and the permission-check time for the original principal. Current access still applies. The manifest stores a query hash rather than the complete prompt. It supports inspection, not guaranteed byte-identical model replay.

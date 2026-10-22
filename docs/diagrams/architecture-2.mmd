@@ -1,0 +1,13 @@
+erDiagram
+    ORGANIZATION ||--o{ SPACE : owns
+    ORGANIZATION ||--o{ PRINCIPAL : includes
+    PRINCIPAL ||--o{ CREDENTIAL : authenticates
+    PRINCIPAL ||--o{ GRANT : receives
+    SPACE ||--o{ GRANT : scopes
+    SPACE ||--o{ SOURCE : holds
+    SOURCE ||--o{ SOURCE_REVISION : versions
+    SOURCE ||--o{ JOB : feeds
+    SPACE ||--o{ MEMORY : stores
+    SPACE ||--o{ ARTIFACT : holds
+    ARTIFACT ||--o{ ARTIFACT_VERSION : versions
+    SPACE ||--o{ CONTEXT_MANIFEST : records

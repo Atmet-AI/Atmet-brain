@@ -1,0 +1,5 @@
+flowchart TD
+    Deployment[Deployment limits] --> Shared[Approved shared configuration]
+    Shared --> Department[Applicable department and task configuration]
+    Department --> Request[Request limits]
+    Request --> Effective[Effective settings]

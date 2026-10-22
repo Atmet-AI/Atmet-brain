@@ -1,0 +1,9 @@
+{
+  "name": "prepare-quotation",
+  "description": "Prepare a customer quotation using current approved pricing and approval rules.",
+  "inputs": ["Customer identity", "Requested products and quantities", "Applicable price source"],
+  "outputs": ["Quotation draft", "Evidence references", "Required approval list"],
+  "required_tools": ["Authorized product lookup", "Document drafting"],
+  "resources": ["templates/quotation.md"],
+  "checks": ["Every price has current evidence", "Missing inputs remain explicit", "Required approvals are identified", "No message is sent by this skill"]
+}

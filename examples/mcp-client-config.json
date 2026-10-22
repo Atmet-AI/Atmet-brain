@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "atmet-brain": {
+      "command": "atmet-brain",
+      "args": ["--home", "/absolute/path/to/brain-data", "--token-file", "/absolute/path/to/scoped-worker.token", "mcp"]
+    }
+  }
+}

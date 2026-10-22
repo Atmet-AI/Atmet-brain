@@ -1,0 +1,14 @@
+flowchart TD
+    A[Agent reports task inputs and accepted output] --> B[Group by task key and approved context]
+    B --> C{Distinct examples match a supported recipe?}
+    C -->|No| D[Continue with agent]
+    C -->|Yes| E[Compile Python and replay examples]
+    E --> F[Pending artifact and authorized review]
+    F --> G[Approved recipe]
+    H[Next explicit task request] --> I[Check current permissions and versions]
+    G --> I
+    I --> J{One current recipe and valid inputs?}
+    J -->|Yes| K[Run bounded Python without a model]
+    J -->|No| D
+    K --> L[Record execution ID and hashes]
+    M[Changed policy or conflicting outcome] --> D

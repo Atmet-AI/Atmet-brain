@@ -1,0 +1,10 @@
+flowchart LR
+    Change[Source edit or connector delta] --> Revision[Source revision]
+    Revision --> Queue[Durable job]
+    Queue --> Extract[Extract bounded candidates]
+    Extract --> Validate[Evidence and authority checks]
+    Validate --> Fact[Eligible ordinary fact or observation]
+    Validate --> Proposal[Inference, conflict or rule candidate]
+    Proposal --> Review[Authorized review]
+    Fact --> Context[Current permitted context]
+    Review --> Context

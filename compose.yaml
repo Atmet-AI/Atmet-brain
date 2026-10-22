@@ -1,0 +1,14 @@
+services:
+  brain:
+    build: .
+    ports:
+      - "127.0.0.1:7310:7310"
+    volumes:
+      - brain-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  brain-data:

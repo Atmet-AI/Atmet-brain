@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Approved: authorized exact-revision review
+    Pending --> Rejected: reject
+    Approved --> Scheduled: effective time is in the future
+    Scheduled --> Current: effective time arrives
+    Approved --> Current: effective now
+    Current --> Superseded: newer eligible approved revision
+    Current --> Retired: explicit retirement revision
+    Current --> Retracted: supporting evidence erased

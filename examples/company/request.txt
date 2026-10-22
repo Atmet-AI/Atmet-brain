@@ -1,0 +1,2 @@
+Customer Example asks for a quotation for three Example products.
+The customer would like delivery next week.

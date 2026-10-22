@@ -1,0 +1,60 @@
+"""SQLite transactions and minimal, non-content-bearing audit events."""
+
+from contextlib import contextmanager
+import os
+from pathlib import Path
+import sqlite3
+
+from .errors import require
+from .util import dumps, now, uid
+
+SCHEMA_VERSION = 1
+
+
+class Store:
+    def __init__(self, home):
+        self.home = Path(home).expanduser().resolve()
+        self.home.mkdir(parents=True, exist_ok=True, mode=0o700)
+        self.path = self.home / "brain.sqlite3"
+        with self.connect() as conn:
+            conn.executescript(Path(__file__).with_name("schema.sql").read_text())
+            conn.execute("INSERT OR IGNORE INTO meta VALUES('schema_version',?)", (str(SCHEMA_VERSION),))
+            conn.execute("INSERT OR IGNORE INTO meta VALUES('instance_id',?)", (uid("instance"),))
+            conn.execute("INSERT OR IGNORE INTO meta VALUES('recovery_mode','0')")
+            version = conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0]
+            require(int(version) == SCHEMA_VERSION, "schema_version", "Unsupported database schema. Use a compatible release.")
+        os.chmod(self.path, 0o600)
+
+    def connect(self):
+        conn = sqlite3.connect(self.path, timeout=20, isolation_level=None)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys=ON")
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=20000")
+        conn.execute("PRAGMA secure_delete=ON")
+        return conn
+
+    @contextmanager
+    def transaction(self, write=False):
+        conn = self.connect()
+        try:
+            conn.execute("BEGIN IMMEDIATE" if write else "BEGIN")
+            yield conn
+            conn.commit()
+        except BaseException:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+
+
+def audit(conn, actor, operation, target=None, space_id=None, details=None):
+    conn.execute("INSERT INTO audit_events VALUES(?,?,?,?,?,?,?,?)",
+                 (uid("audit"), actor.org_id, space_id, actor.principal_id, operation,
+                  target, dumps(details or {}), now()))
+
+
+def recovery_event(conn, operation, target, payload=None):
+    instance = conn.execute("SELECT value FROM meta WHERE key='instance_id'").fetchone()[0]
+    conn.execute("INSERT INTO recovery_events(instance_id,operation,target,payload,recorded_at) VALUES(?,?,?,?,?)",
+                 (instance, operation, target, dumps(payload or {}), now()))

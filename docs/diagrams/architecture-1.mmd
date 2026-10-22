@@ -1,0 +1,29 @@
+flowchart TB
+    subgraph Clients
+        Terminal[CLI and Python]
+        API[REST adapter]
+        MCP[MCP stdio adapter]
+        Product[Platform or Playground client]
+    end
+    subgraph Core
+        Auth[Identity and current grants]
+        Context[Context assembly]
+        Sources[Source lifecycle]
+        Learning[Durable learning jobs]
+        Artifacts[Reviewed policies, workflows and skills]
+        Recovery[Snapshot and recovery tools]
+    end
+    Terminal --> Auth
+    API --> Auth
+    MCP --> Auth
+    Product --> API
+    Auth --> Context
+    Auth --> Sources
+    Auth --> Artifacts
+    Sources --> Learning
+    Learning --> Context
+    Artifacts --> Context
+    Sources --> DB[(SQLite canonical records)]
+    Artifacts --> DB
+    Learning --> DB
+    DB --> Recovery

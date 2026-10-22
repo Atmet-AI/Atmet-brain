@@ -1,0 +1,8 @@
+flowchart LR
+    Backup[Encrypted snapshot] --> Verify[Decrypt and verify inventory]
+    Verify --> Fresh[Restore into fresh data home]
+    Fresh --> Quarantine[Revoke keys and quarantine sources]
+    Quarantine --> Journal[Reconcile current recovery journal]
+    Journal --> Owner[Provision new recovery owners]
+    Owner --> Validate[Revalidate sources and memberships]
+    Validate --> Serve[Resume permitted serving]

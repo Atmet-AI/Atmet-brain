@@ -1,0 +1,4 @@
+[brain]
+max_context_chars = 16000
+max_results = 12
+allow_remote_processing = false

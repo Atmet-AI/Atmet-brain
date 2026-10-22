@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant Agent
+    participant Adapter
+    participant Core
+    participant Store
+    Agent->>Adapter: Task and explicit space
+    Adapter->>Core: Verified bearer credential
+    Core->>Store: Current identity, credential lineage and grants
+    Core->>Store: Approved applicable versions and permitted evidence
+    Core->>Core: Validate dependencies and context budget
+    Core->>Store: Save revision manifest
+    Core-->>Agent: Approved context plus reference evidence
