@@ -1,6 +1,6 @@
 # Security
 
-The 0.2 series is a local/private-pilot alpha. It has behavior tests for scope isolation, current authorization, source revocation, reviewed publication and recovery. It has not received an independent production security audit.
+Atmet Brain is a local/private-pilot alpha. It has behavior tests for scope isolation, current authorization, source revocation, reviewed publication and recovery. It has not received an independent production security audit.
 
 ## Reporting
 
@@ -15,7 +15,9 @@ Use GitHub private vulnerability reporting if enabled by the repository owner. I
 - Skills are read as instructions/resources; the core never executes their scripts.
 - The local HTTP server is not a hardened public internet gateway.
 - Remote clients require verified HTTPS or loopback HTTP inside a controlled local/SSH connection, refuse redirects and never infer a user's identity from their network address.
-- Named connection files bind a verified organization/principal; copied raw credential files are private, device-specific and outside the canonical backup.
+- Saved connection profiles bind a verified organization/principal; copied raw credential files are private, device-specific and outside the canonical backup.
+- Host connection files contain reusable scoped bearer credentials, not single-use invitations. Deliver them privately; revocation and expiry remain server-enforced. Join checks the pinned organization/principal/credential identity before saving a profile.
+- Automatic SSH forwarding requires administrator-approved SSH keys and known hosts, uses strict non-interactive authentication and closes each request's process. It does not provision SSH accounts, accept unknown keys or grant Brain roles.
 - Network access, SSH accounts and individual Brain grants are separate. An employee must not receive host filesystem access as a side effect of sharing a Brain.
 - Per-user background service installation does not configure TLS, SSO, VPN/firewall rules, machine-wide boot services or independent monitoring.
 - Provider processing is opt-in; local storage does not imply offline processing when an external adapter is enabled.

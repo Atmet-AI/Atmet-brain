@@ -137,4 +137,4 @@ Credentials and grants are separate. Minting a key does not create a space grant
 
 ## Private remote clients
 
-The CLI can save verified HTTPS or SSH-loopback connections and call the same operations using `--connection NAME`. `team.add` atomically creates an individual non-admin identity, chosen space/role grants and a narrowed expiring credential; prefer `team-add --output FILE` to keep the returned token out of terminal output. Connection profiles are not grants. See [terminal usage](terminal.md) and [team server](team-server.md).
+The CLI can save verified HTTPS, automatic SSH or manual SSH-loopback connections and call the same operations using `--connection NAME`. `team.add` atomically creates an individual non-admin identity, chosen space/role grants and a narrowed expiring credential; prefer `team-add --output FILE` to keep the returned token out of terminal output. Connection profiles are not grants. See [terminal usage](terminal.md) and [team server](team-server.md).

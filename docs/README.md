@@ -9,7 +9,7 @@ Atmet Brain stores company sources, learned memory and reviewed procedures that 
 3. [Build a company workflow](use-for-your-company.md): add departments, publish instructions and give an agent its own credential.
 4. [Connect an agent with MCP](mcp.md) or [use Python/REST](api.md).
 5. [Keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
-6. [Share a company server](team-server.md) when several people need the same Brain.
+6. [Host a Brain and help teammates Join](team-server.md#guided-host-and-join) when several people need the same Brain.
 
 The examples use the installed `atmet-brain` command. Install it globally as shown in installation, or substitute `npx atmet-brain@latest` before the same arguments. JSON blocks labeled as files must be saved before a command refers to them. Replace uppercase IDs and example paths with values returned by your own installation; no source checkout is needed unless a page explicitly uses repository examples.
 

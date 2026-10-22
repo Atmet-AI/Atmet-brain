@@ -1,5 +1,8 @@
 # Identity and permissions
 
+For guided team access, run `atmet-brain host` on the company device. It accepts workspace names, creates one member's scoped access and writes a private connection file for `atmet-brain join`. The [Host/Join guide](team-server.md#guided-host-and-join) covers delivery, verification and revocation. The commands below provide the manual alternative.
+
+
 The core authorizes each operation before it returns content. A client supplies a credential; it cannot supply its own privileged identity.
 
 ## Give a reader access and verify it

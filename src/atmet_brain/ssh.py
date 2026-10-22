@@ -5,7 +5,9 @@ import re
 import shutil
 import socket
 import subprocess
+import tempfile
 import time
+from pathlib import Path
 
 from .client import Client
 from .errors import BrainError, require
@@ -24,13 +26,22 @@ def validate_ssh(value):
 
 @contextmanager
 def tunnel(settings):
+    # The private log is an ownership signal from SSH itself. A reachable TCP port
+    # alone could belong to another local process that raced the SSH bind.
+    with tempfile.TemporaryDirectory(prefix="atmet-ssh-") as directory:
+        with _tunnel(settings, Path(directory) / "forward.log") as endpoint:
+            yield endpoint
+
+
+@contextmanager
+def _tunnel(settings, log):
     settings = validate_ssh(settings)
     executable = shutil.which("ssh")
     require(executable, "ssh_missing", "Install an OpenSSH client, then retry Join.")
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
-    command = [executable, "-N", "-T", "-a", "-x", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
+    command = [executable, "-v", "-E", str(log), "-N", "-T", "-a", "-x", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
                "-o", "UpdateHostKeys=no", "-o", "PermitLocalCommand=no", "-o", "ControlMaster=no",
                "-o", "ControlPath=none", "-o", "ControlPersist=no", "-o", "ForkAfterAuthentication=no",
                "-o", "ExitOnForwardFailure=yes", "-o", "ConnectTimeout=10",
@@ -46,6 +57,19 @@ def tunnel(settings):
         while time.monotonic() < deadline:
             require(process.poll() is None, "ssh_failed",
                     "SSH forwarding failed. Ask your administrator to verify your SSH key, trusted host key and forwarding-only account. No Brain request was sent.")
+            # OpenSSH emits this exact local diagnostic only after bind/listen
+            # succeeds. Logs are never printed and are removed with the tunnel.
+            if log.exists():
+                with log.open("rb") as stream:
+                    output = stream.read(65537)
+                require(len(output) <= 65536, "ssh_failed", "SSH startup diagnostics exceeded the safety limit.")
+                ready = f"Local forwarding listening on 127.0.0.1 port {port}.".encode()
+                if not any(line in (b"debug1: " + ready, b"debug1: " + ready + b"\r") for line in output.split(b"\n")):
+                    time.sleep(0.05)
+                    continue
+            else:
+                time.sleep(0.05)
+                continue
             try:
                 with socket.create_connection(("127.0.0.1", port), timeout=0.2):
                     pass

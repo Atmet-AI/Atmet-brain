@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.3.1 - SSH forwarding ownership, 2026-10-23
+
+- Require OpenSSH's successful loopback bind/listen diagnostic before sending a Brain credential. A reachable local port alone is not accepted as SSH readiness.
+- Keep startup diagnostics in a private temporary directory, cap reads, and remove the directory when forwarding ends. Preserve strict host checks, bounded startup and process cleanup.
+- Add a regression proving that an unrelated open port receives no probe or Brain credential without SSH's positive bind confirmation.
+
+- Clarify Host/Join credential and SSH boundaries in security, API, permissions and navigation references.
+
 ## 0.3.0 - guided team sharing, 2026-10-23
 
 ### Added

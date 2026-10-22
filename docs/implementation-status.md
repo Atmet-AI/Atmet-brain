@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.3.0 is a local/private-pilot alpha using database schema 1. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.3.1 is a local/private-pilot alpha using database schema 1. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |

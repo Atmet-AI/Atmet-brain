@@ -226,7 +226,11 @@ class SSHTransportCase(unittest.TestCase):
     def test_ssh_is_strict_bounded_and_cleaned_up_even_when_request_fails(self):
         process = Mock()
         process.poll.return_value = None
-        with patch("atmet_brain.ssh.shutil.which", return_value="/usr/bin/ssh"), patch("atmet_brain.ssh.subprocess.Popen", return_value=process) as launch, patch("atmet_brain.ssh.socket.create_connection", return_value=contextlib.nullcontext()):
+        def launched(command, **options):
+            port = command[command.index("-L") + 1].split(":")[1]
+            Path(command[command.index("-E") + 1]).write_text(f"debug1: Local forwarding listening on 127.0.0.1 port {port}.\n")
+            return process
+        with patch("atmet_brain.ssh.shutil.which", return_value="/usr/bin/ssh"), patch("atmet_brain.ssh.subprocess.Popen", side_effect=launched) as launch, patch("atmet_brain.ssh.socket.create_connection", return_value=contextlib.nullcontext()):
             with self.assertRaises(RuntimeError):
                 with tunnel({"destination": "forward@host", "port": 7310}) as endpoint:
                     self.assertTrue(endpoint.startswith("http://127.0.0.1:"))
@@ -239,3 +243,13 @@ class SSHTransportCase(unittest.TestCase):
         self.assertNotIn("test-credential", " ".join(command))
         process.terminate.assert_called_once()
         process.wait.assert_called_once_with(timeout=3)
+
+    def test_open_port_without_ssh_bind_confirmation_never_receives_credentials(self):
+        process = Mock()
+        process.poll.return_value = None
+        with patch("atmet_brain.ssh.shutil.which", return_value="/usr/bin/ssh"), patch("atmet_brain.ssh.subprocess.Popen", return_value=process), patch("atmet_brain.ssh.time.monotonic", side_effect=[0, 0, 13]), patch("atmet_brain.ssh.time.sleep"), patch("atmet_brain.ssh.socket.create_connection") as probe, patch("atmet_brain.client.Client.call") as request:
+            with self.assertRaises(BrainError):
+                SSHClient({"destination": "forward@host", "port": 7310}, "test-credential-with-valid-length").call("identity.me")
+            probe.assert_not_called()
+            request.assert_not_called()
+        process.terminate.assert_called_once()
