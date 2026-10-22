@@ -1,6 +1,6 @@
 # Installation
 
-Version 0.2.3 is prepared for **npm-only distribution**. The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. **The first npm upload and public command verification are pending owner login.** [Publisher checklist](package-publishing.md).
+Version 0.2.3 is [published on npm](https://www.npmjs.com/package/atmet-brain). The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. A fresh public install, setup, MCP exchange and persistent service interpreter were verified on macOS arm64. [Publisher checklist](package-publishing.md).
 
 ## npm and npx
 
@@ -29,7 +29,7 @@ The core is locally validated on macOS and Ubuntu CI. Automatic uv bootstrap has
 
 ## GitHub release fallback
 
-Until registry publication is verified, existing v0.2.0 GitHub release wheels remain an available fallback. The following paths are alternatives, not prerequisites for the registry route. An npm install does not require Git or a source checkout.
+Existing v0.2.0 GitHub release wheels remain an alternative installation route. The following paths are alternatives, not prerequisites for the registry route. An npm install does not require Git or a source checkout.
 
 ## Guided release installer
 

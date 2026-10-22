@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.2.3 - first npm publication candidate, 2026-10-22
+## 0.2.3 - first npm release, 2026-10-22
 
-- Prepare the first public npm package with installation instructions that describe the included core and normal user commands.
+- Published the first public npm package with the included core and normal user commands. Fresh anonymous public install/setup/MCP and the unversioned npx command were verified on macOS arm64.
 - Preserve the v0.2.2 preparation tag; the npm launcher and Python core use the same new version. Runtime behavior and schema are unchanged.
 
 ## 0.2.2 - npm-only publication prepared, 2026-10-22

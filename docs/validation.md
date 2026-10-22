@@ -44,3 +44,8 @@ Actual registry uploads, trusted-publisher authentication, new-name ownership an
 The npm distribution now includes its matching universal core wheel and a SHA-256 manifest. Eight launcher tests cover local-wheel arguments, digest/metadata rejection before execution, runtime reuse, stderr-only bootstrap, protected MCP input/output and failure handling. Build checks inspect the exact tarball allowlist, wheel metadata, CLI/schema and license/notice contents. The shared core API/schema and 130-test Python suite are unchanged.
 
 The actual packed npm archive is exercised with the included wheel and real uv, without the earlier unpublished-PyPI adapter. CI runs the archive on Ubuntu; local validation covers macOS arm64 setup, MCP output and persistent service interpreter. Public npm name ownership, upload/authentication and fresh public npm resolution remain separate pending steps. No Atmet PyPI release is required, although Python and third-party dependencies can be downloaded on first use.
+
+
+## Public npm release, 0.2.3
+
+The owner-authenticated upload completed as `anashamad0`. Public npm metadata matched the reviewed tarball integrity and version, and `latest` resolved to 0.2.3. A new npm cache/runtime with empty account configuration exercised version-pinned public setup, private owner credential creation, MCP initialize/tools-list exchange, runtime reuse and a service interpreter import. The unversioned public `npx atmet-brain` also returned 0.2.3. These checks used fictional temporary company data and the included core, with no Atmet PyPI release. No actual OS service was installed. Future npm OIDC/provenance configuration is separate from the first interactive upload.

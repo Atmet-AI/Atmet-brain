@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**The core is a local/private-pilot alpha.** Version 0.2.3 prepares npm-only distribution with the matching Python core included; first npm publication still needs the owner login. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**The core is a local/private-pilot alpha.** Version 0.2.3 is available on [npm](https://www.npmjs.com/package/atmet-brain), with the matching Python core included. The GitHub release route remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -54,7 +54,7 @@ The Brain supplies context and checks access. The agent/runtime chooses its mode
 
 ## Install
 
-The intended default entry point, **after the official npm package is published**, is:
+With Node.js 22.14+ and npm installed, start with:
 
 ```bash
 npx atmet-brain setup
@@ -62,9 +62,9 @@ npx atmet-brain setup
 
 With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine included in the npm package. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
 
-**Publication pending:** the short npm commands below are prepared, not yet available from the official npm package. No Atmet PyPI publication or PyPI account is required. See the maintainer's [account setup and first-publication checklist](docs/package-publishing.md). Until publication is verified, use the existing [GitHub release fallback](docs/install.md#github-release-fallback).
+No Atmet PyPI publication or PyPI account is required. Use `npx atmet-brain@0.2.3 setup` to pin this release. Maintainers can follow the [publishing checklist](docs/package-publishing.md); Python users can use the [GitHub release route](docs/install.md#github-release-fallback).
 
-For regular use after publication:
+For regular use:
 
 ```bash
 npm install --global atmet-brain

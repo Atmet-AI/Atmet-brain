@@ -38,3 +38,6 @@ Version 0.2.2 replaces the initial registry preparation with npm-only distributi
 
 
 Version 0.2.3 is the first npm publication candidate, with the same npm-only runtime as 0.2.2 and final package-page instructions. Older preparation tags remain unchanged. Public upload and fresh registry validation are recorded separately from the source tag.
+
+
+Version 0.2.3 is now published on npm. Public metadata and fresh anonymous version-pinned/unversioned npx installs were verified. The immutable source tag retains its preparation-time status notes; this documentation follow-up records actual availability without replacing the tag or npm archive. Runtime behavior and schema are unchanged.

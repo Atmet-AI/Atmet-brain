@@ -1,12 +1,12 @@
 # npm-only publication and account setup
 
-Version 0.2.3 includes the matching Atmet Brain Python wheel inside the npm archive. **An npm account is the only publishing account needed.** There is no dependency on an Atmet PyPI project. The first npm upload and fresh public command checks are still pending; a public name check does not reserve ownership.
+Version 0.2.3 includes the matching Atmet Brain Python wheel inside the npm archive. **An npm account is the only publishing account needed.** There is no dependency on an Atmet PyPI project. The first npm upload is complete under maintainer `anashamad0`, and fresh public commands were verified on macOS arm64. The initial upload used owner-authenticated npm CLI publishing; future OIDC setup remains separate.
 
 The owner has created an npm account. Verify its email and enable two-factor authentication. Do not send passwords, tokens, recovery codes, one-time codes or `.npmrc` contents in chat. The npm username and confirmation of completed local login are enough for coordination.
 
 ## 1. Build the exact release
 
-The [publish workflow](../.github/workflows/publish.yml) is manually dispatched. Select the reviewed immutable `v0.2.3` tag and leave `publish_npm=false` for the first build. It checks tag/version identity, runs Python and launcher tests, builds the universal wheel, checks it with twine, copies it into the npm archive with a SHA-256 manifest, then inspects the archive.
+The [publish workflow](../.github/workflows/publish.yml) is manually dispatched. Use the reviewed immutable release tag and leave `publish_npm=false` to build without another upload. Version 0.2.3 is already published and cannot be uploaded again. It checks tag/version identity, runs Python and launcher tests, builds the universal wheel, checks it with twine, copies it into the npm archive with a SHA-256 manifest, then inspects the archive.
 
 The workflow produces:
 
@@ -17,7 +17,7 @@ Download and extract the `npm-launcher` artifact. Its `.tgz` is the complete pub
 
 For a local build, follow [releasing](releasing.md#npm-distribution). The generated `vendor/` stays out of Git and the Python source distribution. [npm's package file rules](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#files) describe archive inclusion.
 
-## 2. Sign in privately and publish the first version
+## 2. Owner-authenticated publication
 
 With Node.js 24 and npm installed, use a private terminal:
 
@@ -27,7 +27,7 @@ npm whoami --registry=https://registry.npmjs.org
 npm publish /path/to/atmet-brain-0.2.3.tgz --access public --registry=https://registry.npmjs.org
 ```
 
-Replace the path with the exact reviewed `.tgz` from the build. Complete browser login/2FA prompts yourself. No shared API token is needed. The first successful upload establishes package ownership; it is not an OIDC-attested CI publication. [npm's first-publication instructions](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/).
+The command above documents the completed first upload. For a future owner-authenticated release, use its new version and exact reviewed `.tgz` from the build. Complete browser login/2FA prompts yourself. No shared API token is needed. The first successful upload establishes package ownership; it is not an OIDC-attested CI publication. [npm's first-publication instructions](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/).
 
 If `atmet-brain` is taken, stop and choose an owner-approved alternative before changing package metadata or commands. Do not use a similarly named third-party package as a fallback.
 
