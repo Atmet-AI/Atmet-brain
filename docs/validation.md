@@ -66,3 +66,9 @@ Release tests exercise actual annotated/lightweight tags in a temporary Git repo
 ## Registry propagation handling, 0.2.6
 
 The first accepted OIDC upload was not visible within the previous 25-second metadata window. The verifier now polls missing metadata/latest for up to ten minutes without publishing again. Regression cases cover delayed version/latest visibility, exhausted attempts and immediate integrity-mismatch failure. The npm job has a fifteen-minute execution bound.
+
+## Verified OIDC release, 0.2.6
+
+The [release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39830420887) passed its build, 139 Python tests, 8 launcher tests, archive checks, OIDC upload, public integrity/latest verification and a fresh public CLI install on Ubuntu. The workflow was dispatched from the immutable v0.2.6 tag after GitHub's push event was delayed; the version-tag trigger is configured and was observed on v0.2.5. No per-release npm authentication prompt or stored npm publishing token was used.
+
+An independent anonymous macOS arm64 install with an empty cache/runtime verified pinned and unversioned resolution to 0.2.6, setup, private owner credential mode, MCP initialize/tools-list, runtime reuse and a persistent service interpreter import. Public SHA-512/SHA-1 matched the actual CI archive, which includes npm provenance metadata. No actual OS service lifecycle or hosted/Playground availability is inferred. The accepted 0.2.5 upload and its initial metadata timeout remain historical; no version or tag was overwritten.

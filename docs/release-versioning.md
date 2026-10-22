@@ -50,3 +50,5 @@ Version 0.2.4 is now live on npm. Exact registry integrity/latest and fresh anon
 Version 0.2.5 adds tag-triggered npm releases, annotated-tag/main-history guards, duplicate/downgrade protection and post-publication integrity/install checks. Initial account trust and activation are required before its first OIDC upload; source preparation alone does not establish npm availability.
 
 Version 0.2.6 fixes the public-registry propagation timeout observed after the first accepted OIDC upload. The metadata verifier can wait ten minutes, with no duplicate upload or integrity-check relaxation.
+
+Version 0.2.6 is now public on npm, with a successful OIDC release workflow, matching public integrity/latest, provenance and fresh public Ubuntu/macOS checks. Account trust and the publishing switch are active. Public GitHub alpha assets are tied to the immutable tag. Use a new version for any future release; no further npm account approval is needed for the configured GitHub flow.

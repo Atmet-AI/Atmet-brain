@@ -1,6 +1,6 @@
 # Automatic npm releases
 
-Atmet Brain 0.2.5 is live on [npm](https://www.npmjs.com/package/atmet-brain), including the orange terminal and the matching Python core. GitHub OIDC publishing is active and the first upload is verified. Version 0.2.6 improves the wait for public registry propagation. An npm account is the only registry account needed; no Atmet PyPI publication is required.
+Atmet Brain 0.2.6 is live on [npm](https://www.npmjs.com/package/atmet-brain), including the orange terminal and the matching Python core. GitHub OIDC publishing is active and the first upload is verified. Version 0.2.6 includes the longer propagation wait, and its publication/integrity/fresh-install workflow passed. An npm account is the only registry account needed; no Atmet PyPI publication is required.
 
 ## Everyday updates
 
