@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**The core is a local/private-pilot alpha.** Version 0.2.6 is available on [npm](https://www.npmjs.com/package/atmet-brain), with the matching Python core included. The GitHub release route remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**Status: local/private-pilot alpha.** See the [support matrix](docs/implementation-status.md) for implemented features, tested integrations and planned capabilities.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -54,32 +54,30 @@ The Brain supplies context and checks access. The agent/runtime chooses its mode
 
 ## Install
 
-With Node.js 22.14+ and npm installed, start with:
+With Node.js 22.14+ and npm installed, run:
 
 ```bash
-npx atmet-brain setup
+npx atmet-brain@latest setup
 ```
 
-With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine included in the npm package. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
+Setup guides you through creating a company Brain or connecting to a company server. For a new Brain, you choose the company name and department spaces. Your information is stored in the selected Brain home.
 
-No Atmet PyPI publication or PyPI account is required. Use `npx atmet-brain@0.2.6 setup` to pin this release. Version tags trigger the tested npm release pipeline. Maintainers can follow the [publishing checklist](docs/package-publishing.md); Python users can use the [GitHub release route](docs/install.md#github-release-fallback).
+The launcher prepares the matching Python engine in an isolated runtime, so you do not need to clone the repository or install Python manually. First use needs network access for runtime dependencies. Automatic setup supports macOS and glibc Linux on x64/arm64; Windows is not validated. See [installation](docs/install.md) for requirements, version pinning and Python use.
 
-For regular use:
+To use the short `atmet-brain` command in the examples below, install it once:
 
 ```bash
 npm install --global atmet-brain
 atmet-brain setup
 ```
 
-The npm archive includes a checksum-verified universal Python wheel for the same core. First use can download Python and public dependencies such as `cryptography`; npm-only publishing does not mean a fully offline installation. There is no Atmet core download from PyPI or GitHub at runtime.
+You can also run commands through `npx atmet-brain@latest` without a global installation.
 
-Use [installation](docs/install.md) for version pinning, Python applications, existing release wheels and source contributions. `npx` requires Node/npm. A terminal welcome/setup screen, plain/JSON output and remote company connections are part of the same engine. Registry packaging does not launch the hosted platform or Playground.
+### Use the terminal
 
-### Terminal welcome
+![Atmet Brain terminal showing setup, status and help commands](docs/terminal-preview.svg)
 
-![Terminal welcome with the orange Atmet wordmark](docs/terminal-preview.svg)
-
-The 0.2.4 terminal refresh adds an orange wordmark and guided next steps. Wide interactive terminals show the full display; narrow/plain terminals use a compact layout. JSON and MCP stay suitable for agents. [Terminal options](docs/terminal.md).
+Run `atmet-brain` to see the welcome screen and entry points for setup, status and available commands. Use `atmet-brain --help` to explore the CLI, `--plain` for unstyled output and `--json` for scripts. See the [terminal guide](docs/terminal.md) for local and remote commands.
 
 ### Create a first company Brain
 
@@ -104,10 +102,10 @@ The default private data home is `~/.atmet-brain`. It starts empty. `init` creat
 
 ### Run the repository examples
 
-For a disposable demonstration or code changes, clone the tagged source:
+For a disposable demonstration or code changes, use a source checkout:
 
 ```bash
-git clone --branch v0.2.0 https://github.com/anashamad9/Atmet-brain.git
+git clone https://github.com/anashamad9/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate
@@ -134,7 +132,7 @@ flowchart TB
 
 Learning means extracting and updating sourced records, not retraining a model. Eligible ordinary facts from explicitly authoritative sources can activate under the implemented rules. Inferences and operating rules do not become approved simply because they appear repeatedly.
 
-The first extractor recognizes explicit `Fact[key]: statement` lines and sourced observations. Model extraction is opt-in and fixture-tested. General business understanding, video transcription and arbitrary cross-tool workflow discovery are broader targets. [Memory and change handling](docs/memory-and-learning.md).
+The local extractor recognizes explicit `Fact[key]: statement` lines and sourced observations. Model extraction is opt-in and fixture-tested. General business understanding, video transcription and arbitrary cross-tool workflow discovery are broader targets. [Memory and change handling](docs/memory-and-learning.md).
 
 ## What happens when an agent gets a task
 
@@ -170,7 +168,7 @@ flowchart TB
     Pattern -->|No| Keep["Continue learning or clarify the task"]
 ```
 
-The first implementation supports record cleanup and grouped decimal totals. A connected runtime reports outcomes and invokes the router. Reuse checks current permissions, evidence and workflow/rule versions. Failed or unsupported tasks return to the client; permission failures remain errors. General Python generation, side effects and automatic scheduling are not implemented. [Script lifecycle and limits](docs/automations.md).
+The supported recipe templates cover record cleanup and grouped decimal totals. A connected runtime reports outcomes and invokes the router. Reuse checks current permissions, evidence and workflow/rule versions. Failed or unsupported tasks return to the client; permission failures remain errors. General Python generation, side effects and automatic scheduling are not implemented. [Script lifecycle and limits](docs/automations.md).
 
 ## Changes stay traceable
 
@@ -256,7 +254,6 @@ The example domain is a placeholder, not an Atmet-hosted endpoint. Team setup ke
 | Goal | Start here |
 | --- | --- |
 | Install or try the CLI | [Installation](docs/install.md), [terminal guide](docs/terminal.md) |
-| Publish official registry packages | [Owner account setup and publishing](docs/package-publishing.md) |
 | Share a private company server | [Team access and background services](docs/team-server.md) |
 | Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
 | Understand modules and data boundaries | [Architecture](docs/architecture.md) |
@@ -278,7 +275,7 @@ python scripts/generate_diagrams.py
 python scripts/check_project.py
 ```
 
-Every change includes a documentation-impact review. Update affected commands, diagrams, guides, supported scope and release notes in the same change. The project checker detects stale generated diagrams and OpenAPI. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before contributing.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before contributing. Keep affected commands, diagrams and guides aligned with code changes. Maintainers can follow [documentation maintenance](docs/documentation.md) and the [publishing guide](docs/package-publishing.md). Release history lives in the [changelog](CHANGELOG.md).
 
 ## License
 

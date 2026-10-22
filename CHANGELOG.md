@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Refocus the root README on architecture, setup and usage. Keep release history and publishing procedures in their dedicated guides, clarify global versus npx commands, and refresh the terminal example.
+
 ## 0.2.6 - registry propagation handling, 2026-10-22
 
 - Wait up to ten minutes for an accepted npm upload to appear in public metadata and latest. Retry visibility checks without uploading the version again.

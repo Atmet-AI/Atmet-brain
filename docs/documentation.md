@@ -2,6 +2,14 @@
 
 Documentation is part of the change. For every project update, assess which reader-facing behavior, command, supported boundary or diagram is affected and update those files in the same commit. A behavior change is not complete while its examples describe the old behavior.
 
+## README purpose
+
+The root README is the entry guide for someone deciding whether to use the Brain and setting up their first company. Explain what it does, how its architecture works, how to install it, and how to use it with agents and a team. Keep examples and diagrams focused on those tasks.
+
+Describe current behavior directly: "Run atmet-brain to see setup and status commands." Avoid release-note wording such as "The terminal refresh adds..." or chronological summaries of previous work. Put version-by-version changes in CHANGELOG.md, publishing/account procedures in package-publishing.md, and detailed test/release evidence in validation.md. Link to those guides when relevant rather than copying their history into the README.
+
+Keep required platform/support boundaries visible, but put installer internals and version-pinning details in install.md. A terminal preview illustrates usage; it is not a release announcement. Documentation-only README edits do not require a runtime version bump or a new npm release when the published launcher README and behavior are unaffected.
+
 ## Which files to review
 
 | Change | Documentation to review |
