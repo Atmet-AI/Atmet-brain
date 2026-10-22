@@ -1,6 +1,7 @@
 """Check public repository hygiene, local documentation links and generated schemas."""
 
 import ast
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -16,6 +17,21 @@ from generate_diagrams import diagram_errors
 ROOT = Path(__file__).resolve().parents[1]
 IGNORE = {".git", ".venv", "__pycache__", "build", "dist", "node_modules"}
 errors, count = [], 0
+vendor = ROOT / "npm/atmet-brain/vendor"
+if vendor.exists():
+    from prepare_npm import validate_wheel
+    try:
+        manifest = json.loads((vendor / "engine.json").read_text())
+        filename = f"atmet_brain-{__version__}-py3-none-any.whl"
+        data = (vendor / filename).read_bytes()
+        if {p.name for p in vendor.iterdir()} != {filename, "engine.json"} or manifest != {
+            "schemaVersion": 1, "version": __version__, "file": filename,
+            "sha256": hashlib.sha256(data).hexdigest()
+        }:
+            raise ValueError("Unexpected bundled core files or metadata")
+        validate_wheel(data, __version__)
+    except Exception as error:
+        errors.append("Invalid generated npm bundle: " + str(error))
 package = tomllib.loads((ROOT / "pyproject.toml").read_text())
 launcher = json.loads((ROOT / "npm/atmet-brain/package.json").read_text())
 if launcher["version"] != __version__ or launcher["atmetBrain"]["engineVersion"] != __version__:
@@ -30,7 +46,7 @@ if package["project"]["version"] != __version__:
 if not re.search(r"^## " + re.escape(__version__) + r"(?:\s|$)", (ROOT / "CHANGELOG.md").read_text(), re.M):
     errors.append("Current version is missing from CHANGELOG.md")
 for path in ROOT.rglob("*"):
-    if not path.is_file() or any(part in IGNORE or part.endswith(".egg-info") for part in path.relative_to(ROOT).parts):
+    if path.is_relative_to(vendor) or not path.is_file() or any(part in IGNORE or part.endswith(".egg-info") for part in path.relative_to(ROOT).parts):
         continue
     if path.suffix in {".pyc", ".pyo"}:
         continue

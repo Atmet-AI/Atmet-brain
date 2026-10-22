@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**The core is a local/private-pilot alpha.** Version 0.2.1 prepares PyPI and npm distribution; registry publication still needs the owner account steps. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**The core is a local/private-pilot alpha.** Version 0.2.2 prepares npm-only distribution with the matching Python core included; first npm publication still needs the owner login. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -54,15 +54,15 @@ The Brain supplies context and checks access. The agent/runtime chooses its mode
 
 ## Install
 
-The intended default entry point, **after the official npm/PyPI packages are published**, is:
+The intended default entry point, **after the official npm package is published**, is:
 
 ```bash
 npx atmet-brain setup
 ```
 
-With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine from PyPI. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
+With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine included in the npm package. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
 
-**Publication pending:** the short registry commands below are prepared, not yet available from official registry packages. See the maintainer's [account setup and first-publication checklist](docs/package-publishing.md). Until publication is verified, use the existing [GitHub release fallback](docs/install.md#github-release-fallback).
+**Publication pending:** the short npm commands below are prepared, not yet available from the official npm package. No Atmet PyPI publication or PyPI account is required. See the maintainer's [account setup and first-publication checklist](docs/package-publishing.md). Until publication is verified, use the existing [GitHub release fallback](docs/install.md#github-release-fallback).
 
 For regular use after publication:
 
@@ -71,14 +71,9 @@ npm install --global atmet-brain
 atmet-brain setup
 ```
 
-Python users can install the same engine through PyPI:
+The npm archive includes a checksum-verified universal Python wheel for the same core. First use can download Python and public dependencies such as `cryptography`; npm-only publishing does not mean a fully offline installation. There is no Atmet core download from PyPI or GitHub at runtime.
 
-```bash
-uv tool install --python 3.12 atmet-brain
-atmet-brain setup
-```
-
-Use [installation](docs/install.md) for version pinning, one-off `uvx`, Python imports and source contributions. `npx` requires Node/npm; the Python route requires uv. A terminal welcome/setup screen, plain/JSON output and remote company connections are part of the same engine. Registry packaging does not launch the hosted platform or Playground.
+Use [installation](docs/install.md) for version pinning, Python applications, existing release wheels and source contributions. `npx` requires Node/npm. A terminal welcome/setup screen, plain/JSON output and remote company connections are part of the same engine. Registry packaging does not launch the hosted platform or Playground.
 
 ### Create a first company Brain
 

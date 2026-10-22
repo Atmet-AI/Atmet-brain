@@ -1,57 +1,58 @@
-# First registry publication and account setup
+# npm-only publication and account setup
 
-The PyPI distribution and npm launcher are prepared as version 0.2.1. Neither registry package has been published by this preparation. A public 404 name check is not ownership or a reservation; confirm the name again immediately before the first upload. Existing GitHub releases remain available independently.
+Version 0.2.2 includes the matching Atmet Brain Python wheel inside the npm archive. **An npm account is the only publishing account needed.** There is no dependency on an Atmet PyPI project. The first npm upload and fresh public command checks are still pending; a public name check does not reserve ownership.
 
-The maintainer needs verified PyPI and npm accounts with two-factor authentication. Do not paste passwords, recovery codes, one-time codes, tokens or `.npmrc` contents into chat or repository files. Only account usernames and confirmation that setup is complete are needed for coordination.
+The owner has created an npm account. Verify its email and enable two-factor authentication. Do not send passwords, tokens, recovery codes, one-time codes or `.npmrc` contents in chat. The npm username and confirmation of completed local login are enough for coordination.
 
-## 1. Configure PyPI without an API token
+## 1. Build the exact release
 
-Sign in at [PyPI account publishing](https://pypi.org/manage/account/publishing/) and add a pending GitHub trusted publisher:
+The [publish workflow](../.github/workflows/publish.yml) is manually dispatched. Select the reviewed immutable `v0.2.2` tag and leave `publish_npm=false` for the first build. It checks tag/version identity, runs Python and launcher tests, builds the universal wheel, checks it with twine, copies it into the npm archive with a SHA-256 manifest, then inspects the archive.
 
-| Field | Exact value |
-| --- | --- |
-| PyPI project name | `atmet-brain` |
-| GitHub owner | `anashamad9` |
-| Repository | `Atmet-brain` |
-| Workflow filename | `publish.yml` |
-| Environment | `pypi` |
+The workflow produces:
 
-PyPI can create the project on the first successful trusted publish. A pending publisher does not reserve the name. [PyPI's official pending-publisher instructions](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/).
+- `python-package`: wheel and source distribution, for independent Python/GitHub use. They are not uploaded to PyPI.
+- `npm-launcher`: the complete `.tgz`, including launcher, core wheel, digest manifest, README and licenses.
 
-In the GitHub repository, create the `pypi` and `npm` environments. For maintainer review before publication, configure required reviewers on each environment and keep trusted publisher values matched exactly. Repository administration is needed for these settings. No registry secret is required by the prepared workflow.
+Download and extract the `npm-launcher` artifact. Its `.tgz` is the complete publishable package; do not publish the source subfolder without first preparing its generated core bundle.
 
-## 2. Build reviewed release artifacts
+For a local build, follow [releasing](releasing.md#npm-distribution). The generated `vendor/` stays out of Git and the Python source distribution. [npm's package file rules](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#files) describe archive inclusion.
 
-The [publish workflow](../.github/workflows/publish.yml) runs only through manual dispatch. Its two publication switches default to false. It checks an immutable `vX.Y.Z` tag, requires the checkout/engine/launcher versions to match, runs Python/Node checks and builds separate artifacts:
+## 2. Sign in privately and publish the first version
 
-- `python-package`: wheel and source distribution, checked with twine.
-- `npm-launcher`: the npm `.tgz` with its executable, metadata, README and licenses.
-
-First run it for the reviewed `v0.2.1` tag with both publication switches off. Review/download the artifacts. The tag must exist and must point to this packaging change. A main-branch preparation commit alone is not a published registry release.
-
-## 3. Publish the engine first
-
-After the PyPI publisher/environment is ready, dispatch again with `publish_pypi=true` and `publish_npm=false`, then complete any environment approval. Confirm the official project/repository identity and wheel:
+With Node.js 24 and npm installed, use a private terminal:
 
 ```bash
-python scripts/check_registry_release.py
+npm login --registry=https://registry.npmjs.org
+npm whoami --registry=https://registry.npmjs.org
+npm publish /path/to/atmet-brain-0.2.2.tgz --access public --registry=https://registry.npmjs.org
 ```
 
-Do not publish the npm launcher until that check passes. A launcher cannot download a Python version that has not been uploaded.
+Replace the path with the exact reviewed `.tgz` from the build. Complete browser login/2FA prompts yourself. No shared API token is needed. The first successful upload establishes package ownership; it is not an OIDC-attested CI publication. [npm's first-publication instructions](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/).
 
-## 4. Make the first npm publication interactively
+If `atmet-brain` is taken, stop and choose an owner-approved alternative before changing package metadata or commands. Do not use a similarly named third-party package as a fallback.
 
-npm's trusted-publisher settings are attached to an existing package. Create the first release from the reviewed npm tarball using your own account in a private terminal. With Node.js 24 and npm installed, run:
+## 3. Verify public installation
+
+After npm confirms the upload, use a fresh runtime directory and npm cache for the explicit release:
 
 ```bash
-npm login
-npm whoami
-npm publish /path/to/atmet-brain-0.2.1.tgz --access public
+npx atmet-brain@0.2.2 --version
+npx atmet-brain@0.2.2 setup
 ```
 
-Replace the path with the exact downloaded `npm-launcher` artifact from the verified tag. Complete npm's login/2FA prompts locally. This upload establishes package ownership; no shared automation token is needed. The first interactive upload is not an OIDC-attested CI publication. [npm first-publication instructions](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/).
+Then the ordinary user route is:
 
-Then, in npm package settings, add a GitHub trusted publisher:
+```bash
+npx atmet-brain setup
+```
+
+The launcher verifies its included wheel and prepares a private Python environment. First use can still download uv, Python and third-party Python dependencies. It never downloads the Atmet core from PyPI or GitHub. There is no need to publish an Atmet Python package and no need for users to have a PyPI account. This is an online bootstrap, not a fully offline installer.
+
+Mark npm availability as verified in the README/support matrix only after actual upload and fresh public install checks. Keep the existing GitHub fallback available until then.
+
+## 4. Configure future token-free publication
+
+npm trusted-publisher settings belong to an existing package, so configure them after the first upload. In the GitHub repository, create an environment named `npm`; use required reviewers if the maintainers want a review gate. In npm package settings, add:
 
 | Field | Exact value |
 | --- | --- |
@@ -62,22 +63,6 @@ Then, in npm package settings, add a GitHub trusted publisher:
 | Environment | `npm` |
 | Allowed action | Allow direct `npm publish` |
 
-Configure it when ready to use it; npm currently requires the first successful use of a new configuration within two days. For future versions, the workflow's npm job uses OIDC and automatically supplied provenance. It requires npm 11.5.1+ / Node 22.14+; this workflow selects Node 24 and npm 11.17.0. [npm trusted-publishing instructions](https://docs.npmjs.com/trusted-publishers/).
+Configure it when ready to use it; npm currently requires the first successful use of a new configuration within two days. Future release tags can use the workflow's `publish_npm=true` switch. It selects Node 24 and npm 11.17.0 for OIDC publication with automatic provenance. No PyPI job or registry-token secret is required. [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
-## 5. Verify the actual public commands
-
-After both uploads, test from a fresh runtime directory:
-
-```bash
-npx atmet-brain@0.2.1 --version
-npx atmet-brain@0.2.1 setup
-uvx --python 3.12 atmet-brain@0.2.1 --version
-```
-
-Only then mark registry availability as verified in the README/support matrix and release evidence. The unversioned `npx atmet-brain setup` resolves npm's current default dist-tag; maintain versioned examples for reproducibility.
-
-Future releases can publish both packages through the workflow after account configuration. Retry only the registry that still needs publication: published registry versions cannot be overwritten. Keep old tags immutable. Do not enable `publish_npm` for an npm version already uploaded interactively.
-
-## What the owner supplies
-
-PyPI username, npm username, and confirmation that the pending PyPI publisher and GitHub environments are configured. The owner performs the first npm login/publish privately, then configures its trusted publisher. No passwords or tokens are needed in chat. Account creation, verified email, 2FA and registry name ownership must be completed by the account owner.
+Do not republish version 0.2.2 from CI after uploading it locally. Published package versions and Git tags are immutable; ship a new version for corrections. A standalone Atmet package on PyPI can be added later as an independent distribution route.

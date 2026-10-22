@@ -32,3 +32,6 @@ See [releasing](releasing.md) for commands. PyPI upload is a separate publishing
 ## Registry preparation
 
 Version 0.2.1 prepares registry packaging without changing the Brain API/schema. The npm launcher version and its exact Python engine pin match the Python package/runtime version. The project checker enforces this parity. GitHub assets, PyPI publication and npm publication have separate availability states; preparation is not a successful registry upload. [Publishing/account steps](package-publishing.md).
+
+
+Version 0.2.2 replaces the initial registry preparation with npm-only distribution. The matching core wheel is built from the same tag and included in the npm archive with a digest manifest. An Atmet PyPI project is not needed. First npm upload remains a separate owner login/publication step; do not move the previous v0.2.1 preparation tag.

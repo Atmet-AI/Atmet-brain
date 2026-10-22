@@ -37,3 +37,10 @@ The core API/schema are unchanged. The 130 Python tests pass with the synchroniz
 A real macOS arm64 uv bootstrap download matched the pinned SHA-256 and its executable reported the expected version. Packed local-tarball npx setup was exercised using an explicit trusted local-wheel adapter because the registry engine does not exist yet. This is local packaging evidence, not a successful public npm/PyPI install. Automatic bootstrap targets other than local macOS arm64 and the CI fixture scope require deployment evaluation.
 
 Actual registry uploads, trusted-publisher authentication, new-name ownership and fresh public npx/uvx resolution remain pending owner account configuration. The publisher checklist identifies the exact account fields.
+
+
+## npm-only packaging, 0.2.2
+
+The npm distribution now includes its matching universal core wheel and a SHA-256 manifest. Eight launcher tests cover local-wheel arguments, digest/metadata rejection before execution, runtime reuse, stderr-only bootstrap, protected MCP input/output and failure handling. Build checks inspect the exact tarball allowlist, wheel metadata, CLI/schema and license/notice contents. The shared core API/schema and 130-test Python suite are unchanged.
+
+The actual packed npm archive is exercised with the included wheel and real uv, without the earlier unpublished-PyPI adapter. CI runs the archive on Ubuntu; local validation covers macOS arm64 setup, MCP output and persistent service interpreter. Public npm name ownership, upload/authentication and fresh public npm resolution remain separate pending steps. No Atmet PyPI release is required, although Python and third-party dependencies can be downloaded on first use.

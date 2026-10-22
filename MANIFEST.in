@@ -8,3 +8,4 @@ recursive-include examples *.py *.md *.json *.txt *.toml
 recursive-include scripts *.py
 recursive-include tests *.py
 recursive-include npm *.json *.mjs *.md LICENSE NOTICE
+prune npm/atmet-brain/vendor

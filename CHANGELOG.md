@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 - npm-only publication prepared, 2026-10-22
+
+- Include the exact matching universal core wheel and SHA-256 manifest inside the npm package; verify both before execution. No Atmet PyPI release or PyPI account is required.
+- Build and inspect the full npm archive in CI, including wheel metadata, licenses and the public file allowlist.
+- Remove the PyPI publication dependency from the npm workflow; update installation/account docs for npm-only publishing.
+- Core API and schema remain unchanged. Python/runtime and third-party dependency downloads may still be needed on first use. Actual npm upload/public install verification remain pending owner login.
+
 ## 0.2.1 - registry publication prepared, 2026-10-22
 
 - Added a copy-and-follow history walkthrough for creating, comparing, publishing and restoring workflow revisions, context manifests, source reads, audit records and common errors.

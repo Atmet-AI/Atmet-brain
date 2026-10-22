@@ -1,6 +1,6 @@
 # Installation
 
-The Python distribution and npm launcher are prepared as version 0.2.1. **First registry publication is pending owner account setup.** The following registry commands become available only after both official packages are uploaded and verified. A name's current availability does not reserve it. [Publisher checklist](package-publishing.md).
+Version 0.2.2 is prepared for **npm-only distribution**. The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. **The first npm upload and public command verification are pending owner login.** [Publisher checklist](package-publishing.md).
 
 ## npm and npx
 
@@ -17,26 +17,19 @@ npm install --global atmet-brain
 atmet-brain setup
 ```
 
-Pin an explicit release with `npx atmet-brain@0.2.1 setup`. The npm launcher prepares the exact matching Python engine from PyPI, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
+Pin an explicit release with `npx atmet-brain@0.2.2 setup`. The npm launcher verifies and installs the exact matching Python wheel included in the npm archive, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
 
-Runtime storage is separate from company data; [launcher details](../npm/atmet-brain/README.md) documents its paths, environment overrides, platform scope and network requirements. A service or MCP configuration may reference its persistent Python environment: do not remove that runtime directory while it is in use. The npm tarball is a launcher, not a second engine or a bundled company Brain.
+Runtime storage is separate from company data; [launcher details](../npm/atmet-brain/README.md) documents its paths, environment overrides, platform scope and network requirements. A service or MCP configuration may reference its persistent Python environment: do not remove that runtime directory while it is in use. The npm tarball includes the launcher and engine software, never company data. There is one core and one authorization model. Python and dependencies may still require public downloads on first use.
 
-## Python package registry
+## Python and platform scope
 
-After the official PyPI upload, with [uv installed](https://docs.astral.sh/uv/getting-started/installation/):
-
-```bash
-uv tool install --python 3.12 atmet-brain
-atmet-brain setup
-```
-
-One-off use is `uvx --python 3.12 atmet-brain setup`; pin with `uvx --python 3.12 atmet-brain@0.2.1 --help`. A Python application can use `python -m pip install atmet-brain` inside its Python 3.11+ virtual environment. It provides `from atmet_brain import Brain` and the same CLI.
+A standalone Atmet package on PyPI is deferred. The npm launcher installs its included wheel locally and uses the public Python index only for declared dependencies such as `cryptography`. A PyPI publishing account is unnecessary for maintainers or users of this route. Python applications can use existing release wheels or source instructions below.
 
 The core is locally validated on macOS and Ubuntu CI. Automatic uv bootstrap has pinned assets for macOS/glibc Linux x64/arm64; the non-local/non-CI targets need deployment checks. Windows is not validated.
 
 ## GitHub release fallback
 
-Until registry publication is verified, existing v0.2.0 GitHub release wheels remain an available fallback. The following paths are alternatives, not prerequisites for the registry route. A normal npm/PyPI install does not require Git or a source checkout.
+Until registry publication is verified, existing v0.2.0 GitHub release wheels remain an available fallback. The following paths are alternatives, not prerequisites for the registry route. An npm install does not require Git or a source checkout.
 
 ## Guided release installer
 

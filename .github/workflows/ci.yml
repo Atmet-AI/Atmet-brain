@@ -25,8 +25,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: node --test npm/atmet-brain/test/*.test.mjs
-      - run: npm pack ./npm/atmet-brain --dry-run
+      - run: python -m pip install build
+      - run: python -m build --wheel --outdir dist/python
+      - run: python scripts/prepare_npm.py --wheel dist/python/atmet_brain-*-py3-none-any.whl
+      - run: mkdir -p dist/npm && npm pack ./npm/atmet-brain --pack-destination dist/npm
+      - run: python scripts/check_npm_package.py dist/npm/atmet-brain-*.tgz
+      - name: Run the packed npm core without an Atmet PyPI release
+        env:
+          ATMET_LAUNCHER_HOME: ${{ runner.temp }}/atmet-npm-smoke
+        run: npx --yes --package "$(realpath dist/npm/atmet-brain-*.tgz)" atmet-brain --version

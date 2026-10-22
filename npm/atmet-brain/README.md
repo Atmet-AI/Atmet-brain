@@ -1,6 +1,6 @@
 # Atmet Brain launcher
 
-The terminal entry point for the open-source Atmet Brain Python engine. This package is prepared for its first npm publication; the short commands are not available until both the matching engine and launcher are published by the maintainer.
+The terminal entry point for the open-source Atmet Brain Python engine. This package is prepared for its first npm publication; the short commands are not available until this package is published by the maintainer. Only an npm account is needed for publication; the core wheel is included.
 
 After official publication, with Node.js 22.14 or newer and npm installed:
 
@@ -18,7 +18,7 @@ atmet-brain status
 
 ## What happens
 
-On first execution, the launcher downloads the pinned official uv runtime, verifies its archive SHA-256, and prepares the exact matching `atmet-brain` release from PyPI in an isolated Python 3.12 tool environment. uv can obtain Python when needed. No manual Python/uv install, repository clone, sudo or shell startup-file changes are required. macOS/Linux need the standard `tar` utility for automatic uv extraction. The npm package has no dependencies or postinstall hooks.
+On first execution, the launcher downloads the pinned official uv runtime, verifies its archive SHA-256, then verifies and installs the exact matching `atmet-brain` wheel included in this npm archive in an isolated Python 3.12 tool environment. uv can obtain Python when needed. No manual Python/uv install, repository clone, sudo or shell startup-file changes are required. macOS/Linux need the standard `tar` utility for automatic uv extraction. The npm package has no JavaScript dependencies or postinstall hooks. The Python core declares dependencies such as `cryptography`, downloaded from the public Python index when needed. No Atmet PyPI release/account is required; this is not a fully offline installer.
 
 Subsequent launches reuse that version's runtime. The launcher does not supply a second memory engine or fall back to downloading Atmet wheels from GitHub. The uv/Python runtime bootstrap uses upstream distribution infrastructure; package installation needs network access. Brain processing/provider data flows are configured separately.
 
@@ -32,7 +32,7 @@ Subsequent launches reuse that version's runtime. The launcher does not supply a
 
 Keep the runtime directory available while its background services or saved MCP configurations use its Python executable. Removing/upgrading the npm launcher does not delete company data. Different launcher versions keep separate tool environments and share the explicitly selected company data; read schema/recovery notes before changing engine versions.
 
-The launcher ignores ambient uv/pip project/index configuration for its engine install and uses the official PyPI index. Brain credentials/provider settings still reach the core through its normal environment. Managed runtime files are protected by user filesystem permissions; this is not protection from a compromised host administrator.
+The launcher ignores ambient uv/pip project/index configuration for its engine install and uses the official PyPI index for third-party Python dependencies only. Its core is always the checksum-verified wheel included in the npm archive. Brain credentials/provider settings still reach the core through its normal environment. Managed runtime files are protected by user filesystem permissions; this is not protection from a compromised host administrator.
 
 ## Agents and remote teams
 

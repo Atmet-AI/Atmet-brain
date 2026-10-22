@@ -5,12 +5,8 @@ on:
       release_tag:
         description: Reviewed immutable release tag
         required: true
-        default: v0.2.1
+        default: v0.2.2
         type: string
-      publish_pypi:
-        description: Publish the Python distribution through the configured PyPI trusted publisher
-        default: false
-        type: boolean
       publish_npm:
         description: Publish the launcher through an existing npm trusted publisher
         default: false
@@ -44,7 +40,13 @@ jobs:
       - run: python scripts/check_project.py
       - run: python -m build --outdir dist/python
       - run: python -m twine check dist/python/*
+      - run: python scripts/prepare_npm.py --wheel dist/python/atmet_brain-*-py3-none-any.whl
       - run: mkdir -p dist/npm && npm pack ./npm/atmet-brain --pack-destination dist/npm
+      - run: python scripts/check_npm_package.py dist/npm/atmet-brain-*.tgz
+      - name: Run the packed npm core without an Atmet PyPI release
+        env:
+          ATMET_LAUNCHER_HOME: ${{ runner.temp }}/atmet-npm-smoke
+        run: npx --yes --package "$(realpath dist/npm/atmet-brain-*.tgz)" atmet-brain --version
       - uses: actions/upload-artifact@v4
         with:
           name: python-package
@@ -53,25 +55,9 @@ jobs:
         with:
           name: npm-launcher
           path: dist/npm/*.tgz
-  pypi:
-    if: ${{ inputs.publish_pypi }}
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/atmet-brain
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: python-package
-          path: dist
-      - uses: pypa/gh-action-pypi-publish@release/v1
   npm:
-    if: ${{ always() && inputs.publish_npm && needs.build.result == 'success' && (!inputs.publish_pypi || needs.pypi.result == 'success') }}
-    needs: [build, pypi]
+    if: ${{ inputs.publish_npm }}
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: npm
@@ -95,6 +81,5 @@ jobs:
         with:
           name: npm-launcher
           path: dist/npm
-      - name: Require the matching engine on PyPI first
-        run: python scripts/check_registry_release.py
+      - run: python scripts/check_npm_package.py dist/npm/atmet-brain-*.tgz
       - run: npm publish dist/npm/*.tgz --access public

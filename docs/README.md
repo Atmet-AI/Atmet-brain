@@ -22,7 +22,7 @@ Start with the [quickstart](quickstart.md), then read the pages for the part you
 | Ingestion adapters | [Connectors](connectors.md) |
 | Running a service | [Deployment](deployment.md) |
 | Checks and fixtures | [Testing](testing.md) |
-| Publish to PyPI/npm | [Account setup](package-publishing.md), [releasing](releasing.md) |
+| Publish to npm | [Account setup](package-publishing.md), [releasing](releasing.md) |
 | Release numbers and tags | [Release versioning](release-versioning.md) |
 | Keep guides and diagrams current | [Documentation maintenance](documentation.md) |
 | Current support | [Implementation status](implementation-status.md) |
