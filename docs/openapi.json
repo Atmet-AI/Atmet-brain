@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.3.1"
+    "version": "0.4.0"
   },
   "components": {
     "securitySchemes": {
@@ -1429,6 +1429,221 @@
                         "required": [
                           "space_id",
                           "task_key"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "reports.record"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "report_key": {
+                            "type": "string"
+                          },
+                          "task_key": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "outcome": {
+                            "type": "string"
+                          },
+                          "result": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "steps": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "corrections": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "checks": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "audience": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id",
+                          "report_key",
+                          "task_key",
+                          "summary",
+                          "outcome",
+                          "result",
+                          "evidence"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "reports.get"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "report_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "report_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "reports.search"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "query": {
+                            "type": "string"
+                          },
+                          "task_key": {
+                            "type": "string"
+                          },
+                          "limit": {
+                            "type": "integer"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "reports.erase"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "report_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "report_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "skills.learn"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "report_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "idempotency_key": {
+                            "type": "string"
+                          },
+                          "artifact_id": {
+                            "type": "string"
+                          },
+                          "expected_revision": {
+                            "type": "integer"
+                          },
+                          "instruction_path": {
+                            "type": "string"
+                          },
+                          "audience": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id",
+                          "report_ids",
+                          "name",
+                          "idempotency_key"
                         ]
                       }
                     }

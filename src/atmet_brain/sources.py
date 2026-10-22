@@ -17,6 +17,10 @@ class SourcesMixin:
         require(row is not None, "not_found", "Source not found.", 404)
         authorize(conn, actor, row["space_id"], operation)
         require(audience_allows(conn, actor, row["audience"]), "not_found", "Source not found.", 404)
+        if row["category"] == "task_report" and operation == "read":
+            report = conn.execute("SELECT evidence FROM task_reports WHERE source_id=?", (source_id,)).fetchone()
+            require(report and self._evidence_readable(conn, actor, row["space_id"], report[0], current=False),
+                    "not_found", "Source not found.", 404)
         if operation == "read" and row["connector_id"]:
             binding = conn.execute("SELECT enabled FROM connectors WHERE id=?", (row["connector_id"],)).fetchone()
             require(binding and binding[0], "not_found", "Source not found.", 404)
@@ -25,7 +29,7 @@ class SourcesMixin:
     def _source_readable(self, conn, actor, source_id):
         try:
             source = self._source(conn, actor, source_id)
-            return source["status"] == "active"
+            return source["status"] == ("reported" if source["category"] == "task_report" else "active")
         except BrainError:
             return False
 
@@ -38,10 +42,13 @@ class SourcesMixin:
                     and isinstance(item["source_id"], str) and type(item["revision"]) is int,
                     "invalid_evidence", "Evidence requires source_id and integer revision.")
             source = self._source(conn, actor, item["source_id"])
-            require(source["space_id"] == space_id and source["status"] == "active",
+            require(source["space_id"] == space_id and source["status"] == ("reported" if source["category"] == "task_report" else "active"),
                     "evidence_unavailable", "Required evidence is unavailable.", 409)
             require(not current or source["revision"] == item["revision"],
                     "stale_evidence", "A source changed. Review its current revision.", 409)
+            if current and source["category"] == "task_report":
+                report = conn.execute("SELECT evidence FROM task_reports WHERE source_id=?", (source["id"],)).fetchone()
+                self._evidence(conn, actor, space_id, loads(report[0]), current=True)
             require(conn.execute("SELECT 1 FROM source_revisions WHERE source_id=? AND revision=?",
                                  (source["id"], item["revision"])).fetchone(),
                     "evidence_unavailable", "Required evidence is unavailable.", 409)
@@ -60,6 +67,7 @@ class SourcesMixin:
     def put_source(self, actor, space_id, external_id, title, content, mime="text/plain", audience=None,
                    authority="observation", expected_revision=None, effective_at=None, _connector_id=None):
         text(external_id, "external_id", 500)
+        require(not external_id.startswith("atmet-report:"), "reserved_source", "Task report sources are managed through reports.record.")
         text(title, "title", 200)
         text(content, "content", 200_000)
         require(authority in {"observation", "reference", "authoritative"}, "invalid_authority", "Invalid authority.")
@@ -113,16 +121,27 @@ class SourcesMixin:
             return {"id": ident, "revision": revision, "job_id": job, "status": "accepted"}
 
     def _invalidate_source(self, conn, source_id, erase=False):
+        affected = {source_id}
+        reports = conn.execute("SELECT source_id,evidence FROM task_reports").fetchall()
+        for report in reports:
+            if any(ref["source_id"] == source_id for ref in loads(report["evidence"])):
+                affected.add(report["source_id"])
+                if erase:
+                    conn.execute("UPDATE source_revisions SET body=X'' WHERE source_id=?", (report["source_id"],))
+                    conn.execute("UPDATE sources SET status='deleted',title='Erased task report' WHERE id=?", (report["source_id"],))
+        if erase:
+            for ident in affected:
+                conn.execute("UPDATE task_reports SET task_key='' WHERE source_id=?", (ident,))
         for row in conn.execute("SELECT id,evidence FROM memories").fetchall():
-            if any(e["source_id"] == source_id for e in loads(row["evidence"])):
+            if any(e["source_id"] in affected for e in loads(row["evidence"])):
                 conn.execute("UPDATE memories SET status=?,statement=CASE WHEN ? THEN '' ELSE statement END WHERE id=?",
                              ("erased" if erase else "stale", int(erase), row["id"]))
         if erase:
             for row in conn.execute("SELECT id,evidence FROM task_runs").fetchall():
-                if any(e["source_id"] == source_id for e in loads(row["evidence"])):
+                if any(e["source_id"] in affected for e in loads(row["evidence"])):
                     conn.execute("UPDATE task_runs SET inputs='{}',output='{}',succeeded=0 WHERE id=?", (row["id"],))
             for row in conn.execute("SELECT artifact_id,revision,evidence FROM artifact_versions").fetchall():
-                if any(e["source_id"] == source_id for e in loads(row["evidence"])):
+                if any(e["source_id"] in affected for e in loads(row["evidence"])):
                     conn.execute("UPDATE artifact_versions SET body='{}',state='retracted',reason='Evidence erased',"
                                  "content_hash=? WHERE artifact_id=? AND revision=?",
                                  (sha("{}"), row["artifact_id"], row["revision"]))
@@ -132,7 +151,9 @@ class SourcesMixin:
     def get_source(self, actor, source_id, revision=None):
         with self.store.transaction() as conn:
             source = self._source(conn, actor, source_id)
-            require(source["status"] == "active", "not_found", "Source not found.", 404)
+            if source["category"] == "task_report":
+                authorize(conn, actor, source["space_id"], "history")
+            require(source["status"] == ("reported" if source["category"] == "task_report" else "active"), "not_found", "Source not found.", 404)
             if revision is not None and revision != source["revision"]:
                 authorize(conn, actor, source["space_id"], "history")
             chosen = source["revision"] if revision is None else revision
@@ -145,7 +166,7 @@ class SourcesMixin:
     def list_sources(self, actor, space_id):
         with self.store.transaction() as conn:
             authorize(conn, actor, space_id, "read")
-            rows = conn.execute("SELECT * FROM sources WHERE space_id=? AND status='active' ORDER BY title", (space_id,))
+            rows = conn.execute("SELECT * FROM sources WHERE space_id=? AND status='active' AND category='document' ORDER BY title", (space_id,))
             result = []
             for row in rows:
                 if self._source_readable(conn, actor, row["id"]):
@@ -163,18 +184,19 @@ class SourcesMixin:
             source = self._source(conn, actor, source_id, "manage")
             require(source["status"] != "deleted", "source_deleted", "Erased sources cannot be restored.", 409)
             values = validate_audience(conn, actor.org_id, audience)
+            live_state = "reported" if source["category"] == "task_report" else "active"
             conn.execute("UPDATE sources SET audience=?,status=?,updated_at=? WHERE id=?",
-                         (dumps(values), "active" if active else "revoked", now(), source_id))
+                         (dumps(values), live_state if active else "revoked", now(), source_id))
             if not active:
                 self._invalidate_source(conn, source_id)
-            elif source["status"] != "active":
+            elif source["status"] != live_state:
                 conn.execute("UPDATE jobs SET status='pending',attempts=0,error_code=NULL,requested_by=?,requested_credential=?,"
                              "updated_at=? WHERE source_id=? AND source_revision=?",
                              (actor.principal_id, actor.credential_id, now(), source_id, source["revision"]))
             recovery_event(conn, "source.access", source_id, {"audience": values, "active": active})
             audit(conn, actor, "source.access", source_id, source["space_id"], {"active": active})
         self.flush_recovery_journal()
-        return {"status": "active" if active else "revoked"}
+        return {"status": live_state if active else "revoked"}
 
     def erase_source(self, actor, source_id):
         with self.store.transaction(write=True) as conn:

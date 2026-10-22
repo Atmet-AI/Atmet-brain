@@ -81,3 +81,9 @@ atmet-brain --connection company mcp
 `mcp-config` prints an MCP client configuration using the current Python executable, absolute data home and connection name. For local use, supply a dedicated scoped `--token-file`. Adapt the JSON to your client's configuration format. A persistent installation is preferable to a temporary uvx environment for saved service/client commands.
 
 MCP stdout contains only protocol messages, even in a terminal. The remote bridge runs locally and forwards operations to the authenticated REST service; it does not implement a remote MCP HTTP/OAuth endpoint. [MCP details](mcp.md).
+
+## Task reports and skill learning
+
+Use task-report FILE --space SPACE_ID to submit a selected outcome, task-history QUERY --space SPACE_ID to search permitted reports, task-get REPORT_ID to inspect one and task-learn to create a pending skill. task-erase requires separate erase/history access. These commands also work with --connection NAME. The [complete walkthrough](task-history-and-learning.md) explains report JSON, source evidence, permissions and separate publication.
+
+MCP configuration accepts --allow-task-reports, --allow-proposals and --allow-automations to expose selected tool groups. Underlying grants remain required; reporting and learning expose no publication tool.

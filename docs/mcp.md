@@ -75,3 +75,7 @@ atmet-brain --json --connection company mcp-config
 ```
 
 Or configure your MCP client to launch `atmet-brain --connection company mcp` with an absolute executable and data-home path. The local stdio bridge authenticates on each request and forwards selected tools through REST. It uses the same exact operation schemas, tool opt-in flags and current authorization as local MCP. No company database or owner credential needs to be copied to the employee device. MCP stdout remains protocol-only. This is not an HTTP MCP/OAuth server. Follow [team setup](team-server.md) for HTTPS or restricted SSH forwarding.
+
+## Task reporting and learning tools
+
+brain_search_task_history and brain_get_task_report require history/read access. Add --allow-task-reports to expose brain_report_task, which requires observe/contribute/read. --allow-proposals also exposes brain_learn_skill; it requires history/contribute/read and creates a pending skill, never publication. mcp-config accepts the same switches when generating local or remote-bridge configuration. Review the [reporting walkthrough](task-history-and-learning.md) for explicit evidence, audiences and separate approval.

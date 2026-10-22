@@ -8,7 +8,7 @@ Run the same core from a terminal, a Python application, REST or MCP. Your compa
 
 **Status: local/private-pilot alpha.** See the [support matrix](docs/implementation-status.md) for implemented features, tested integrations and planned capabilities.
 
-[Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
+[Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Task history](docs/task-history-and-learning.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
 ## What your company builds
 
@@ -219,6 +219,27 @@ atmet-brain --token-file /absolute/path/to/worker.token mcp
 
 The API defaults to loopback port 7310. A remote CLI or local MCP bridge can connect through HTTPS or an SSH loopback tunnel. Remote hosting still needs trusted private ingress; no public production gateway/SSO is included. [Company setup](docs/use-for-your-company.md) · [MCP guide](docs/mcp.md) · [Deployment](docs/deployment.md).
 
+## Learn from completed work
+
+Connected agents can explicitly report task outcomes, search permitted task history and propose reusable skills from the recorded steps and corrections.
+
+```mermaid
+flowchart TD
+    Agent[Agent reports a selected task] --> History[Private task history with source evidence]
+    History --> Search[Permissioned history search]
+    History --> Draft[Skill draft from reported steps and corrections]
+    Draft --> Review[Authorized exact-revision review]
+    Review --> Method[Approved method for future agents]
+```
+
+```bash
+atmet-brain task-report task-report.json --space SPACE_ID
+atmet-brain task-history "quotation" --space SPACE_ID
+atmet-brain task-learn --space SPACE_ID --report REPORT_ID --name prepare-quotation --idempotency-key learn-quotation-1
+```
+
+Create the report JSON using the [complete task-reporting walkthrough](docs/task-history-and-learning.md). Reports default to the reporter's private audience and stay outside ordinary company search/context. History requires explicit read/history grants. Skill learning creates a pending draft, never automatic publication or execution. Current source permissions and versions continue to govern the approved method. Reported success is not independent proof of business success.
+
 ## Share one Brain with your team
 
 ```mermaid
@@ -258,6 +279,7 @@ Automatic SSH mode opens and closes forwarding for each request; no separate tun
 | Goal | Start here |
 | --- | --- |
 | Install or try the CLI | [Installation](docs/install.md), [terminal guide](docs/terminal.md) |
+| Report tasks, search past work and propose skills | [Task history and learning](docs/task-history-and-learning.md) |
 | Share a private company server | [Team access and background services](docs/team-server.md) |
 | Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
 | Understand modules and data boundaries | [Architecture](docs/architecture.md) |

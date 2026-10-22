@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS sources (
  id TEXT PRIMARY KEY, space_id TEXT NOT NULL REFERENCES spaces(id), external_id TEXT NOT NULL,
  title TEXT NOT NULL, revision INTEGER NOT NULL, audience TEXT NOT NULL, authority TEXT NOT NULL,
  status TEXT NOT NULL DEFAULT 'active', created_at REAL NOT NULL, updated_at REAL NOT NULL,
- connector_id TEXT REFERENCES connectors(id),
+ connector_id TEXT REFERENCES connectors(id), category TEXT NOT NULL DEFAULT 'document',
  UNIQUE(space_id,external_id)
 );
 CREATE TABLE IF NOT EXISTS source_revisions (
@@ -118,3 +118,11 @@ CREATE TABLE IF NOT EXISTS automation_executions (
  revision INTEGER NOT NULL, input_hash TEXT NOT NULL, output_hash TEXT NOT NULL, created_at REAL NOT NULL,
  UNIQUE(principal_id,space_id,request_key)
 );
+CREATE TABLE IF NOT EXISTS task_reports (
+ id TEXT PRIMARY KEY, space_id TEXT NOT NULL REFERENCES spaces(id),
+ source_id TEXT NOT NULL UNIQUE REFERENCES sources(id), report_key_hash TEXT NOT NULL,
+ task_key TEXT NOT NULL, evidence TEXT NOT NULL, recorded_by TEXT NOT NULL REFERENCES principals(id),
+ recorded_credential TEXT NOT NULL REFERENCES credentials(id), request_hash TEXT NOT NULL,
+ created_at REAL NOT NULL, UNIQUE(space_id,recorded_by,report_key_hash)
+);
+CREATE INDEX IF NOT EXISTS idx_report_history ON task_reports(space_id,task_key,created_at);

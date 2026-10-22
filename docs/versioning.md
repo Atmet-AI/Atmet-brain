@@ -11,6 +11,7 @@ For exact terminal commands, start with the [history walkthrough](history-walkth
 | Read a retained document revision | `sources.get` with `revision` |
 | Check versions used for one context request | `context.manifest` |
 | Inspect permitted change records | `audit.list` |
+| Search selected past task outcomes | reports.search / [task history](task-history-and-learning.md) |
 | Recover lost installation storage | [Encrypted backup/recovery](backup-and-recovery.md) |
 
 These operations run through `atmet-brain rpc METHOD --params JSON`, REST or Python. Whole-agent profile/release bundles remain proposed; current artifact history does not save an entire agent, conversation or model state.
@@ -63,3 +64,7 @@ Rollback checks current evidence and dependencies. It cannot restore erased evid
 ## Traceability
 
 Task envelopes include a manifest ID. `context.manifest` returns referenced artifact/source versions, hashes, effective settings and the permission-check time for the original principal. Current access still applies. The manifest stores a query hash rather than the complete prompt. It supports inspection, not guaranteed byte-identical model replay.
+
+## Schema 2 upgrade
+
+Engine 0.4.0 introduces schema 2 for explicit task reporting and separate report-source classification. Supported schema-1 installations upgrade in one transaction while retaining existing identity/source/artifact records. Unknown schemas are rejected. Back up before opening an existing Brain with the new engine, stop old local processes, and restart all local services with the compatible runtime. Older engines cannot open schema 2; there is no in-place downgrade. Restore an old snapshot into a separate home if an older-engine recovery path is needed. Schema-1 backups can also be restored with the current engine, upgraded and quarantined before normal recovery.

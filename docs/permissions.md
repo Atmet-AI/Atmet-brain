@@ -83,3 +83,7 @@ An [automation artifact](automations.md) is distinct from an arbitrary skill scr
 Database provisioning, server filesystem selection and backup/recovery are local owner operations outside public RPC. Someone who controls the machine and database files can alter the installation. API grants protect serving paths, not the host administrator.
 
 Additional company organizations can be provisioned with `organization-add`. Each gets an independent owner token; a company credential cannot access another company by changing an ID.
+
+## Task reporting and learning
+
+Task reporting requires read/observe/contribute. Reading/searching reports requires read/history and current access to the report plus original evidence. Learning a draft additionally requires contribute. Publication keeps the existing publish operation and exact-revision review; reporting/learning does not grant it. Reports default to their submitting principal's audience; explicitly choose a department audience when sharing is intended. [Full workflow and grant requirements](task-history-and-learning.md#permissions-and-agent-integration).

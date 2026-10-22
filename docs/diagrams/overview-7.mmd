@@ -1,6 +1,6 @@
-flowchart TB
-    Server["One company device: Atmet Brain"] --> Spaces["Shared, Sales and Finance spaces"]
-    CLI["Employee terminals"] --> Secure["Private HTTPS or restricted SSH tunnel"]
-    MCP["Agent clients via local MCP bridge"] --> Secure
-    Secure --> Auth["Individual credential and current grants"]
-    Auth --> Server
+flowchart TD
+    Agent[Agent reports a selected task] --> History[Private task history with source evidence]
+    History --> Search[Permissioned history search]
+    History --> Draft[Skill draft from reported steps and corrections]
+    Draft --> Review[Authorized exact-revision review]
+    Review --> Method[Approved method for future agents]

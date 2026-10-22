@@ -16,11 +16,14 @@ READ_TOOLS = {
     "brain_list_skills": ("artifacts.list", "List approved skills with descriptions before loading their full content."),
     "brain_skill_resource": ("skills.resource", "Read a selected skill resource without executing it."),
     "brain_route_task": ("tasks.route", "Check whether a task has one current approved pure Python recipe. Does not execute or call a model."),
+    "brain_search_task_history": ("reports.search", "Search explicitly reported past tasks. Requires read/history and current evidence access; reports are not company rules."),
+    "brain_get_task_report": ("reports.get", "Read one permitted task report, its reported outcome, corrections and evidence. Requires history."),
 }
 WRITE_TOOLS = {
     "brain_propose_memory": ("memories.propose", "Submit a sourced observation or inference for review."),
     "brain_propose_artifact": ("artifacts.propose", "Submit a version-checked skill or workflow proposal. This does not publish it."),
     "brain_discover_automation": ("automations.discover", "Test recorded examples and propose a bounded Python recipe for review."),
+    "brain_learn_skill": ("skills.learn", "Assemble a pending skill draft from permitted task reports. Requires history/contribute; never publishes or executes."),
 }
 AUTOMATION_TOOLS = {
     "brain_record_task_run": ("tasks.record", "Record an attributable task outcome and test for repeated deterministic work. Requires observe and contribute."),
@@ -29,10 +32,12 @@ AUTOMATION_TOOLS = {
 
 
 class MCPServer:
-    def __init__(self, brain, token, allow_writes=False, allow_automations=False, client=None):
+    def __init__(self, brain, token, allow_writes=False, allow_automations=False, client=None, allow_task_reports=False):
         self.brain, self.token, self.initialized = brain, token, False
         self.client = client
         self.tools = {**READ_TOOLS, **(WRITE_TOOLS if allow_writes else {}), **(AUTOMATION_TOOLS if allow_automations else {})}
+        if allow_task_reports:
+            self.tools["brain_report_task"] = ("reports.record", "Save selected task outcomes with original source evidence and an explicit audience. Client-reported success is not verified. Requires observe/contribute/read.")
 
     def handle(self, request):
         ident = request.get("id") if isinstance(request, dict) else None

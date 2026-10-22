@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 0.4.0 - task history and reviewed skill learning, 2026-10-23
+
+### Added
+
+- Explicit task reports with authenticated attribution, bounded outcomes/steps/corrections/checks, original source evidence, private-by-default audiences and idempotent reporting.
+- Permissioned lexical task-history search and report inspection through Python, CLI, REST and MCP. Raw reports remain outside ordinary company search/context/source listings and portable space exports.
+- Deterministic skill drafts from selected reported methods and corrections. Drafts retain report/original-source evidence, remain pending and require the normal exact-revision publisher approval. Reported success remains unverified; no scripts are executed.
+- CLI task-report, task-history, task-get, task-learn and task-erase commands, including remote connections. Explicit MCP task-reporting/proposal switches and matching configuration generation.
+- Report erasure through the existing source journal, including dependent method retraction and recovery replay. Tests cover identity, grants, audiences, stale evidence, concurrency, migration and local/remote interfaces.
+
+### Upgrade
+
+- Schema 2 adds task-report metadata and separate operational source classification/state. Schema-1 installations upgrade transactionally; back up first, stop old local processes and restart services with the compatible engine. Older engines cannot open schema 2; there is no in-place downgrade.
+- Restore supported schema-1 snapshots into a fresh home, upgrade before quarantine and replay the latest recovery journal. Existing identities, sources and artifact versions remain.
+- Operational report sources never enter the legacy active-document state, preventing older ordinary-source queries from exposing raw report bodies.
+
+### Documentation
+
+- Add a complete reporting/history/learning walkthrough, permission requirements, agent tool setup, erasure/recovery and migration instructions. Update architecture, README, support matrix and MVP/Harness records.
+
 ## 0.3.1 - SSH forwarding ownership, 2026-10-23
 
 - Require OpenSSH's successful loopback bind/listen diagnostic before sending a Brain credential. A reachable local port alone is not accepted as SSH readiness.

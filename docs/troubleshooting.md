@@ -32,3 +32,12 @@ Share only redacted error codes, engine version and reproduction steps when aski
 - **Connection already exists:** choose another local connection name, or explicitly remove the old profile before reconnecting.
 - **Workspace missing after Join:** the server's current grants and source audiences decide visibility. Ask the administrator to check your access; file labels do not grant it.
 - **Background service already exists:** inspect/start it with `service status` / `service start`. Do not repeatedly reinstall or initialize the Brain.
+
+## Task history and learned skills
+
+- **History denied:** a reporting/worker credential does not automatically have history permission. Ask an authorized administrator for the required scoped operations and report/source audience access.
+- **Report absent from ordinary search:** use task-history or task-get. Raw reports intentionally stay separate from ordinary company retrieval.
+- **Report key conflict:** retry the exact same request or submit a new immutable follow-up key. The old body is not overwritten.
+- **No method to learn:** choose the same task key in one space and include a succeeded/corrected report with explicit steps. Failed-only outcomes do not establish a method.
+- **Stale evidence or review:** inspect current source/artifact revisions and submit a new report or reviewed draft. Reported historical results do not authorize an obsolete procedure.
+- **Schema mismatch after upgrade:** stop old processes, use the schema-2 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-2-upgrade).

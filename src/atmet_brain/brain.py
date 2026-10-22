@@ -11,9 +11,10 @@ from .discovery import DiscoveryMixin
 from .learning import LearningMixin
 from .retrieval import RetrievalMixin
 from .sources import SourcesMixin
+from .task_reports import TaskReportsMixin
 
 
-class Brain(IdentityMixin, SourcesMixin, ArtifactsMixin, AutomationsMixin, LearningMixin, RetrievalMixin, DiscoveryMixin, BackupsMixin, ConnectorsMixin):
+class Brain(IdentityMixin, SourcesMixin, ArtifactsMixin, AutomationsMixin, TaskReportsMixin, LearningMixin, RetrievalMixin, DiscoveryMixin, BackupsMixin, ConnectorsMixin):
     def __init__(self, home=None, settings=None):
         self.store = Store(home or default_home())
         self.settings = settings or Settings.load(self.store.home)

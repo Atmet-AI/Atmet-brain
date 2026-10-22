@@ -74,3 +74,7 @@ Replace those paths with the installation, existing private key and chosen stora
 Test a restore into a fresh directory regularly, verify sources/skills/versions and current permission denial, then dispose of the recovery environment appropriately. The test suite covers tampering, clean restore, later erasure replay and old-key rejection.
 
 Source erasure is logical removal from serving and retained bodies. Physical storage remnants, external model/provider retention and old backup destruction need separate operational controls. No immediate media-erasure guarantee is made.
+
+## Task history and schema upgrades
+
+Schema-2 snapshots include explicit task reports, their attribution and learned skill evidence. Restore accepts supported schema-1 snapshots, checks the original manifest/database schema, upgrades before quarantine and then follows the same recovery journal procedure. Later erasures of report sources or their original evidence clear report payloads and retract dependent methods during replay. Raw reports stay outside portable space exports. Back up before an upgrade; there is no in-place schema downgrade. See [task history](task-history-and-learning.md).

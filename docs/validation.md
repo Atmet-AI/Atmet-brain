@@ -4,11 +4,9 @@ Use this page to judge what has been checked. For installation and daily operati
 
 ## Current engine verification
 
-Atmet Brain 0.3.1 uses schema 1. The local release checks cover 155 Python regressions and 8 Node launcher tests. The Host/Join tests exercise real loopback HTTPS, private connection files, scope/identity checks, expiry/revocation, malformed inputs and SSH failure/cleanup, including rejection of port readiness without an SSH-owned listener. The version-tag release workflow also passed build/archive checks, GitHub OIDC publication, exact public npm integrity/latest verification and a fresh Ubuntu CLI installation. [Verified workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39859008158) identifies this release.
+Atmet Brain 0.4.0 uses schema 2. The local suite passed 181 Python tests and 8 launcher tests; the seven-block reporting walkthrough ran with the installed engine, and all 18 Mermaid diagrams rendered. Task-report checks cover actual caller attribution, read/observe/contribute/history/publish separation, private/source audience intersections, immutable replay, stale evidence and reviews, report/source erasure, encrypted recovery replay, old-schema/backup migration and rollback on a failed migration. CLI and real local REST/MCP fixtures exercise reporting, search and skill drafts through the same core. Publication/public-install evidence is separate from local validation.
 
-A disposable macOS arm64 integration exercised real OpenSSH forwarding with temporary host/member keys and a loopback-only SSH daemon, joining Sales, denying Finance, rejecting an unknown host key and enforcing revocation. No system SSH configuration was changed. This is an isolated integration check, not a customer-network deployment assessment.
-
-Read the [support matrix](implementation-status.md) before relying on a capability. Older release evidence is preserved in [historical validation](release-validation.md).
+The existing Host/Join, automation, source, permissions, connector and recovery regressions remain required. Live customer applications, model quality and independently verified business outcomes are outside these tests. Read the [support matrix](implementation-status.md).
 
 ## Documentation checks
 

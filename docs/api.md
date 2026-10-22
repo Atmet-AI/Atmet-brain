@@ -138,3 +138,7 @@ Credentials and grants are separate. Minting a key does not create a space grant
 ## Private remote clients
 
 The CLI can save verified HTTPS, automatic SSH or manual SSH-loopback connections and call the same operations using `--connection NAME`. `team.add` atomically creates an individual non-admin identity, chosen space/role grants and a narrowed expiring credential; prefer `team-add --output FILE` to keep the returned token out of terminal output. Connection profiles are not grants. See [terminal usage](terminal.md) and [team server](team-server.md).
+
+## Task outcomes and learned skills
+
+reports.record saves an explicit, immutable client-reported result with original source evidence. reports.search and reports.get read permitted history; reports.erase clears a report through the existing source-erasure journal. skills.learn assembles a pending skill from selected reports and delegates publication to artifacts.review. All operations use the existing RPC envelope and authorization. [Task-report examples](task-history-and-learning.md) define required fields, privacy, bounds and revision behavior. No caller identity or role field is accepted from the model.

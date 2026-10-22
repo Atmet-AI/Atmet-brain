@@ -38,7 +38,7 @@ class RetrievalMixin:
                 items.append({"id": row["id"], "type": "memory", "kind": row["kind"], "text": row["statement"],
                               "revision": row["revision"], "evidence": loads(row["evidence"]), "recorded_at": row["recorded_at"]})
         for source in conn.execute("SELECT s.*,r.body,r.recorded_at,r.effective_at FROM sources s JOIN source_revisions r "
-                                   "ON r.source_id=s.id AND r.revision=s.revision WHERE s.space_id=? AND s.status='active' "
+                                   "ON r.source_id=s.id AND r.revision=s.revision WHERE s.space_id=? AND s.status='active' AND s.category='document' "
                                    "AND r.effective_at<=?", (space_id, now())):
             if not self._source_readable(conn, actor, source["id"]):
                 continue
@@ -245,6 +245,11 @@ class RetrievalMixin:
                         if run is None:
                             continue
                         self._read_task_run(conn, actor, run)
+                    except BrainError:
+                        continue
+                if target.startswith("report_"):
+                    try:
+                        self._read_report(conn, actor, target)
                     except BrainError:
                         continue
                 if row["operation"].startswith(("grant.", "credential.", "principal.", "group.")) and not can(conn, actor, space_id, "manage"):

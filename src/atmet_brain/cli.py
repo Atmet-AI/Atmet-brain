@@ -37,7 +37,9 @@ def parser():
     root.add_argument("--token-file", type=Path, help="Scoped credential file; defaults to ATMET_TOKEN_FILE or home/owner.token")
     sub = root.add_subparsers(dest="command")
     sub.add_parser("status", help="Show current local or selected remote Brain status")
-    sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
+    mcp_config = sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
+    for flag in ("allow-proposals", "allow-automations", "allow-task-reports"):
+        mcp_config.add_argument("--" + flag, action="store_true")
     setup = sub.add_parser("setup", help="Guided company initialization or connection")
     setup.add_argument("--mode", choices=["local", "host", "join", "team", "connect"])
     setup.add_argument("--organization")
@@ -111,6 +113,25 @@ def parser():
     source.add_argument("--authority", choices=["observation", "reference", "authoritative"], default="observation")
     source.add_argument("--audience", action="append")
     source.add_argument("--expected-revision", type=int)
+    report = sub.add_parser("task-report", help="Record an explicit task outcome from a JSON file")
+    report.add_argument("file", type=Path)
+    report.add_argument("--space", required=True)
+    history = sub.add_parser("task-history", help="Search permissioned task history; requires history access")
+    history.add_argument("query", nargs="?", default="")
+    history.add_argument("--space", required=True)
+    history.add_argument("--task-key")
+    history.add_argument("--limit", type=int, default=10)
+    for name in ("task-get", "task-erase"):
+        command = sub.add_parser(name, help="Read or erase a task report with current permissions")
+        command.add_argument("report_id")
+    learn = sub.add_parser("task-learn", help="Propose a skill from reported outcomes; never publish")
+    learn.add_argument("--space", required=True)
+    learn.add_argument("--report", action="append", required=True)
+    learn.add_argument("--name", required=True)
+    learn.add_argument("--idempotency-key", required=True)
+    learn.add_argument("--artifact-id")
+    learn.add_argument("--expected-revision", type=int, default=0)
+    learn.add_argument("--task-path", default="shared")
     for name in ["search", "context"]:
         command = sub.add_parser(name)
         command.add_argument("query")
@@ -153,6 +174,7 @@ def parser():
     mcp = sub.add_parser("mcp", help="Run MCP over stdio")
     mcp.add_argument("--allow-proposals", action="store_true")
     mcp.add_argument("--allow-automations", action="store_true", help="Expose observed-run recording and bounded pure recipe execution tools")
+    mcp.add_argument("--allow-task-reports", action="store_true", help="Expose explicit task reporting; grants still apply")
     rpc = sub.add_parser("rpc", help="Call any registered operation")
     rpc.add_argument("method")
     rpc.add_argument("--params", default="{}", help="JSON object, or @path/to/request.json")
@@ -199,7 +221,7 @@ def save_credential(path, create):
 def remote_execute(args, client):
     command = args.command
     if command == "mcp":
-        MCPServer(None, None, args.allow_proposals, args.allow_automations, client=client).serve()
+        MCPServer(None, None, args.allow_proposals, args.allow_automations, client=client, allow_task_reports=args.allow_task_reports).serve()
         return None
     if command == "status":
         return {"mode": "remote", "endpoint": client.endpoint, "identity": client.call("identity.me"),
@@ -220,6 +242,9 @@ def remote_execute(args, client):
     if command == "team-add":
         return save_credential(args.output, lambda: client.call("team.add", name=args.name, space_ids=args.space,
                                                                role=args.role, kind=args.kind, expires_at=args.expires_at))
+    if command in {"task-report", "task-history", "task-get", "task-learn", "task-erase"}:
+        method, params = task_request(args)
+        return client.call(method, **params)
     if command == "search":
         return client.call("search", space_id=args.space, query=args.query)
     if command == "context":
@@ -242,6 +267,21 @@ def remote_execute(args, client):
     if command == "sync":
         return client.call("connectors.sync", connector_id=args.connector_id)
     raise BrainError("local_only", "This command requires the server's local installation. Remote mode never falls back to a local Brain.")
+
+
+def task_request(args):
+    if args.command == "task-report":
+        require(args.file.stat().st_size <= 200000, "invalid_report", "Task report file is too large.")
+        params = json.loads(args.file.read_text())
+        require(isinstance(params, dict) and "space_id" not in params, "invalid_report", "Use report parameters without space_id; select it with --space.")
+        return "reports.record", {**params, "space_id": args.space}
+    if args.command == "task-history":
+        return "reports.search", {"space_id": args.space, "query": args.query, "task_key": args.task_key, "limit": args.limit}
+    if args.command in {"task-get", "task-erase"}:
+        return ("reports.get" if args.command == "task-get" else "reports.erase"), {"report_id": args.report_id}
+    return "skills.learn", {"space_id": args.space, "report_ids": args.report, "name": args.name,
+                            "idempotency_key": args.idempotency_key, "artifact_id": args.artifact_id,
+                            "expected_revision": args.expected_revision, "instruction_path": args.task_path}
 
 
 def execute(args):
@@ -296,7 +336,8 @@ def execute(args):
         else:
             require(args.token_file and args.token_file.is_file(), "credential_missing", "Use --token-file with a dedicated scoped agent credential.")
             command += ["--token-file", str(args.token_file.expanduser().resolve())]
-        return {"mcpServers": {"atmet-brain": {"command": str(Path(sys.executable).absolute()), "args": command + ["mcp"]}}}
+        switches = ["--" + flag.replace("_", "-") for flag in ("allow_proposals", "allow_automations", "allow_task_reports") if getattr(args, flag)]
+        return {"mcpServers": {"atmet-brain": {"command": str(Path(sys.executable).absolute()), "args": command + ["mcp", *switches]}}}
     if args.connection or args.endpoint:
         require(not args.connection or not args.token_file, "invalid_connection", "A saved connection uses its own credential. Reconnect to change it.")
         client = load_connection(args.home, args.connection)[0] if args.connection else Client(args.endpoint, read_token(args), args.ca_file)
@@ -333,10 +374,11 @@ def execute(args):
         private_write(args.home / "config.toml", "[brain]\nmax_context_chars = 16000\nmax_results = 12\nallow_remote_processing = false\n", overwrite=False)
         return {**result, "token_file": str(path), "home": str(args.home)}
     if args.command == "doctor":
+        from .db import SCHEMA_VERSION
         with brain.store.transaction() as conn:
             integrity = conn.execute("PRAGMA integrity_check").fetchone()[0]
             recovering = conn.execute("SELECT value FROM meta WHERE key='recovery_mode'").fetchone()[0]
-            return {"integrity": integrity, "schema": 1, "recovery_mode": recovering == "1", "home": str(brain.store.home)}
+            return {"integrity": integrity, "schema": SCHEMA_VERSION, "recovery_mode": recovering == "1", "home": str(brain.store.home)}
     if args.command == "backup":
         return brain.create_backup(args.output, args.key_file)
     if args.command == "journal":
@@ -365,8 +407,11 @@ def execute(args):
         return None
     token = read_token(args)
     actor = brain.authenticate(token)
+    if args.command in {"task-report", "task-history", "task-get", "task-learn", "task-erase"}:
+        method, params = task_request(args)
+        return dispatch(brain, actor, method, params)
     if args.command == "mcp":
-        MCPServer(brain, token, args.allow_proposals, args.allow_automations).serve()
+        MCPServer(brain, token, args.allow_proposals, args.allow_automations, allow_task_reports=args.allow_task_reports).serve()
         return None
     if args.command == "space":
         return brain.create_space(actor, args.name) if args.name else brain.list_spaces(actor)

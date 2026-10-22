@@ -26,6 +26,7 @@ All examples and tests use fictional data in temporary directories. No mailbox, 
 - Context budget failures, current-access history and manifest restrictions.
 - Connector changes, disappearance, symlinks, disabled bindings and permanent tombstones.
 - Encrypted backup tampering, fresh restore, later erasure reconciliation and old-key rejection.
+- Explicit task reports, private and original-source audience intersections, immutable replay, history access, draft-only skill learning, stale source/review rejection, report erasure/recovery and schema migration rollback.
 - REST/MCP/Python parity, forged identity fields, private operator method denial and actual stdio subprocess messages.
 
 Provider adapters should add fixture tests before live account checks. A mocked provider proves request/response handling under the fixture, not provider compatibility, model quality or a service-level target.

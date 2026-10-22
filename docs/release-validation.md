@@ -92,3 +92,11 @@ Atmet Brain 0.2.6 has the following observed release evidence:
 | Providers | Gmail/model request handling uses fixtures; no live provider certification |
 
 [Release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39830420887) and [versioned assets](https://github.com/anashamad9/Atmet-brain/releases/tag/v0.2.6) identify that release. Read the [support matrix](implementation-status.md) before relying on a capability.
+
+## Published 0.3.1 checkpoint, 23 October 2026
+
+Atmet Brain 0.3.1 uses schema 1. The local release checks cover 155 Python regressions and 8 Node launcher tests. The Host/Join tests exercise real loopback HTTPS, private connection files, scope/identity checks, expiry/revocation, malformed inputs and SSH failure/cleanup, including rejection of port readiness without an SSH-owned listener. The version-tag release workflow also passed build/archive checks, GitHub OIDC publication, exact public npm integrity/latest verification and a fresh Ubuntu CLI installation. [Verified workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39859008158) identifies this release.
+
+A disposable macOS arm64 integration exercised real OpenSSH forwarding with temporary host/member keys and a loopback-only SSH daemon, joining Sales, denying Finance, rejecting an unknown host key and enforcing revocation. No system SSH configuration was changed. This is an isolated integration check, not a customer-network deployment assessment.
+
+Read the [support matrix](implementation-status.md) before relying on a capability. Older release evidence is preserved in [historical validation](release-validation.md).

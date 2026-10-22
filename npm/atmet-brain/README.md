@@ -51,3 +51,9 @@ SSH connections manage their own forwarding per request after an administrator c
 Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have local macOS arm64 and Linux CI coverage; the other archive targets need deployment checks. Windows is not validated. On other Linux libc variants, an administrator can select a compatible uv with `ATMET_UV_BIN`; core support still needs evaluation.
 
 [Usage and installation](https://github.com/anashamad9/Atmet-brain/blob/main/docs/install.md) | [Account publication setup](https://github.com/anashamad9/Atmet-brain/blob/main/docs/package-publishing.md) | [Apache 2.0](LICENSE)
+
+## Task outcomes and reusable skills
+
+Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/task-history-and-learning.md).
+
+Engine 0.4.0 upgrades schema-1 company data transactionally to schema 2. Back up first, stop old local processes and restart services with the compatible runtime. Older engines cannot open schema 2. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-2-upgrade).

@@ -116,3 +116,7 @@ For MCP, routing is a read tool. `--allow-proposals` exposes explicit discovery.
 An external coding agent could later generate custom Python or other languages for stable workflow steps, with schemas, representative regression and edge cases, dependency hashes, shadow comparisons, measured cost/latency and reviewed release gates. General scripts need a separate isolated execution service, explicit tool/network/secret permissions, resource limits, idempotent side-effect handling, deployment controls and kill switches. Those mechanisms, automatic scheduling, universal task detection and arbitrary code generation/execution are not implemented here.
 
 Compare equivalent work before claiming savings. The pure script operation makes zero model calls, but a surrounding chat, classification or explanation may still use model tokens. No total-workflow savings percentage or autonomous correctness guarantee is established.
+
+## Task reports versus recipe training
+
+[Task reports](task-history-and-learning.md) retain general selected outcomes, steps and corrections and can draft reusable text skills. The tasks.record interface above records exact input/output examples for the two bounded deterministic transformations. They are separate contracts; a general report does not automatically become a script or prove its correctness.

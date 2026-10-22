@@ -85,7 +85,7 @@ These revision numbers assume exactly one prior approved revision. Reload the he
 
 ## Learning a skill
 
-The design path is run evidence -> observation -> reusable lesson -> skill draft -> validation -> publication. Current code supports evidence-linked skill proposals and their lifecycle. Automatic extraction of complete portable skill packages from arbitrary agent traces is planned. Model-generated success claims are not accepted as proof of a successful business outcome.
+The design path is run evidence -> observation -> reusable lesson -> skill draft -> validation -> publication. Current code supports evidence-linked skill proposals and their lifecycle. The reports.record/reports.search/skills.learn interfaces now retain selected task outcomes and assemble reviewed skill drafts from explicit steps/corrections. Follow the [task-history walkthrough](task-history-and-learning.md). General model-based extraction from arbitrary agent traces remains planned. Model-generated success claims are not accepted as proof of a successful business outcome.
 
 ## Execution authority
 

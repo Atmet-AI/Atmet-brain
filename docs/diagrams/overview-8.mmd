@@ -1,0 +1,6 @@
+flowchart TB
+    Server["One company device: Atmet Brain"] --> Spaces["Shared, Sales and Finance spaces"]
+    CLI["Employee terminals"] --> Secure["Private HTTPS or restricted SSH tunnel"]
+    MCP["Agent clients via local MCP bridge"] --> Secure
+    Secure --> Auth["Individual credential and current grants"]
+    Auth --> Server

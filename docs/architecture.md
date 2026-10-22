@@ -53,6 +53,7 @@ flowchart TB
 | Learning | `extraction.py`, `learning.py`, `discovery.py` | Bounded extraction, durable jobs and explicit case-event sequence drafts |
 | Approved procedures | `artifacts.py`, `skills.py` | Proposals, exact-version publication, dependencies, history, rollback and skill resources |
 | Retrieval | `retrieval.py` | Permission-first lexical retrieval, context envelopes/manifests and permitted graph/export |
+| Task outcomes | task_reports.py | Explicit scoped reports, lexical operational history and skill drafts through the normal artifact lifecycle |
 | Repeated work | `automations.py`, `recipe_runtime.py` | Recorded examples, template inference, reviewed recipes, routing, pure computation and pause records |
 | Connections | `connector_service.py`, `connectors/` | Selected-resource bindings, source reconciliation and bounded provider adapters |
 | Persistence | `db.py`, `schema.sql` | Transactions, durable canonical state, source/permission references and audit metadata |
@@ -141,7 +142,7 @@ SQLite transactions keep canonical updates coherent. Source capture and its dura
 
 The local database supports reproducible first installation and coherent bounded backup. It is not a claim of unlimited throughput or production tenant isolation. PostgreSQL, semantic/vector indexes and multi-node workers need separate adapters, migration and load testing. [ADR 0001](adr/0001-local-core.md) records the original choice.
 
-Task observations, automation blocks and execution hashes use additive schema-1 tables created on open. Old snapshots gain empty operational tables, not invented training history. Future incompatible schema changes require a migration/recovery plan.
+Schema 2 adds task-report metadata and a source category for operational report bodies. Report bodies use immutable observation sources and original-source evidence; they have no extraction jobs and are excluded from ordinary search/context/source listings. Task history requires history permission; approved learned methods retain report and original evidence checks. Schema-1 installations upgrade transactionally, and supported old backups upgrade before quarantine/recovery. Older engines cannot open schema 2. See [task reporting](task-history-and-learning.md) and [schema upgrades](versioning.md#schema-2-upgrade).
 
 ## 8. External boundaries
 

@@ -14,7 +14,7 @@ from cryptography.fernet import Fernet, InvalidToken
 from ._version import __version__
 from .auth import issue, OPERATIONS
 from .config import validate_settings
-from .db import SCHEMA_VERSION
+from .db import SCHEMA_VERSION, Store
 from .errors import BrainError, require
 from .util import dumps, loads, now, private_write, sha, text, uid
 
@@ -98,13 +98,17 @@ class BackupsMixin:
                         "invalid_backup", "Invalid backup inventory.")
                 manifest = loads(archive.read("manifest.json"))
                 data = archive.read("brain.sqlite3")
-            require(manifest["format"] == "atmet-brain-backup-v1" and manifest["schema_version"] == SCHEMA_VERSION
+            require(manifest["format"] == "atmet-brain-backup-v1" and manifest["schema_version"] in {1, SCHEMA_VERSION}
                     and sha(data) == manifest["database_sha256"] and len(data) == manifest["database_bytes"],
                     "invalid_backup", "Backup manifest or database checksum mismatch.")
         except (KeyError, ValueError, zipfile.BadZipFile):
             raise BrainError("invalid_backup", "Invalid backup payload.") from None
         destination.mkdir(parents=True, mode=0o700)
         private_write(destination / "brain.sqlite3", data)
+        with sqlite3.connect(destination / "brain.sqlite3") as check:
+            actual = check.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()
+            require(actual and actual[0] == str(manifest["schema_version"]), "invalid_backup", "Database schema differs from the backup manifest.")
+        Store(destination)  # Transactionally upgrade supported old snapshots before quarantine/replay.
         settings = validate_settings(manifest.get("deployment_settings", {}))
         private_write(destination / "config.toml", "[brain]\n" + "".join(
             f"{key} = {str(value).lower() if isinstance(value, bool) else value}\n" for key, value in settings.items()))
