@@ -26,7 +26,7 @@ npm whoami --registry=https://registry.npmjs.org
 npm trust github atmet-brain --repo anashamad9/Atmet-brain --file publish.yml --env npm --allow-publish
 ```
 
-Complete npm's private verification when prompted. The same configuration can be added in npm package settings under Trusted Publisher:
+Run this command in your own terminal and keep it open until npm reports that trust was created. Complete npm's private verification when prompted. An approved browser page alone does not confirm that configuration was saved: if a waiting CLI request expires, use the local command again or the stable package settings form. The same configuration can be added in npm package settings under Trusted Publisher:
 
 | Field | Exact value |
 | --- | --- |
@@ -62,7 +62,7 @@ Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete ch
 
 - Build/test failure: fix it before publishing. Never move a tag; create a new version when source changes.
 - npm job skipped: inspect NPM_PUBLISH_ENABLED. A missing switch intentionally leaves publishing disabled.
-- OIDC rejection: check package owner/repository/workflow/environment, direct-publish permission and the initial two-day window. Do not repeatedly request interactive uploads or add a token as a workaround.
+- OIDC rejection: check package owner/repository/workflow/environment, direct-publish permission and the initial two-day window. A provenance signing message followed by an npm PUT rejection is not a successful upload. Pause NPM_PUBLISH_ENABLED until account trust is confirmed. Do not repeatedly request interactive uploads or add a token as a workaround.
 - Publish failed before upload: confirm the version is absent using npm view, then retry the same immutable tag via manual dispatch with publish_npm=true.
 - Publish succeeded but verification/install failed: inspect the public version, latest and digest. Do not upload the accepted version again. Fix bootstrap defects in a new release; preserve the failed run as evidence.
 - Pause future uploads: set NPM_PUBLISH_ENABLED=false. This does not remove existing releases.
