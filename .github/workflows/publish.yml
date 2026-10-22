@@ -1,11 +1,13 @@
 name: publish packages
 on:
+  push:
+    tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
       release_tag:
         description: Reviewed immutable release tag
         required: true
-        default: v0.2.4
+        default: v0.2.5
         type: string
       publish_npm:
         description: Publish the launcher through an existing npm trusted publisher
@@ -14,15 +16,16 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: registry-${{ inputs.release_tag }}
+  group: npm-release
   cancel-in-progress: false
 jobs:
   build:
+    if: github.repository == 'anashamad9/Atmet-brain'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release_tag }}
+          ref: ${{ inputs.release_tag || github.ref_name }}
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -32,7 +35,7 @@ jobs:
           node-version: '24'
       - name: Verify release identity
         env:
-          RELEASE_TAG: ${{ inputs.release_tag }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: python scripts/check_release_tag.py
       - run: python -m pip install -e . build twine
       - run: python -m unittest discover -s tests -v
@@ -56,7 +59,7 @@ jobs:
           name: npm-launcher
           path: dist/npm/*.tgz
   npm:
-    if: ${{ inputs.publish_npm }}
+    if: vars.NPM_PUBLISH_ENABLED == 'true' && (github.event_name == 'push' || inputs.publish_npm)
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -68,7 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release_tag }}
+          ref: ${{ inputs.release_tag || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -82,4 +85,22 @@ jobs:
           name: npm-launcher
           path: dist/npm
       - run: python scripts/check_npm_package.py dist/npm/atmet-brain-*.tgz
-      - run: npm publish dist/npm/*.tgz --access public
+      - name: Refuse duplicate versions and latest downgrades
+        run: python scripts/check_npm_registry.py before dist/npm/atmet-brain-*.tgz
+      - name: Publish through GitHub OIDC
+        run: npm publish dist/npm/*.tgz --access public --provenance --registry=https://registry.npmjs.org
+      - name: Verify public identity, integrity and latest
+        run: python scripts/check_npm_registry.py after dist/npm/atmet-brain-*.tgz --receipt dist/npm/registry-receipt.json
+      - name: Check a fresh public install
+        env:
+          ATMET_LAUNCHER_HOME: ${{ runner.temp }}/atmet-public-smoke
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/atmet-public-npm-cache
+        run: |
+          VERSION=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          test "$(npx --yes --package=atmet-brain@$VERSION atmet-brain --version)" = "Atmet Brain $VERSION"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-publication-receipt
+          path: dist/npm/registry-receipt.json
+          if-no-files-found: ignore

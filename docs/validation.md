@@ -54,3 +54,11 @@ The owner-authenticated upload completed as `anashamad0`. Public npm metadata ma
 ## Orange terminal refresh, 0.2.4
 
 The 132 Python tests and 8 launcher tests passed. Terminal checks cover orange wide-terminal rendering, compact narrow/plain/dumb fallbacks, control-character removal and stderr-only prompts. A real 88-column PTY captured the fictional welcome screen; its rendered SVG/PNG was visually inspected. The source preview is generated from actual CLI output, not a separate UI implementation. Existing transport tests retain JSON/MCP protocol checks. The color patch does not change the core API, authorization, schema or source learning.
+
+## Public orange terminal release, 0.2.4
+
+Public npm metadata matched the reviewed archive SHA-1 and SHA-512, and latest resolved to 0.2.4. A new anonymous cache/runtime verified pinned setup, private owner credentials, MCP initialize/tools-list, runtime reuse and the persistent service interpreter. Unversioned npx also resolved to 0.2.4. This used the real bundled engine and official bootstrap on macOS arm64, with no Atmet PyPI release or installer override.
+
+## Automatic release guards, 0.2.5
+
+Release tests exercise actual annotated/lightweight tags in a temporary Git repository, checkout mismatch and main ancestry. Registry tests reject duplicate versions, missing package metadata, malformed versions, downgrades, non-404 HTTP errors, mismatched public digests and an incorrect latest tag. They also check numeric version ordering. These tests do not substitute for a successful OIDC upload; record that separately after account activation.

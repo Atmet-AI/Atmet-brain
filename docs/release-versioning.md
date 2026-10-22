@@ -11,7 +11,7 @@ Versions follow `MAJOR.MINOR.PATCH`:
 - During `0.x`, add capabilities or make incompatible API changes in a new minor version, such as `0.2.0`. Document any migration or changed client contract.
 - Fix compatible defects in a patch release, such as `0.1.1`.
 - Reserve `1.0.0` for a deliberately defined stable API and supported operating scope. An alpha tag does not imply production readiness.
-- If several preview builds of the same future version are needed, use explicit identifiers such as `0.2.0a1` in Python metadata and `v0.2.0a1` as the matching Git tag.
+- The automatic npm `latest` pipeline accepts MAJOR.MINOR.PATCH only. Alpha scope is described in release notes and GitHub prerelease status. Python-only preview identifiers require a separate explicit distribution plan.
 
 ## Sources and checks
 
@@ -24,7 +24,7 @@ Database schema, source revisions, workflow versions and recipe-runtime versions
 1. Update the package/runtime version, changelog, README/support scope, default install URLs/source tags and applicable migration notes.
 2. Regenerate OpenAPI and diagrams; run the suite, project checker, both demos and clean wheel installation.
 3. Commit reviewed source on `main` and create an annotated tag for that exact commit.
-4. Push the commit and tag. Mark alpha releases as GitHub prereleases and describe their supported limits.
+4. Push main and its annotated tag atomically. The tag automatically runs the npm workflow after one-time [activation](package-publishing.md). Mark alpha releases as GitHub prereleases and describe their supported limits.
 5. Verify the remote tag, release and CI results. Never move a published version tag; ship a new version for corrections.
 
 See [releasing](releasing.md) for commands. PyPI upload is a separate publishing step.
@@ -44,3 +44,7 @@ Version 0.2.3 is now published on npm. Public metadata and fresh anonymous versi
 
 
 Version 0.2.4 adds terminal presentation and stderr-only setup prompts. The same core version is included in its npm archive; schema, permissions and API contracts are unchanged. The terminal wordmark has compact/no-color/encoding fallbacks. Prior tags and npm versions remain immutable.
+
+Version 0.2.4 is now live on npm. Exact registry integrity/latest and fresh anonymous pinned/unversioned installs, setup and MCP were checked on macOS arm64.
+
+Version 0.2.5 adds tag-triggered npm releases, annotated-tag/main-history guards, duplicate/downgrade protection and post-publication integrity/install checks. Initial account trust and activation are required before its first OIDC upload; source preparation alone does not establish npm availability.

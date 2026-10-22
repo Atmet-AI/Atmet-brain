@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**The core is a local/private-pilot alpha.** Version 0.2.3 is available on [npm](https://www.npmjs.com/package/atmet-brain), with the matching Python core included. The GitHub release route remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**The core is a local/private-pilot alpha.** Version 0.2.4 is available on [npm](https://www.npmjs.com/package/atmet-brain), with the matching Python core included. The GitHub release route remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -62,7 +62,7 @@ npx atmet-brain setup
 
 With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine included in the npm package. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
 
-No Atmet PyPI publication or PyPI account is required. Use `npx atmet-brain@0.2.3 setup` to pin this release. Maintainers can follow the [publishing checklist](docs/package-publishing.md); Python users can use the [GitHub release route](docs/install.md#github-release-fallback).
+No Atmet PyPI publication or PyPI account is required. Use `npx atmet-brain@0.2.4 setup` to pin this release. Version tags trigger the tested npm release pipeline after one-time trusted-publisher activation. Maintainers can follow the [publishing checklist](docs/package-publishing.md); Python users can use the [GitHub release route](docs/install.md#github-release-fallback).
 
 For regular use:
 

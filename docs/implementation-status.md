@@ -1,12 +1,12 @@
 # Implementation status
 
-This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.4 (terminal refresh; npm release preparation). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
+This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.5 (automated release pipeline; npm activation pending). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
 
 | Capability | Evidence and scope |
 | --- | --- |
 | Organizations/spaces | Local provisioning, stable IDs and tested company/space isolation |
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
-| Registry distribution | npm launcher includes the matching checksum-verified core wheel and private runtime bootstrap; published on npm as 0.2.3 with a fresh anonymous public install/setup/MCP check on macOS arm64. Linux packed-archive CI passed; future OIDC publisher setup remains separate. No Atmet PyPI release needed. |
+| Registry distribution | npm launcher includes the matching checksum-verified core wheel and private runtime bootstrap; published on npm as 0.2.4 with a fresh anonymous public install/setup/MCP check on macOS arm64. Linux packed-archive CI passed; tag-triggered OIDC workflow is implemented; one-time npm trust/activation and its first successful CI publication remain separate. No Atmet PyPI release needed. |
 | Terminal setup | Guided create/connect choices, company/department setup, orange pixel welcome, compact command headers, responsive/plain fallbacks and JSON for scripts; no AI onboarding interview |
 | Background services | Explicit per-user launchd/systemd API and worker definitions plus controls; templates/dispatch tested, actual OS-manager lifecycle needs deployment validation |
 | Source ingestion | Working UTF-8 text/Markdown/CSV/JSON capture with revisions and current audience |

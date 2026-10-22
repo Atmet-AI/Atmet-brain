@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.5 - automated npm releases, 2026-10-22
+
+- Annotated version tags automatically build, test and publish through GitHub OIDC after one-time trusted-publisher activation. No stored npm publishing token or per-release browser approval is needed for that route.
+- Reject mismatched tags, commits outside main, duplicate npm versions and latest downgrades. Verify public archive integrity and run a fresh public CLI install after publishing.
+- Keep build-only dispatch and a repository activation switch for initial setup/recovery. Update maintainer instructions and record verified 0.2.4 availability. Core API and schema are unchanged.
+
 ## 0.2.4 - orange terminal refresh, 2026-10-22
 
 - Large orange pixel wordmark for the welcome and interactive setup, with clearer mode choices and next steps. Compact headers keep ordinary commands short.
