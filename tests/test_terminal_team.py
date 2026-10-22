@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import plistlib
+import re
 import ssl
 import subprocess
 import sys
@@ -28,7 +29,7 @@ from atmet_brain.connections import connect, load_connection, remove_connection
 from atmet_brain.mcp import MCPServer
 from atmet_brain.server import make_server
 from atmet_brain.services import manage_service, service_spec
-from atmet_brain.terminal import Console, clean
+from atmet_brain.terminal import Console, clean, prompt
 
 
 class TerminalTeamCase(unittest.TestCase):
@@ -121,6 +122,37 @@ class TerminalTeamCase(unittest.TestCase):
             console.result({"name": "unsafe\x1b[2J\x07"})
         self.assertNotIn("\x1b", output.getvalue())
         self.assertNotIn("\x07", clean("x\x07"))
+
+    def test_terminal_large_color_and_compact_fallbacks(self):
+        output = io.StringIO()
+        with patch.dict(os.environ, {"TERM": "xterm-256color", "COLORTERM": "truecolor"}, clear=True), \
+                patch.object(output, "isatty", return_value=True), \
+                patch("shutil.get_terminal_size", return_value=os.terminal_size((80, 24))):
+            Console(output).banner()
+        self.assertIn("\x1b[38;2;245;83;21m", output.getvalue())
+        self.assertIn("██", output.getvalue())
+        for plain, term in [(True, "xterm-256color"), (False, "dumb")]:
+            output = io.StringIO()
+            with patch.dict(os.environ, {"TERM": term}, clear=True), patch.object(output, "isatty", return_value=True):
+                Console(output, plain=plain).banner()
+            self.assertNotIn("\x1b", output.getvalue())
+            self.assertNotIn("██", output.getvalue())
+        output = io.StringIO()
+        with patch.dict(os.environ, {"TERM": "xterm-256color"}, clear=True), \
+                patch.object(output, "isatty", return_value=True), \
+                patch("shutil.get_terminal_size", return_value=os.terminal_size((40, 24))):
+            Console(output).banner()
+        self.assertNotIn("██", output.getvalue())
+        for line in output.getvalue().splitlines():
+            self.assertLessEqual(len(re.sub(r"\x1b\[[0-9;]*m", "", line)), 40)
+
+    def test_setup_prompt_stays_off_machine_stdout(self):
+        output, protocol = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(protocol), patch("builtins.input", return_value="sales"):
+            answer = prompt("Department", "shared", console=Console(output, plain=True))
+        self.assertEqual("sales", answer)
+        self.assertEqual("", protocol.getvalue())
+        self.assertIn("Department [shared]", output.getvalue())
 
     def test_team_provision_is_scoped_expiring_and_denies_finance(self):
         member = self.member()

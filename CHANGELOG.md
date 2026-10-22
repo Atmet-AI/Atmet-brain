@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4 - orange terminal refresh, 2026-10-22
+
+- Large orange pixel wordmark for the welcome and interactive setup, with clearer mode choices and next steps. Compact headers keep ordinary commands short.
+- Responsive/plain/no-color/encoding fallbacks; prompts go to stderr to preserve redirected JSON. Core API, permissions and schema remain unchanged.
+
 ## 0.2.3 - first npm release, 2026-10-22
 
 - Published the first public npm package with the included core and normal user commands. Fresh anonymous public install/setup/MCP and the unversioned npx command were verified on macOS arm64.

@@ -8,6 +8,16 @@ import textwrap
 
 from ._version import __version__
 
+# A terminal-only display treatment, not a replacement for the brand's SVG mark.
+PIXELS = {
+    "A": ("01110", "11011", "11011", "11111", "11011", "11011"),
+    "T": ("11111", "00100", "00100", "00100", "00100", "00100"),
+    "M": ("10001", "11011", "11111", "10101", "10001", "10001"),
+    "E": ("11111", "10000", "11110", "10000", "10000", "11111"),
+}
+WORDMARK = tuple("  ".join("".join("██" if bit == "1" else "  " for bit in PIXELS[letter][row])
+                           for letter in "ATMET").rstrip() for row in range(6))
+
 
 def clean(value):
     # Do not let imported source text or names issue terminal control sequences.
@@ -18,17 +28,57 @@ class Console:
     def __init__(self, stream=None, plain=False):
         self.stream = stream or sys.stderr
         self.color = self.stream.isatty() and not plain and "NO_COLOR" not in os.environ and os.environ.get("TERM") != "dumb"
+        self.width = max(20, shutil.get_terminal_size().columns)
+        depth = os.environ.get("COLORTERM", "").lower()
+        self.orange = "38;2;245;83;21" if depth in {"truecolor", "24bit"} else (
+            "38;5;202" if "256" in os.environ.get("TERM", "") else "33")
+        try:
+            "█─".encode(getattr(self.stream, "encoding", None) or "utf-8")
+            self.unicode = True
+        except (UnicodeError, LookupError):
+            self.unicode = False
 
-    def line(self, value="", accent=False):
+    def styled(self, value, accent=False, muted=False):
         value = clean(value)
-        if accent and self.color:
-            value = "\033[1m" + value + "\033[0m"
-        print(value, file=self.stream)
+        if self.color and (accent or muted):
+            code = self.orange if accent else "2"
+            return "\033[" + code + "m" + value + "\033[0m"
+        return value
 
-    def banner(self, subtitle="Company memory. Current procedures. Your agents."):
+    def line(self, value="", accent=False, muted=False):
+        print(self.styled(value, accent, muted), file=self.stream)
+
+    def banner(self, subtitle="Company memory. Workflows. Your agents.", compact=False):
         self.line()
-        self.line("  A T M E T   /   B R A I N", accent=True)
-        self.line("  " + __version__ + "  |  " + subtitle)
+        if not compact and self.color and self.unicode and self.width >= max(map(len, WORDMARK)) + 4:
+            for row in WORDMARK:
+                self.line("  " + row, accent=True)
+            self.line()
+            self.line("  Atmet Brain  /  " + __version__)
+        else:
+            self.line("  Atmet Brain  /  " + __version__, accent=True)
+        self.wrapped(subtitle, "  ", muted=True)
+        self.line("  " + ("─" if self.unicode else "-") * min(58, self.width - 4), muted=True)
+        self.line()
+
+    def welcome(self, value):
+        self.banner()
+        self.line("  Welcome back." if value["initialized"] else "  Start with your company.")
+        self.wrapped("Build one department and one workflow, then connect your agents.", "  ", muted=True)
+        self.line()
+        self.wrapped("Home  " + value["home"], "  ", muted=True)
+        self.line()
+        for title, command in [("Set up a Brain", value["start"]), ("Inspect this Brain", value["inspect"]),
+                               ("Browse commands", value["help"])]:
+            self.line("  " + title)
+            self.wrapped(command, "    ", accent=True)
+            self.line()
+        if value["connections"]:
+            self.wrapped("Saved connections: " + str(len(value["connections"])) + ". Use atmet-brain connections list.", "  ", muted=True)
+
+    def option(self, name, title, description):
+        self.line("  " + name + "  /  " + title, accent=True)
+        self.wrapped(description, "    ", muted=True)
         self.line()
 
     def result(self, value, indent=2):
@@ -53,22 +103,26 @@ class Console:
         else:
             self.wrapped(str(value), prefix)
 
-    def wrapped(self, value, prefix):
-        width = max(40, shutil.get_terminal_size().columns)
+    def wrapped(self, value, prefix, accent=False, muted=False):
+        width = self.width
         for paragraph in clean(value).splitlines() or [""]:
             for line in textwrap.wrap(paragraph, width=width, initial_indent=prefix,
                                       subsequent_indent=" " * len(prefix), break_long_words=False, break_on_hyphens=False) or [prefix]:
-                self.line(line)
+                self.line(line, accent, muted)
 
 
-def prompt(label, default=None, choices=None):
+def prompt(label, default=None, choices=None, *, console=None):
     from .errors import BrainError
+    console = console or Console()
     suffix = f" [{default}]" if default is not None else ""
     while True:
         try:
-            value = input(clean(label) + suffix + ": ").strip() or default
+            # Prompts belong on stderr so redirected stdout stays valid JSON.
+            print(console.styled("  > ", accent=True) + clean(label) + clean(suffix) + ": ",
+                  end="", file=console.stream, flush=True)
+            value = input().strip() or default
         except EOFError:
             raise BrainError("setup_interrupted", "Setup needs answers. Use setup flags for non-interactive use.") from None
         if value and (not choices or value in choices):
             return value
-        print("Choose " + ", ".join(choices) if choices else "Enter a value.", file=sys.stderr)
+        console.line("  Choose " + ", ".join(choices) if choices else "  Enter a value.")

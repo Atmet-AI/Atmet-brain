@@ -75,6 +75,12 @@ The npm archive includes a checksum-verified universal Python wheel for the same
 
 Use [installation](docs/install.md) for version pinning, Python applications, existing release wheels and source contributions. `npx` requires Node/npm. A terminal welcome/setup screen, plain/JSON output and remote company connections are part of the same engine. Registry packaging does not launch the hosted platform or Playground.
 
+### Terminal welcome
+
+![Terminal welcome with the orange Atmet wordmark](docs/terminal-preview.svg)
+
+The 0.2.4 terminal refresh adds an orange wordmark and guided next steps. Wide interactive terminals show the full display; narrow/plain terminals use a compact layout. JSON and MCP stay suitable for agents. [Terminal options](docs/terminal.md).
+
 ### Create a first company Brain
 
 If `setup` already created your company and Sales space, run `atmet-brain space` to find its ID and skip the next two commands. Otherwise, use the manual path below. Initialize each data home only once.

@@ -3,7 +3,7 @@ include AGENTS.md Dockerfile Makefile compose.yaml .gitignore .dockerignore .env
 include install.sh
 recursive-include .github *.yml *.md
 recursive-include src *.py *.sql py.typed
-recursive-include docs *.md *.json *.mmd
+recursive-include docs *.md *.json *.mmd *.svg
 recursive-include examples *.py *.md *.json *.txt *.toml
 recursive-include scripts *.py
 recursive-include tests *.py

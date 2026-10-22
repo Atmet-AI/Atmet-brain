@@ -41,3 +41,6 @@ Version 0.2.3 is the first npm publication candidate, with the same npm-only run
 
 
 Version 0.2.3 is now published on npm. Public metadata and fresh anonymous version-pinned/unversioned npx installs were verified. The immutable source tag retains its preparation-time status notes; this documentation follow-up records actual availability without replacing the tag or npm archive. Runtime behavior and schema are unchanged.
+
+
+Version 0.2.4 adds terminal presentation and stderr-only setup prompts. The same core version is included in its npm archive; schema, permissions and API contracts are unchanged. The terminal wordmark has compact/no-color/encoding fallbacks. Prior tags and npm versions remain immutable.

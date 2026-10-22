@@ -16,6 +16,8 @@ atmet-brain setup
 atmet-brain status
 ```
 
+The interactive welcome and setup use a large orange wordmark with compact layouts on narrow terminals. Use `--plain` or `NO_COLOR=1` to disable styling; redirected JSON and MCP remain free of display decoration.
+
 ## What happens
 
 On first execution, the launcher downloads the pinned official uv runtime, verifies its archive SHA-256, then verifies and installs the exact matching `atmet-brain` wheel included in this npm archive in an isolated Python 3.12 tool environment. uv can obtain Python when needed. No manual Python/uv install, repository clone, sudo or shell startup-file changes are required. macOS/Linux need the standard `tar` utility for automatic uv extraction. The npm package has no JavaScript dependencies or postinstall hooks. The Python core declares dependencies such as `cryptography`, downloaded from the public Python index when needed. No Atmet PyPI release/account is required; this is not a fully offline installer.

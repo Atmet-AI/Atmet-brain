@@ -5,7 +5,7 @@ on:
       release_tag:
         description: Reviewed immutable release tag
         required: true
-        default: v0.2.3
+        default: v0.2.4
         type: string
       publish_npm:
         description: Publish the launcher through an existing npm trusted publisher

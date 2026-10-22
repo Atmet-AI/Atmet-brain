@@ -49,3 +49,8 @@ The actual packed npm archive is exercised with the included wheel and real uv, 
 ## Public npm release, 0.2.3
 
 The owner-authenticated upload completed as `anashamad0`. Public npm metadata matched the reviewed tarball integrity and version, and `latest` resolved to 0.2.3. A new npm cache/runtime with empty account configuration exercised version-pinned public setup, private owner credential creation, MCP initialize/tools-list exchange, runtime reuse and a service interpreter import. The unversioned public `npx atmet-brain` also returned 0.2.3. These checks used fictional temporary company data and the included core, with no Atmet PyPI release. No actual OS service was installed. Future npm OIDC/provenance configuration is separate from the first interactive upload.
+
+
+## Orange terminal refresh, 0.2.4
+
+The 132 Python tests and 8 launcher tests passed. Terminal checks cover orange wide-terminal rendering, compact narrow/plain/dumb fallbacks, control-character removal and stderr-only prompts. A real 88-column PTY captured the fictional welcome screen; its rendered SVG/PNG was visually inspected. The source preview is generated from actual CLI output, not a separate UI implementation. Existing transport tests retain JSON/MCP protocol checks. The color patch does not change the core API, authorization, schema or source learning.

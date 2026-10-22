@@ -395,8 +395,14 @@ def main():
         if result is not None:
             if human:
                 console = Console(sys.stdout, args.plain)
-                console.banner()
-                console.result(result)
+                if args.command is None:
+                    console.welcome(result)
+                else:
+                    if args.command == "setup" and sys.stdin.isatty():
+                        console.line("\n  Setup complete", accent=True)
+                    else:
+                        console.banner(compact=True)
+                    console.result(result)
             else:
                 print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         return 0
