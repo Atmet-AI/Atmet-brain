@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph Clients["Clients"]
+        CLI["Terminal or Python app"]
+        Agent["External agent runtime"]
+        Future["Platform and Playground: planned"]
+    end
+    subgraph Interfaces["Core interfaces"]
+        REST["REST"]
+        MCP["MCP stdio"]
+    end
+    CLI --> Core["One Brain core: identity, memory and reviewed procedures"]
+    Agent --> REST
+    Agent --> MCP
+    Future -.-> REST
+    REST --> Core
+    MCP --> Core
+    Core --> Store[("Private SQLite installation")]
+    Agent --> Tools["Separately authorized business tools"]

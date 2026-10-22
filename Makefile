@@ -1,4 +1,4 @@
-.PHONY: test check demo schema wheel
+.PHONY: test check demo schema diagrams wheel
 test:
 	python -m unittest discover -s tests -v
 check:
@@ -8,5 +8,7 @@ demo:
 	python examples/automation_demo.py
 schema:
 	python scripts/generate_openapi.py
+diagrams:
+	python scripts/generate_diagrams.py
 wheel:
 	python -m pip wheel --no-deps . -w dist

@@ -1,6 +1,6 @@
 # Implementation status
 
-This repository is a working local alpha of Atmet Brain, version 0.1.0. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
+This repository is a working local alpha of Atmet Brain, version 0.1.1. The 0.1.1 patch improves documentation and release checks; core behavior and public API are unchanged from 0.1.0. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
 
 | Capability | Evidence and scope |
 | --- | --- |

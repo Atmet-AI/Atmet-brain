@@ -1,0 +1,11 @@
+flowchart TB
+    Report["Authenticated runtime reports a task outcome"] --> Trace["Private task observation and source evidence"]
+    Trace --> Infer["Try bounded deterministic templates"]
+    Infer --> Draft["Pending automation artifact and regression examples"]
+    Draft --> Publish["Authorized exact-version publication"]
+    Publish --> Request["New explicit task request"]
+    Request --> Checks["Current grants, sources, rules, code and input contract"]
+    Checks --> Match{"Exactly one applicable approved recipe?"}
+    Match -->|Yes| Pure["Fixed pure Python implementation"]
+    Match -->|No| Fallback["Return to client for agent handling or review"]
+    Pure --> Hashes["Execution ID and input/output hashes"]

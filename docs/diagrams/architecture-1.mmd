@@ -1,29 +1,30 @@
 flowchart TB
-    subgraph Clients
-        Terminal[CLI and Python]
-        API[REST adapter]
-        MCP[MCP stdio adapter]
-        Product[Platform or Playground client]
+    subgraph Callers["Callers"]
+        Local["Trusted local Python or CLI"]
+        Remote["REST client"]
+        Agent["MCP agent client"]
     end
-    subgraph Core
-        Auth[Identity and current grants]
-        Context[Context assembly]
-        Sources[Source lifecycle]
-        Learning[Durable learning jobs]
-        Artifacts[Reviewed policies, workflows and skills]
-        Recovery[Snapshot and recovery tools]
+    subgraph Adapters["Interface layer"]
+        CLI["cli.py"]
+        REST["server.py and rpc.py"]
+        MCP["mcp.py and rpc.py"]
     end
-    Terminal --> Auth
-    API --> Auth
-    MCP --> Auth
-    Product --> API
-    Auth --> Context
-    Auth --> Sources
-    Auth --> Artifacts
-    Sources --> Learning
-    Learning --> Context
-    Artifacts --> Context
-    Sources --> DB[(SQLite canonical records)]
-    Artifacts --> DB
-    Learning --> DB
-    DB --> Recovery
+    Local --> CLI
+    Remote --> REST
+    Agent --> MCP
+    CLI --> Identity["auth.py: identity, grants and audiences"]
+    REST --> Identity
+    MCP --> Identity
+    Identity --> Facade["brain.py: shared core facade"]
+    subgraph Services["Shared core services"]
+        Sources["Sources, connections and learning"]
+        Artifacts["Reviewed procedures and skills"]
+        Tasks["Context, task observations and pure recipes"]
+    end
+    Facade --> Sources
+    Facade --> Artifacts
+    Facade --> Tasks
+    Sources --> Store[("SQLite transactions and canonical records")]
+    Artifacts --> Store
+    Tasks --> Store
+    Store --> Recovery["Encrypted snapshots and recovery journal"]

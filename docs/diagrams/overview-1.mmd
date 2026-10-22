@@ -1,12 +1,8 @@
-flowchart LR
-    Sources[Selected files and app records] --> Ingest[Source revisions and durable jobs]
-    Ingest --> Learn[Extraction and change checks]
-    Learn --> Memory[Sourced memory]
-    Learn --> Review[Review proposals]
-    Review --> Approved[Policies, workflows and skills]
-    Memory --> Core[Authorized context core]
-    Approved --> Core
-    Core --> CLI[Terminal and Python]
-    Core --> REST[REST clients]
-    Core --> MCP[MCP clients]
-    Core --> Clients[Platform and Playground]
+flowchart TB
+    Core["Atmet Brain engine"] --> Company["Your company"]
+    Company --> Shared["Shared space"]
+    Company --> Sales["Sales space"]
+    Company --> Finance["Finance space"]
+    Shared --> Foundation["Company facts and reference material"]
+    Sales --> SalesContext["Catalogue, quotation workflow and skills"]
+    Finance --> FinanceContext["Finance sources and approved procedures"]

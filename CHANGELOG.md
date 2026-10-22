@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1 - 2026-10-22
+
+Documentation and release-maintenance update. Core behavior and public API are unchanged.
+
+- Six README diagrams explain company spaces, the shared core, learning/review, agent tasks, pure Python reuse and change handling.
+- Rebuilt architecture guide with current module responsibilities, task/recipe paths, data relationships and runtime boundaries.
+- Added an installation guide and company walkthrough; the quickstart works without repository example files.
+- Added a documentation-impact requirement to project instructions, contribution guidance and the pull request template.
+- The project checker now rejects missing, stale and obsolete generated Mermaid diagrams; diagram generation has a read-only check mode.
+
 ## 0.1.0 - 2026-10-22
 
 Initial local alpha.

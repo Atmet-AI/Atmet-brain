@@ -2,7 +2,7 @@
 
 Release preparation date: 22 October 2026.
 
-This record describes local development validation of version 0.1.0. GitHub Actions results are tracked separately in the repository, and local checks do not establish a production assessment.
+This record describes local development validation of version 0.1.1. The patch changes documentation and maintenance checks, while preserving the 0.1.0 core behavior and API. GitHub Actions results are tracked separately in the repository, and local checks do not establish a production assessment.
 
 ## Executed
 
@@ -12,10 +12,13 @@ This record describes local development validation of version 0.1.0. GitHub Acti
 - `python examples/automation_demo.py`: passed recorded examples, template compilation, explicit review, routing and a new decimal report with zero model calls.
 - Provider request/response handling was tested with fixtures. No live mailbox or model account was used.
 - A wheel was built, installed into an isolated virtual environment and exercised from outside the source checkout. The packaged SQLite schema loaded and source-to-context retrieval plus the full fictional demo passed.
+- All 15 current Mermaid diagrams rendered to SVG and PNG in a local headless browser. README and architecture layouts were inspected for readable labels and unclipped content.
+- Diagram synchronization was checked with matching, missing, stale and obsolete generated files. The read-only check accepted matching source and rejected each drift case.
+- The v0.1.1 wheel was installed with uv in temporary isolated tool/cache directories. Its CLI completed the checkout-independent company walkthrough: initialization, source ingestion/learning, context retrieval, the guide's exact workflow JSON, draft inspection/publication and scoped service setup.
 
 ## Release checks
 
-The repository checker verifies Python syntax, JSON, portable local links, generated OpenAPI consistency, forbidden punctuation and common credential patterns. Package build and isolated installation are recorded in the prepared release's validation report. Run these checks again for the actual public release you create.
+The repository checker verifies Python syntax, JSON, portable local links, package/runtime/changelog consistency, generated OpenAPI/diagram consistency, forbidden punctuation and common credential patterns. Package build and isolated installation are recorded in the release validation report. Run these checks again for the actual public release you create.
 
 ## Limits
 

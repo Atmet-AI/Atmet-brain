@@ -2,6 +2,8 @@
 
 The first public source release is **v0.1.0**, a local alpha. Package versions use `0.1.0`; Git tags add the `v` prefix. The changelog records the scope and date of each release.
 
+The current patch is **v0.1.1**, covering clearer company/setup/architecture documentation and diagram synchronization checks. It preserves the 0.1.0 core behavior and API. Documentation or release-maintenance changes can ship in a patch without moving the previous tag.
+
 ## Version numbers
 
 Versions follow `MAJOR.MINOR.PATCH`:
@@ -19,7 +21,7 @@ Database schema, source revisions, workflow versions and recipe-runtime versions
 
 ## Release sequence
 
-1. Update the package/runtime version, changelog, README/support scope and applicable migration notes.
+1. Update the package/runtime version, changelog, README/support scope, default install URLs/source tags and applicable migration notes.
 2. Regenerate OpenAPI and diagrams; run the suite, project checker, both demos and clean wheel installation.
 3. Commit reviewed source on `main` and create an annotated tag for that exact commit.
 4. Push the commit and tag. Mark alpha releases as GitHub prereleases and describe their supported limits.

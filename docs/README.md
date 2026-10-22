@@ -4,7 +4,9 @@ Start with the [quickstart](quickstart.md), then read the pages for the part you
 
 | Topic | Guide |
 | --- | --- |
+| Choose an installation route | [Installation](install.md) |
 | Setup and first task | [Quickstart](quickstart.md) |
+| Use it in a company | [Company walkthrough](use-for-your-company.md) |
 | Shared core and storage | [Architecture](architecture.md) |
 | Business knowledge | [Memory and learning](memory-and-learning.md) |
 | Processes and observed activity | [Workflows](workflows.md) |
@@ -21,9 +23,10 @@ Start with the [quickstart](quickstart.md), then read the pages for the part you
 | Checks and fixtures | [Testing](testing.md) |
 | Public packaging | [Releasing](releasing.md) |
 | Release numbers and tags | [Release versioning](release-versioning.md) |
+| Keep guides and diagrams current | [Documentation maintenance](documentation.md) |
 | Current support | [Implementation status](implementation-status.md) |
 | Next development | [Roadmap](roadmap.md) |
 | Design rationale | [Architecture decisions](adr/0001-local-core.md) |
 | Prior work and protocol references | [References](references.md) |
 
-Diagrams are Mermaid source so they remain editable and render directly on GitHub. The architecture page includes system, data-model and request diagrams; the lifecycle pages include learning, publication and recovery diagrams. [Standalone chart sources](diagrams) are generated from those documentation blocks by `scripts/generate_diagrams.py`.
+Diagrams are Mermaid source so they remain editable and render directly on GitHub. The README has six diagrams covering company spaces, the shared core, learning, task retrieval, pure scripts and change handling. The architecture guide maps the current modules, data records and trust boundaries. [Standalone chart sources](diagrams) are generated from Markdown by `scripts/generate_diagrams.py`; the project checker rejects missing, stale or obsolete copies.

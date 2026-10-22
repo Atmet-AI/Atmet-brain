@@ -11,6 +11,7 @@ from urllib.parse import unquote
 
 from atmet_brain import Brain, __version__
 from atmet_brain.rpc import openapi
+from generate_diagrams import diagram_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 IGNORE = {".git", ".venv", "__pycache__", "build", "dist"}
@@ -62,7 +63,8 @@ with tempfile.TemporaryDirectory(prefix="atmet-check-") as home:
 schema = ROOT / "docs/openapi.json"
 if not schema.exists() or json.loads(schema.read_text()) != expected:
     errors.append("OpenAPI schema is missing or stale; run scripts/generate_openapi.py")
+errors.extend(diagram_errors(ROOT))
 if errors:
     print("\n".join(errors), file=sys.stderr)
     raise SystemExit(1)
-print(f"PASS: {count} public text files, Python syntax, JSON, local links, punctuation, credential scan and OpenAPI registry")
+print(f"PASS: {count} public text files, Python syntax, JSON, local links, punctuation, credential scan, OpenAPI and diagram synchronization")

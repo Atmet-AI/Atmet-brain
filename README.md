@@ -1,103 +1,195 @@
 # Atmet Brain
 
-**Company memory, workflows and skills for AI agents.**
+**Company memory, workflows and skills that your agents can use.**
 
-Atmet Brain is the open-source core for building a shared understanding of a business. Connect selected sources, keep facts and approved procedures current, and give an agent the context it needs for a task.
+Atmet Brain is the open-source core for keeping business context in one place: company facts, source evidence, approved procedures and reusable task methods. Give an agent the context it is allowed to read, then keep that context current as the business changes.
 
-Use the same Brain from a terminal, a Python application, a REST client or an MCP client. The Atmet Brain platform and Atmet Playground are separate clients of this core.
+Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**Version 0.1.0 is a local alpha.** It includes working code and tests for the core lifecycle. Start with fictional data and a bounded workflow. See the [implementation status](docs/implementation-status.md) for exact boundaries and [roadmap](docs/roadmap.md) for the wider design.
+**v0.1.1 is a local alpha.** The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
-## Start here
+[Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
-Use Python 3.11 or newer.
+## What your company builds
 
-```bash
-git clone https://github.com/anashamad9/Atmet-brain.git
-cd Atmet-brain
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-python examples/demo.py
+Start with one department and one workflow. For example, a sales agent can retrieve the current catalogue, quotation instructions and approval policy before preparing a draft. A finance agent can work in a separate space with different source access.
+
+```mermaid
+flowchart TB
+    Core["Atmet Brain engine"] --> Company["Your company"]
+    Company --> Shared["Shared space"]
+    Company --> Sales["Sales space"]
+    Company --> Finance["Finance space"]
+    Shared --> Foundation["Company facts and reference material"]
+    Sales --> SalesContext["Catalogue, quotation workflow and skills"]
+    Finance --> FinanceContext["Finance sources and approved procedures"]
 ```
 
-The demo creates a temporary company, ingests a catalogue and customer request, processes memory, publishes an example policy and skill, issues a scoped agent credential, retrieves task context and creates an encrypted backup. It removes its temporary data when it finishes. No model key or external app connection is needed.
+Spaces are independent permission scopes. The tree is a logical view, not a set of folders that grants access automatically. An agent reads each permitted space explicitly; shared information is not inherited across spaces. Named department agents are configurations in your chosen client/runtime, not autonomous workers created by a space name.
 
-For a persistent installation:
+## One core, several ways to use it
+
+```mermaid
+flowchart TB
+    subgraph Clients["Clients"]
+        CLI["Terminal or Python app"]
+        Agent["External agent runtime"]
+        Future["Platform and Playground: planned"]
+    end
+    subgraph Interfaces["Core interfaces"]
+        REST["REST"]
+        MCP["MCP stdio"]
+    end
+    CLI --> Core["One Brain core: identity, memory and reviewed procedures"]
+    Agent --> REST
+    Agent --> MCP
+    Future -.-> REST
+    REST --> Core
+    MCP --> Core
+    Core --> Store[("Private SQLite installation")]
+    Agent --> Tools["Separately authorized business tools"]
+```
+
+The Brain supplies context and checks access. The agent/runtime chooses its model and controls external actions. The pure recipe runner inside the core can transform bounded data; email sending, browser control and general code execution need separate runtime permissions.
+
+## Install
+
+For regular CLI use, install the published wheel in an isolated tool environment. With [uv installed](https://docs.astral.sh/uv/getting-started/installation/):
+
+```bash
+uv tool install --python 3.12 \
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.1.1/atmet_brain-0.1.1-py3-none-any.whl"
+
+atmet-brain --help
+```
+
+If the command is not on your shell's PATH, run `uv tool update-shell` and open a new terminal. This route does not require cloning or Git. Python 3.11+ is required; the command requests Python 3.12.
+
+Use [the installation guide](docs/install.md) for one-off `uvx`, a Python-project installation or a source checkout. The project is published on GitHub; no PyPI or npm package is published by this release.
+
+### Create a first company Brain
 
 ```bash
 atmet-brain init --organization example-company --owner "Company owner"
 atmet-brain space sales
 ```
 
-Copy the returned space ID, then:
+Save the returned space ID, then try a fictional company fact:
 
 ```bash
-atmet-brain ingest examples/company/catalogue.md --space SPACE_ID --authority authoritative
-atmet-brain worker --space SPACE_ID
-atmet-brain search "product price" --space SPACE_ID
-atmet-brain context "Prepare a customer quotation" --space SPACE_ID
+export SALES_SPACE="paste-the-returned-space-id"
+printf '%s\n' 'Fact[delivery.window]: Standard delivery is five business days.' > company.md
+atmet-brain ingest company.md --space "$SALES_SPACE" --authority authoritative
+atmet-brain worker --space "$SALES_SPACE"
+atmet-brain context "What delivery window should a sales quotation use?" --space "$SALES_SPACE"
 ```
 
-The owner credential is written to a private file under `~/.atmet-brain`. Create separate scoped credentials for apps and agents. The [quickstart](docs/quickstart.md) walks through that setup.
+The default private data home is `~/.atmet-brain`. It starts empty. `init` creates the company, owner credential and configuration; it does not start a chat interview. `context` returns structured context for an agent, not a generated customer reply. [Continue with a company workflow](docs/use-for-your-company.md).
 
-## How it fits together
+### Run the repository examples
+
+For a disposable demonstration or code changes, clone the tagged source:
+
+```bash
+git clone --branch v0.1.1 https://github.com/anashamad9/Atmet-brain.git
+cd Atmet-brain
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+python examples/demo.py
+python examples/automation_demo.py
+```
+
+Use Python 3.11 or newer. Both demos use temporary fictional data, remove their state on exit and need no model key. A wheel installation provides the library and CLI; repository examples live in the source checkout.
+
+## How the Brain learns
 
 ```mermaid
-flowchart LR
-    Sources[Selected files and app records] --> Ingest[Source revisions and durable jobs]
-    Ingest --> Learn[Extraction and change checks]
-    Learn --> Memory[Sourced memory]
-    Learn --> Review[Review proposals]
-    Review --> Approved[Policies, workflows and skills]
-    Memory --> Core[Authorized context core]
-    Approved --> Core
-    Core --> CLI[Terminal and Python]
-    Core --> REST[REST clients]
-    Core --> MCP[MCP clients]
-    Core --> Clients[Platform and Playground]
+flowchart TB
+    Selected["Selected files or supported app records"] --> Sources["Versioned sources"]
+    Sources --> Jobs["Learning jobs"]
+    Jobs --> Memory["Sourced facts and observations"]
+    Jobs --> Drafts["Reviewable candidates"]
+    Drafts --> Review["Authorized review"]
+    Review --> Approved["Approved policies, workflows and skills"]
+    Memory --> Context["Permitted task context"]
+    Approved --> Context
 ```
 
-The Brain stores context and enforces access to it. The agent runtime separately controls actions such as sending an email, editing a business record or running a shell command.
+Learning means extracting and updating sourced records, not retraining a model. Eligible ordinary facts from explicitly authoritative sources can activate under the implemented rules. Inferences and operating rules do not become approved simply because they appear repeatedly.
 
-It can also turn supported repeated transformations into reviewed Python recipes. The core then processes matching data without a model call. This bounded pure-computation path does not grant external action permissions. See [repeated tasks into scripts](docs/automations.md).
+The first extractor recognizes explicit `Fact[key]: statement` lines and sourced observations. Model extraction is opt-in and fixture-tested. General business understanding, video transcription and arbitrary cross-tool workflow discovery are broader targets. [Memory and change handling](docs/memory-and-learning.md).
 
-## What is included
+## What happens when an agent gets a task
 
-| Area | This release |
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent as Agent runtime
+    participant Brain as Atmet Brain
+    participant Tools as Authorized tools
+    User->>Agent: Prepare a customer quotation
+    Agent->>Brain: Credential, space ID and task
+    Brain->>Brain: Check current access, approved versions and evidence
+    Brain-->>Agent: Instructions, facts, citations and constraints
+    Agent->>Agent: Use its chosen model to prepare a draft
+    Agent->>Tools: Perform only separately permitted actions
+    Agent->>Brain: Submit evidence-linked feedback if permitted
+```
+
+The Brain rechecks the real caller's credential and current source permissions. An agent cannot gain authority by sending a person's name or a role in its prompt. Approved instructions and untrusted reference material are returned separately. [Permissions](docs/permissions.md) · [API](docs/api.md).
+
+## Repeated work can become Python
+
+```mermaid
+flowchart TB
+    Task["Explicit task request"] --> Match{"Approved recipe applies?"}
+    Match -->|Yes| Script["Run bounded Python: no model call"]
+    Match -->|No| Agent["Client handles the task with its agent"]
+    Agent --> Observe["Report accepted inputs and outputs"]
+    Observe --> Pattern{"Supported pattern repeats?"}
+    Pattern -->|Yes| Draft["Compile Python and replay examples"]
+    Draft --> Review["Authorized review and publication"]
+    Review --> Match
+    Pattern -->|No| Keep["Continue learning or clarify the task"]
+```
+
+The first implementation supports record cleanup and grouped decimal totals. A connected runtime reports outcomes and invokes the router. Reuse checks current permissions, evidence and workflow/rule versions. Failed or unsupported tasks return to the client; permission failures remain errors. General Python generation, side effects and automatic scheduling are not implemented. [Script lifecycle and limits](docs/automations.md).
+
+## Changes stay traceable
+
+```mermaid
+flowchart TB
+    Change["Source or procedure changes"] --> Version["Record a new revision"]
+    Version --> Check["Recheck evidence and dependencies"]
+    Check --> Fact["Eligible ordinary fact refresh"]
+    Check --> Review["Rule or workflow proposal needs review"]
+    Review --> Publish["Publish the exact reviewed revision"]
+    Check --> Pause["Stale dependent recipes stop routing"]
+```
+
+History explains who changed an artifact and which evidence it used. Rollback creates a new reviewed business revision. Encrypted backup/recovery restores an installation and reconciles current revocations/deletions. These are different operations. [History](docs/versioning.md) · [Recovery](docs/backup-and-recovery.md).
+
+## Included in this alpha
+
+| Area | Implemented scope |
 | --- | --- |
-| Company spaces | Separate spaces, attributable users/services, operation grants and restricted audiences |
+| Company organization | Independent spaces, human/service identities, scoped credentials, groups and audiences |
 | Sources | UTF-8 text, Markdown, JSON and CSV with revisions and evidence |
-| Learning | Durable jobs, local extraction, opt-in model extraction, ordinary-fact refresh and reviewable conflicts |
-| Operating context | Reviewed policies, nested instructions, workflows, typed configuration and scheduled versions |
-| Skills | Portable packages, resources, reviewed updates, pinned dependencies and staged loading |
-| Retrieval | Permission-first lexical search, bounded context envelopes and revision manifests |
-| Interfaces | Python, CLI, bearer-authenticated REST and MCP stdio |
-| Connectors | Selected local directories and a bounded Gmail label reader |
-| Discovery | Draft process sequences from explicit case-linked events |
-| Repeated tasks | Recorded outcomes, automatic recipe proposals, reviewed Python and permission/version-aware reuse for two supported templates |
-| History | Source versions, artifact diffs through retained bodies, audit metadata and controlled rollback |
-| Recovery | Encrypted snapshots, integrity checks, a recovery journal and quarantined restore |
+| Learning | Durable jobs, bounded local extraction, opt-in model adapter and reviewable changes |
+| Procedures | Reviewed policies, workflows, nested instructions, skills and typed configuration |
+| Retrieval | Permission-first lexical search, bounded context and revision manifests |
+| Reuse | Two pure Python recipe templates, reviewed publication, guarded routing and conflict pauses |
+| Interfaces | Python, CLI, REST and MCP stdio |
+| Connections | Selected-directory sync; bounded read-only Gmail with fixture coverage |
+| Inspection | Artifact history, diffs and permissioned JSON graph/export |
+| Recovery | Encrypted snapshots, integrity checks, journal reconciliation and quarantined restoration |
 
-Gmail and model adapters have fixture tests; live provider accounts were not used for release validation. Gmail token refresh, remote MCP OAuth, semantic/vector retrieval, recording transcription, managed hosting and the Playground application are later work. See the [support matrix](docs/implementation-status.md).
-
-## A small set of concepts
-
-| Concept | Meaning |
-| --- | --- |
-| Source | The original information and its revisions |
-| Memory | A sourced fact, observation or inference |
-| Policy | An approved operating constraint |
-| Workflow | A business process with steps, branches and handoffs |
-| Skill | A reusable method with instructions and resources |
-| Automation | A reviewed executable recipe for a bounded deterministic task |
-| Agent | An authenticated client using permitted context through a runtime |
-
-Observations can become suggestions. Operating rules become active through authorized publication. A skill package never grants permissions by itself.
+Gmail/model live accounts, named external MCP-client compatibility, semantic/vector retrieval, recording transcription, general script execution, managed hosting and Playground are outside the implemented or validated scope described in the [support matrix](docs/implementation-status.md). A local API server is not a dashboard or chat interface.
 
 ## Connect an agent
 
-Start the REST adapter:
+Use a dedicated scoped credential. Start the REST adapter:
 
 ```bash
 atmet-brain serve
@@ -109,39 +201,34 @@ Or configure an MCP client to launch:
 atmet-brain --token-file /absolute/path/to/worker.token mcp
 ```
 
-Use a dedicated credential and an explicit space ID. The same checks run for every interface. [REST guide](docs/api.md) | [MCP guide](docs/mcp.md) | [Identity and permissions](docs/permissions.md)
+The API defaults to loopback port 7310. It needs trusted ingress before remote deployment. MCP uses a local subprocess. [Company setup](docs/use-for-your-company.md) · [MCP guide](docs/mcp.md) · [Deployment](docs/deployment.md).
 
 ## Documentation
 
-- [Documentation index](docs/README.md)
-- [Quickstart](docs/quickstart.md)
-- [Architecture and data model](docs/architecture.md)
-- [Memory and continuous learning](docs/memory-and-learning.md)
-- [Workflows and automatic discovery](docs/workflows.md)
-- [Skills](docs/skills.md)
-- [Repeated tasks into Python scripts](docs/automations.md)
-- [Configuration](docs/configuration.md)
-- [Versions and history](docs/versioning.md)
-- [Backup and recovery](docs/backup-and-recovery.md)
-- [Connector development](docs/connectors.md)
-- [Deployment](docs/deployment.md)
-- [Testing](docs/testing.md)
-- [GitHub release guide](docs/releasing.md)
-- [Release versions](docs/release-versioning.md)
+| Goal | Start here |
+| --- | --- |
+| Install or try the CLI | [Installation](docs/install.md) |
+| Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
+| Understand modules and data boundaries | [Architecture](docs/architecture.md) |
+| Learn from information and changes | [Memory](docs/memory-and-learning.md), [workflows](docs/workflows.md), [skills](docs/skills.md) |
+| Reuse deterministic work | [Automations](docs/automations.md) |
+| Manage access, configuration and history | [Permissions](docs/permissions.md), [configuration](docs/configuration.md), [versions](docs/versioning.md) |
+| Back up and operate the core | [Recovery](docs/backup-and-recovery.md), [deployment](docs/deployment.md) |
+| Integrate another client | [API](docs/api.md), [MCP](docs/mcp.md), [connectors](docs/connectors.md) |
+| Contribute or release | [Contributing](CONTRIBUTING.md), [documentation maintenance](docs/documentation.md), [release versioning](docs/release-versioning.md) |
+
+See the [full documentation index](docs/README.md) and [validation record](docs/validation.md).
 
 ## Development
 
 ```bash
 python -m unittest discover -s tests -v
+python scripts/generate_diagrams.py
 python scripts/check_project.py
 ```
 
-Tests use temporary fictional data. HTTP integration tests bind loopback sockets. No external model or mailbox is contacted by the test suite.
-
-## Contributing
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Small, evidence-backed changes are welcome. Add a regression test when changing authorization, revisions, publication, connector behavior or recovery.
+Every change includes a documentation-impact review. Update affected commands, diagrams, guides, supported scope and release notes in the same change. The project checker detects stale generated diagrams and OpenAPI. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before contributing.
 
 ## License
 
-[Apache License 2.0](LICENSE). Copyright 2026 Atmet. Third-party dependencies retain their own licenses. Atmet names and branding are separate from the software license.
+[Apache License 2.0](LICENSE). Copyright 2026 Atmet. Third-party dependencies retain their licenses. Atmet names and branding are separate from the software license.

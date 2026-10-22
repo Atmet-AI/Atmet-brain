@@ -1,13 +1,13 @@
-erDiagram
-    ORGANIZATION ||--o{ SPACE : owns
-    ORGANIZATION ||--o{ PRINCIPAL : includes
-    PRINCIPAL ||--o{ CREDENTIAL : authenticates
-    PRINCIPAL ||--o{ GRANT : receives
-    SPACE ||--o{ GRANT : scopes
-    SPACE ||--o{ SOURCE : holds
-    SOURCE ||--o{ SOURCE_REVISION : versions
-    SOURCE ||--o{ JOB : feeds
-    SPACE ||--o{ MEMORY : stores
-    SPACE ||--o{ ARTIFACT : holds
-    ARTIFACT ||--o{ ARTIFACT_VERSION : versions
-    SPACE ||--o{ CONTEXT_MANIFEST : records
+sequenceDiagram
+    participant Client
+    participant Adapter
+    participant Core
+    participant Store
+    Client->>Adapter: Credential, task and explicit space ID
+    Adapter->>Core: Authenticated actor and validated parameters
+    Core->>Store: Current identity, credential lineage and grants
+    Core->>Store: Applicable approved policies, workflow and skills
+    Core->>Store: Current permitted source evidence
+    Core->>Core: Check dependencies and bounded context budget
+    Core->>Store: Save exact revision manifest
+    Core-->>Client: Approved context, reference evidence and constraints

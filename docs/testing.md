@@ -1,5 +1,7 @@
 # Testing
 
+Documentation changes use the same release checks when they affect packaged commands, examples or release metadata. `python scripts/check_project.py` also verifies that standalone Mermaid files exactly match the current README/guide blocks. Run `python scripts/generate_diagrams.py` to refresh them, or `python scripts/generate_diagrams.py --check` for a read-only check. Render changed diagrams for visual review. See [documentation maintenance](documentation.md).
+
 Install the package, then:
 
 ```bash

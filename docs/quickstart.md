@@ -1,89 +1,51 @@
 # Quickstart
 
-Use Python 3.11 or newer, a private local directory and fictional data for the first run.
-
-## Install
-
-```bash
-python3 --version
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-atmet-brain --help
-```
-
-On Windows, activate with `.venv\Scripts\activate`. Core Python support is intended to be portable; the selected-directory connector uses POSIX descriptor-relative reads and is currently validated on macOS and in Linux CI configuration, not on Windows.
+[Install the released CLI](install.md), then start with fictional data and one space. You do not need a source checkout for the steps below. The [company walkthrough](use-for-your-company.md) adds a reviewed workflow, scoped agent identity and department organization.
 
 ## Initialize
 
 ```bash
+atmet-brain --help
 atmet-brain init --organization example-company --owner "Company owner"
 atmet-brain space sales
 ```
 
-Initialization prints organization/principal IDs and the location of `owner.token`. It does not print the token. Keep the data directory private. Use `--home /path/to/data` before a subcommand to choose another installation.
+Initialization runs once per data home. It prints organization/principal IDs and the location of the owner credential; it does not print the token. The default home is `~/.atmet-brain`. Use `--home /private/path/to/data` before a subcommand for a separate installation.
 
-Save the returned space ID in a shell variable:
+## Add a fictional source
+
+Save the returned Sales space ID:
 
 ```bash
 export SALES_SPACE="paste-the-returned-space-id"
-atmet-brain ingest examples/company/catalogue.md --space "$SALES_SPACE" --authority authoritative
-atmet-brain ingest examples/company/request.txt --space "$SALES_SPACE"
+printf '%s\n' \
+  'Fact[product.price]: Example product price is 100 USD.' \
+  'Fact[delivery.window]: Standard delivery is five business days.' > company.md
+atmet-brain ingest company.md --space "$SALES_SPACE" --authority authoritative
 atmet-brain worker --space "$SALES_SPACE"
 atmet-brain search "product price" --space "$SALES_SPACE"
+atmet-brain context "Prepare a product quotation" --space "$SALES_SPACE"
 ```
 
-The local extractor recognizes explicit `Fact[key]: statement` lines. An authoritative source can activate an eligible ordinary fact. Rule-like text and inferred claims remain reviewable. Plain lines become sourced observations. This is a deliberately bounded first learning implementation.
+Authoritative source classification requires the corresponding management authority. Use it only for genuinely approved company material. Eligible ordinary `Fact[key]: statement` lines can activate through the bounded local extractor. Inferences and rule-like text still require their review path.
 
-## Add a skill
+`context` returns structured facts, evidence and approved instructions to a caller. It does not generate a customer-facing reply. An external agent/runtime uses that context and its separately authorized tools.
 
-```bash
-atmet-brain skill-install examples/skills/prepare-quotation --space "$SALES_SPACE"
-```
+## Add a workflow or agent
 
-The result is pending. Review the package and use its returned artifact ID:
+Continue with [use for your company](use-for-your-company.md) for a self-contained workflow JSON example and scoped agent credential. Use [MCP](mcp.md) or [REST](api.md) to connect the chosen runtime. The current core does not conduct a first-run interview or supply a dashboard.
 
-```bash
-atmet-brain review ARTIFACT_ID --revision 1 --approve --reason "Reviewed the task method and template"
-atmet-brain context "Prepare a quotation" --space "$SALES_SPACE" --artifact ARTIFACT_ID
-```
+## Run disposable repository demos
 
-Skills and workflows can depend on exact approved versions of policies and other skills. See the [skills guide](skills.md) for dependency checks and resource loading.
-
-## Give an agent access
-
-```bash
-atmet-brain principal quotation-worker --kind service
-atmet-brain grant --principal PRINCIPAL_ID --space "$SALES_SPACE" --role worker
-atmet-brain token --principal PRINCIPAL_ID --space "$SALES_SPACE" --operation read --operation contribute --output /private/path/quotation-worker.token
-```
-
-Replace the returned principal ID and choose a private token path. That credential can read and propose within its underlying grants. It cannot publish policy. All derived credentials also depend on their issuing credential remaining active.
-
-Connect it through [MCP](mcp.md) or run the [REST example](../examples/rest_client.py).
-
-## Run everything in a disposable environment
+If you want the bundled fictional scenarios, use the source-install route in [installation](install.md). From that checkout and its activated environment:
 
 ```bash
 python examples/demo.py
-```
-
-The demo demonstrates the full implemented local path and does not retain data or credentials.
-
-For the repeated-task-to-script path:
-
-```bash
 python examples/automation_demo.py
 ```
 
-This records three fictional accepted reports, prepares and explicitly reviews Python, then computes a new report without calling a model. See [automations](automations.md) for client reporting and routing requirements.
+The first demo covers ingestion, learning, a policy, skill and workflow, scoped context retrieval and encrypted backup. The second covers explicit task reports, reviewed Python and a new report with no model call. Both remove their temporary data on exit. These files are repository examples, not files installed with the wheel.
 
-## Back up before keeping real data
+## Before keeping real data
 
-```bash
-atmet-brain backup-key --output /private/path/brain-backup.key
-atmet-brain backup --key-file /private/path/brain-backup.key --output /separate/storage/brain.atmet
-atmet-brain journal --output /separate/storage/recovery-journal.json
-```
-
-Store the key separately from backup storage. Keep the recovery journal current and test restoration. The [recovery guide](backup-and-recovery.md) explains why an old backup alone cannot establish today's permissions or deletions.
+Keep the data directory private, create dedicated scoped credentials and read the [backup/recovery guide](backup-and-recovery.md). Record the current recovery journal independently of the disk holding your Brain and test a restoration. The selected-directory connector is validated on POSIX; Windows and live Gmail/model accounts need separate checks.

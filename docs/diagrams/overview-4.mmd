@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant User
+    participant Agent as Agent runtime
+    participant Brain as Atmet Brain
+    participant Tools as Authorized tools
+    User->>Agent: Prepare a customer quotation
+    Agent->>Brain: Credential, space ID and task
+    Brain->>Brain: Check current access, approved versions and evidence
+    Brain-->>Agent: Instructions, facts, citations and constraints
+    Agent->>Agent: Use its chosen model to prepare a draft
+    Agent->>Tools: Perform only separately permitted actions
+    Agent->>Brain: Submit evidence-linked feedback if permitted

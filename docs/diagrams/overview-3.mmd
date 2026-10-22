@@ -1,0 +1,9 @@
+flowchart TB
+    Selected["Selected files or supported app records"] --> Sources["Versioned sources"]
+    Sources --> Jobs["Learning jobs"]
+    Jobs --> Memory["Sourced facts and observations"]
+    Jobs --> Drafts["Reviewable candidates"]
+    Drafts --> Review["Authorized review"]
+    Review --> Approved["Approved policies, workflows and skills"]
+    Memory --> Context["Permitted task context"]
+    Approved --> Context

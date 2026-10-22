@@ -18,15 +18,15 @@ Install the wheel into a fresh environment and run a first task. Verify the lice
 
 ## Commit and tag
 
-The source repository is [anashamad9/Atmet-brain](https://github.com/anashamad9/Atmet-brain). Keep the Git author configured to the actual maintainer. Review source, license, supported scope and version consistency before committing. The first release uses:
+The source repository is [anashamad9/Atmet-brain](https://github.com/anashamad9/Atmet-brain). Keep the Git author configured to the actual maintainer. Review source, license, supported scope and version consistency before committing. For the current documentation patch:
 
 ```bash
 git add .
 git status --short
 git diff --cached --stat
-git commit -m "Release Atmet Brain v0.1.0"
-git tag -a v0.1.0 -m "Atmet Brain v0.1.0"
-git push --atomic origin main v0.1.0
+git commit -m "Explain company setup and architecture for v0.1.1"
+git tag -a v0.1.1 -m "Atmet Brain v0.1.1"
+git push --atomic origin main v0.1.1
 ```
 
 Review staged content before the commit. The ignore rules exclude ordinary data, key, token and backup paths, but they cannot identify every possible confidential file. Enable private vulnerability reporting and repository branch rules as appropriate for the team.

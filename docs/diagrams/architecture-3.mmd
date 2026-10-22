@@ -1,12 +1,17 @@
-sequenceDiagram
-    participant Agent
-    participant Adapter
-    participant Core
-    participant Store
-    Agent->>Adapter: Task and explicit space
-    Adapter->>Core: Verified bearer credential
-    Core->>Store: Current identity, credential lineage and grants
-    Core->>Store: Approved applicable versions and permitted evidence
-    Core->>Core: Validate dependencies and context budget
-    Core->>Store: Save revision manifest
-    Core-->>Agent: Approved context plus reference evidence
+erDiagram
+    ORGANIZATION ||--o{ SPACE : owns
+    ORGANIZATION ||--o{ PRINCIPAL : includes
+    PRINCIPAL ||--o{ CREDENTIAL : authenticates
+    PRINCIPAL ||--o{ GRANT : receives
+    SPACE ||--o{ GRANT : scopes
+    SPACE ||--o{ SOURCE : holds
+    SOURCE ||--o{ SOURCE_REVISION : versions
+    SOURCE ||--o{ JOB : feeds
+    SPACE ||--o{ MEMORY : stores
+    SPACE ||--o{ ARTIFACT : holds
+    ARTIFACT ||--o{ ARTIFACT_VERSION : versions
+    SPACE ||--o{ CONTEXT_MANIFEST : records
+    ARTIFACT ||--o{ TASK_RUN : identifies_workflow
+    TASK_RUN ||--o{ AUTOMATION_BLOCK : can_pause
+    ARTIFACT ||--o{ AUTOMATION_BLOCK : records_pause
+    ARTIFACT ||--o{ AUTOMATION_EXECUTION : records_execution
