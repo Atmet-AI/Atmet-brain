@@ -1,5 +1,20 @@
 # Versions and history
 
+For exact terminal commands, start with the [history walkthrough](history-walkthrough.md). It creates revisions 1 and 2, compares them, records a context manifest and restores revision 1 as reviewed revision 3 using the released CLI.
+
+| Goal | Operation / guide |
+| --- | --- |
+| List workflow or skill revisions | `artifacts.history` |
+| Read one old revision | `artifacts.get` with `revision` |
+| Compare two retained bodies | `artifacts.diff` |
+| Restore an approved old body as a draft | `artifacts.rollback`, then authorized review |
+| Read a retained document revision | `sources.get` with `revision` |
+| Check versions used for one context request | `context.manifest` |
+| Inspect permitted change records | `audit.list` |
+| Recover lost installation storage | [Encrypted backup/recovery](backup-and-recovery.md) |
+
+These operations run through `atmet-brain rpc METHOD --params JSON`, REST or Python. Whole-agent profile/release bundles remain proposed; current artifact history does not save an entire agent, conversation or model state.
+
 Several independent versions describe a Brain:
 
 | Version | Tracks |

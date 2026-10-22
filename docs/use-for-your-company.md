@@ -6,6 +6,8 @@ The current core has terminal, Python, REST and MCP access. A dashboard, chat in
 
 ## 1. Install and initialize
 
+If guided `setup` already created the company and Sales space, list spaces with `atmet-brain space`, save its ID and continue to step 2. The manual commands below are an alternative for a fresh installation; do not run `init` again after setup.
+
 Follow [installation](install.md), then initialize a fresh company:
 
 ```bash

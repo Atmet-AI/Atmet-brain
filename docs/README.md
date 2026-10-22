@@ -14,7 +14,8 @@ Start with the [quickstart](quickstart.md), then read the pages for the part you
 | Repeated work and scripts | [Automations](automations.md) |
 | Identity and access | [Permissions](permissions.md) |
 | Settings and precedence | [Configuration](configuration.md) |
-| Revisions and rollback | [Versioning](versioning.md) |
+| View history, compare versions and restore instructions | [History walkthrough](history-walkthrough.md) |
+| Revision concepts, time and rollback rules | [Versioning](versioning.md) |
 | Snapshots and restoration | [Backup and recovery](backup-and-recovery.md) |
 | Python and REST | [API](api.md) |
 | Agent integration | [MCP](mcp.md) |

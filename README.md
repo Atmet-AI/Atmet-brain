@@ -8,7 +8,7 @@ Run the same core from a terminal, a Python application, REST or MCP. Your compa
 
 **v0.2.0 is a local/private-pilot alpha.** The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
-[Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
+[Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
 ## What your company builds
 
@@ -70,6 +70,8 @@ Use [the installation guide](docs/install.md) for one-off `uvx`, a Python-projec
 For an interactive first visit, run `atmet-brain` or `atmet-brain setup`. The wizard creates a local/company installation or connects to an existing server. Terminal results are readable; redirected output remains JSON. Use `--json` for scripts and `--plain` to disable colors. A [versioned installer](docs/install.md#guided-release-installer) verifies the release wheel checksum before installing it.
 
 ### Create a first company Brain
+
+If `setup` already created your company and Sales space, run `atmet-brain space` to find its ID and skip the next two commands. Otherwise, use the manual path below. Initialize each data home only once.
 
 ```bash
 atmet-brain init --organization example-company --owner "Company owner"
@@ -172,6 +174,8 @@ flowchart TB
 
 History explains who changed an artifact and which evidence it used. Rollback creates a new reviewed business revision. Encrypted backup/recovery restores an installation and reconciles current revocations/deletions. These are different operations. [History](docs/versioning.md) · [Recovery](docs/backup-and-recovery.md).
 
+For exact commands and expected results, follow [inspect, compare and restore a workflow](docs/history-walkthrough.md). It shows why a pending revision does not replace approved instructions, and why restoring revision 1 creates revision 3 rather than deleting revision 2. Whole-agent snapshot/version bundles are not implemented by artifact history.
+
 ## Included in this alpha
 
 | Area | Implemented scope |
@@ -246,6 +250,7 @@ The example domain is a placeholder, not an Atmet-hosted endpoint. Team setup ke
 | Learn from information and changes | [Memory](docs/memory-and-learning.md), [workflows](docs/workflows.md), [skills](docs/skills.md) |
 | Reuse deterministic work | [Automations](docs/automations.md) |
 | Manage access, configuration and history | [Permissions](docs/permissions.md), [configuration](docs/configuration.md), [versions](docs/versioning.md) |
+| View changes or restore older instructions | [Step-by-step history walkthrough](docs/history-walkthrough.md) |
 | Back up and operate the core | [Recovery](docs/backup-and-recovery.md), [deployment](docs/deployment.md) |
 | Integrate another client | [API](docs/api.md), [MCP](docs/mcp.md), [connectors](docs/connectors.md) |
 | Contribute or release | [Contributing](CONTRIBUTING.md), [documentation maintenance](docs/documentation.md), [release versioning](docs/release-versioning.md) |

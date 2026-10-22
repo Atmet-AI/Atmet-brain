@@ -4,6 +4,8 @@
 
 ## Initialize
 
+You can run `atmet-brain setup` for guided company/department setup. If it already created your Sales space, list it with `atmet-brain space` and skip initialization below. Otherwise follow this manual path in a fresh data home:
+
 ```bash
 atmet-brain --help
 atmet-brain init --organization example-company --owner "Company owner"
@@ -33,7 +35,7 @@ Authoritative source classification requires the corresponding management author
 
 ## Add a workflow or agent
 
-Continue with [use for your company](use-for-your-company.md) for a self-contained workflow JSON example and scoped agent credential. Use [MCP](mcp.md) or [REST](api.md) to connect the chosen runtime. The current core does not conduct a first-run interview or supply a dashboard.
+Continue with [use for your company](use-for-your-company.md) for a self-contained workflow JSON example and scoped agent credential. Use [MCP](mcp.md) or [REST](api.md) to connect the chosen runtime. Guided setup asks company/space questions; an AI interview about business workflows and a dashboard are not implemented. For later changes, follow the [history and rollback walkthrough](history-walkthrough.md).
 
 ## Run disposable repository demos
 

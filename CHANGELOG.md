@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Added a copy-and-follow history walkthrough for creating, comparing, publishing and restoring workflow revisions, context manifests, source reads, audit records and common errors.
+- Linked practical history usage from the README/docs index, clarified whole-agent snapshot limits, and distinguished guided setup from manual initialization to prevent repeated init.
+- Documentation only; engine behavior, schema and released v0.2.0 assets are unchanged.
+
 ## 0.2.0 - 2026-10-22
 
 Terminal experience and private team access feature release. Canonical schema version 1 is unchanged.
