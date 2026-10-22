@@ -76,3 +76,19 @@ The first accepted OIDC upload was not visible within the previous 25-second met
 The [release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39830420887) passed its build, 139 Python tests, 8 launcher tests, archive checks, OIDC upload, public integrity/latest verification and a fresh public CLI install on Ubuntu. The workflow was dispatched from the immutable v0.2.6 tag after GitHub's push event was delayed; the version-tag trigger is configured and was observed on v0.2.5. No per-release npm authentication prompt or stored npm publishing token was used.
 
 An independent anonymous macOS arm64 install with an empty cache/runtime verified pinned and unversioned resolution to 0.2.6, setup, private owner credential mode, MCP initialize/tools-list, runtime reuse and a persistent service interpreter import. Public SHA-512/SHA-1 matched the actual CI archive, which includes npm provenance metadata. No actual OS service lifecycle or hosted/Playground availability is inferred. The accepted 0.2.5 upload and its initial metadata timeout remain historical; no version or tag was overwritten.
+
+## Published 0.2.6 checkpoint, 22 October 2026
+
+Atmet Brain 0.2.6 has the following observed release evidence:
+
+| Check | Result and scope |
+| --- | --- |
+| Core suite | 139 Python tests passed in the release workflow on Python 3.12 |
+| npm launcher | 8 Node tests plus wheel/tarball identity, content and digest checks passed |
+| Public distribution | GitHub OIDC upload, npm provenance metadata, exact public archive integrity and latest checks passed |
+| Ubuntu install | Fresh public CLI installation passed in the release workflow |
+| macOS arm64 install | Fresh anonymous pinned/unversioned setup, private credential output, MCP initialize/tools-list, runtime reuse and persistent service interpreter checks passed |
+| API and MCP | Regression coverage includes real loopback HTTP/TLS and stdio subprocesses |
+| Providers | Gmail/model request handling uses fixtures; no live provider certification |
+
+[Release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39830420887) and [versioned assets](https://github.com/anashamad9/Atmet-brain/releases/tag/v0.2.6) identify that release. Read the [support matrix](implementation-status.md) before relying on a capability.

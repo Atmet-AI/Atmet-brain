@@ -15,6 +15,81 @@ flowchart TB
     Check --> Finance["Finance space"]
 ```
 
+## Guided Host and Join
+
+There are two jobs: the company administrator hosts the Brain, and each teammate joins it. A workspace named `shared` is a memory space, not a network-sharing switch. Access always needs explicit grants.
+
+### On the company device: Host
+
+```bash
+npx atmet-brain@latest host
+```
+
+For regular administration, install with `npm install --global atmet-brain` and use `atmet-brain host`.
+
+1. For a new data home, enter the company slug, owner name and department workspace names. An existing Brain is reused without replacing its owner or data. With a custom data home, run `atmet-brain --home /srv/company/brain host`.
+2. Choose **ssh**, **https** or **later**. SSH uses an administrator-configured forwarding-only `user@host`; HTTPS uses an already configured company Brain address. Choose later if secure network access is not ready, then run Host again when it is.
+3. Enter a teammate's name, allowed workspace names and role. The default role is reader. Only the selected spaces are granted, including `shared` only if explicitly selected. Review the summary before creating access.
+4. Host saves one private connection file and offers to install/start the per-user background API service. If you choose no, start the displayed `serve` command and keep that terminal running. The API stays on loopback. The host must stay awake and connected.
+5. Give the returned `.atmet-join.json` file privately to its intended recipient. Run Host again for each teammate. The wizard does not send it to anyone.
+
+Host validates the route syntax, not real remote reachability. A completed Host wizard is not proof that teammates can reach the service. Join performs that check from their device. If a service installation fails after access was created, retain the printed file path and fix/start the service; do not repeatedly create credentials.
+
+### On each teammate's device: Join
+
+```bash
+npx atmet-brain@latest join
+```
+
+Choose the received file and a local connection name, default `company`. Check the displayed server/access summary against your administrator's instructions. Join verifies the server-reported organization, principal and credential identity, then lists the workspaces that the server currently permits. It saves a private copy of the credential and creates no local company database. The file's displayed role/workspace labels are descriptive; server grants remain authoritative.
+
+If your company uses a private certificate authority, obtain its CA certificate separately through your administrator and run `atmet-brain --ca-file /private/company-ca.pem join`. A connection file cannot select a local CA file or disable verification.
+
+After a successful Join, use a persistent globally installed CLI:
+
+```bash
+atmet-brain --connection company status
+atmet-brain --connection company space
+atmet-brain --json --connection company mcp-config
+```
+
+Without a global installation, prefix commands with `npx atmet-brain@latest`, for example `npx atmet-brain@latest --connection company status`. Select the connection explicitly each time; joining does not silently change the active company. The MCP configuration launches a local bridge using this verified connection.
+
+### Automatic SSH route: prerequisites and behavior
+
+An administrator must configure a forwarding-only SSH account that cannot read Brain files or run a general shell, restrict forwarding to the Brain's loopback port, authorize each teammate's own SSH key, and verify/install the host key on their devices. The company SSH host must be reachable. Default Brain port is 7310; Host accepts `--port` for a different upstream. SSH service ports and identity-file choices can use administrator-controlled local OpenSSH configuration; the connection file cannot supply shell commands, SSH options or local key paths. Supported destination syntax is `user@hostname` or `user@IPv4`, including a configured host alias.
+
+Atmet opens an ephemeral loopback forwarding port for each API request, waits for readiness and closes its SSH process afterward. CLI and MCP share this behavior. It uses key-based, non-interactive authentication, strict host-key verification, no remote command and no agent forwarding. Unknown host keys or unavailable SSH access fail with instructions; they are never silently accepted. There is no fallback to an unprotected network endpoint. Each request establishes a connection, so SSH adds latency. [OpenSSH forwarding](https://man.openbsd.org/ssh#L) and [client configuration](https://man.openbsd.org/ssh_config).
+
+### Protect and revoke connection files
+
+The file contains a bearer credential with a default 30-day expiry, selected workspaces and a non-owner role. It is reusable until expiry or revocation, not an invitation code consumed once. Do not put it in source control, public chat, a shared drive or logs. Anyone with a copy can use its Brain permissions if they can reach the server. The file contains no SSH private key; SSH access is checked separately.
+
+Host prints a credential ID so an administrator can revoke access:
+
+```bash
+atmet-brain rpc credentials.revoke --params '{"credential_id":"CREDENTIAL_ID"}'
+```
+
+Revocation blocks saved clients and copies of the file. Deleting a file or local connection does not revoke access. Brain backups protect canonical server records; exported connection files and device-local client profiles need their own private handling. Never distribute owner credentials or the database directory.
+
+### Non-interactive administration
+
+For an already initialized Brain:
+
+```bash
+atmet-brain --json host --transport https --endpoint https://brain.example.com --member "Sales employee" --member-spaces shared,sales --role reader --output /private/sales.atmet-join.json
+atmet-brain --json join --file /private/sales.atmet-join.json --name company
+```
+
+The first command runs on the host; the second runs on the teammate's device after private delivery. Replace the example domain with your configured ingress. For SSH, replace `--transport https --endpoint ...` with `--transport ssh --ssh-destination forward-user@brain-host`. On a fresh host, also pass `--organization example-company --spaces shared,sales`. Existing hosts reject creation flags to avoid silently changing company identity. Add `--start-service` only when explicitly installing a new per-user API service. For an existing service use `service start`, not repeated installation.
+
+`setup --mode host` and `setup --mode join` provide the same flows. The older `setup --mode team` aliases Host; `setup --mode connect` keeps the manual endpoint/credential wizard. JSON mode requires explicit answers and never prompts.
+
+## Manual setup and deployment reference
+
+The following commands remain available for administrators who need individual steps or existing credential files.
+
 ## 1. Create the server installation
 
 Install the released CLI persistently on a company device, then:

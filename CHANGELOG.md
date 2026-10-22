@@ -2,12 +2,22 @@
 
 ## Unreleased
 
+## 0.3.0 - guided team sharing, 2026-10-23
+
 ### Added
+
+- Guided Host and Join entry points, available from setup and the terminal welcome. Host reuses an existing Brain, selects workspaces by name and provisions one scoped member connection file at a time.
+- Join previews the server/access details, validates the real organization/principal/credential identity and lists permitted workspaces before saving a private connection. Expired, changed, revoked and mismatched files are rejected.
+- Automatic SSH forwarding for named CLI/MCP connections, with strict known-host/key authentication, bounded startup and per-request process cleanup. No separate tunnel terminal is required after administrator SSH setup.
+- Explicit Host option to install/start the existing per-user API service. HTTPS/manual connection profiles remain supported. The API stays on loopback; no SSH accounts, firewall rules, VPN or certificates are installed.
+- Regression coverage for guided flows, connection-file handling, access boundaries and SSH failure/cleanup. Schema remains 1; existing company data is reused.
+
+### Documentation
+
+- Explain Host and Join by device, how to transfer/revoke private connection files, SSH prerequisites and troubleshooting. Keep advanced manual commands available.
 
 - A task-based documentation index and troubleshooting guide for setup, retrieval, agents, access, synchronization and upgrades.
 - Installed-CLI walkthroughs for memory updates, workflow publication, portable skills, scoped access and task configuration; historical validation has its own archive page.
-
-### Changed
 
 - Refocus the root README and user guides on architecture, setup and usage. Keep release history and publishing procedures in their dedicated guides.
 - Correct old installation pins, require an explicit version for the legacy GitHub installer, and clarify npx versus global CLI commands, source-only examples and existing-data upgrades.

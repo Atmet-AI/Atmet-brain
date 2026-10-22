@@ -2,21 +2,13 @@
 
 Use this page to judge what has been checked. For installation and daily operation, start with the [quickstart](quickstart.md). For the commands contributors run, use [testing](testing.md).
 
-## Current published engine
+## Current engine verification
 
-Atmet Brain 0.2.6 has the following observed release evidence:
+Atmet Brain 0.3.0 uses schema 1. The local release checks cover 154 Python regressions and 8 Node launcher tests. The Host/Join tests exercise real loopback HTTPS, private connection files, scope/identity checks, expiry/revocation, malformed inputs and SSH failure/cleanup. Publication and public installation must be verified separately from local tests.
 
-| Check | Result and scope |
-| --- | --- |
-| Core suite | 139 Python tests passed in the release workflow on Python 3.12 |
-| npm launcher | 8 Node tests plus wheel/tarball identity, content and digest checks passed |
-| Public distribution | GitHub OIDC upload, npm provenance metadata, exact public archive integrity and latest checks passed |
-| Ubuntu install | Fresh public CLI installation passed in the release workflow |
-| macOS arm64 install | Fresh anonymous pinned/unversioned setup, private credential output, MCP initialize/tools-list, runtime reuse and persistent service interpreter checks passed |
-| API and MCP | Regression coverage includes real loopback HTTP/TLS and stdio subprocesses |
-| Providers | Gmail/model request handling uses fixtures; no live provider certification |
+A disposable macOS arm64 integration exercised real OpenSSH forwarding with temporary host/member keys and a loopback-only SSH daemon, joining Sales, denying Finance, rejecting an unknown host key and enforcing revocation. No system SSH configuration was changed. This is an isolated integration check, not a customer-network deployment assessment.
 
-[Release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39830420887) and [versioned assets](https://github.com/anashamad9/Atmet-brain/releases/tag/v0.2.6) identify that release. Read the [support matrix](implementation-status.md) before relying on a capability.
+Read the [support matrix](implementation-status.md) before relying on a capability. Older release evidence is preserved in [historical validation](release-validation.md).
 
 ## Documentation checks
 
@@ -26,6 +18,6 @@ The setup-to-use documentation audit passed 117 CLI invocations against the inst
 
 ## Boundaries
 
-Local tests and the reference API do not establish production hardening or an uptime target. Actual launchd/systemd lifecycle and before-login operation, Docker runtime, private SSH/VPN/HTTPS ingress, live Gmail/model accounts, external named MCP clients, large-scale load and penetration testing need separate deployment validation. No real company information or paid provider was needed for the ordinary suite.
+Local tests and the reference API do not establish production hardening or an uptime target. Actual launchd/systemd lifecycle and before-login operation, Docker runtime, customer SSH/VPN/HTTPS ingress, live Gmail/model accounts, external named MCP clients, large-scale load and penetration testing need separate deployment validation. No real company information or paid provider was needed for the ordinary suite.
 
 For dated earlier evidence and preparation checkpoints, see [historical release validation](release-validation.md). Keep version-by-version changes in the [changelog](../CHANGELOG.md), rather than appending release narratives to usage guides.

@@ -39,7 +39,7 @@ def parser():
     sub.add_parser("status", help="Show current local or selected remote Brain status")
     sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
     setup = sub.add_parser("setup", help="Guided company initialization or connection")
-    setup.add_argument("--mode", choices=["local", "team", "connect"])
+    setup.add_argument("--mode", choices=["local", "host", "join", "team", "connect"])
     setup.add_argument("--organization")
     setup.add_argument("--owner")
     setup.add_argument("--spaces", help="Comma-separated department space slugs")
@@ -47,6 +47,19 @@ def parser():
     setup.add_argument("--endpoint", default=argparse.SUPPRESS)
     setup.add_argument("--token-file", type=Path, default=argparse.SUPPRESS)
     setup.add_argument("--ca-file", type=Path, default=argparse.SUPPRESS)
+    setup.add_argument("--file", type=Path, help="Private team connection file for Join")
+    setup.add_argument("--transport", choices=["ssh", "https", "later"], help="Host connection route")
+    setup.add_argument("--ssh-destination", help="Administrator-configured forwarding-only user@host")
+    setup.add_argument("--port", type=int, default=7310, help="Host loopback Brain port")
+    setup.add_argument("--member", help="Teammate name to provision")
+    setup.add_argument("--member-spaces", help="Allowed workspace names, separated by commas")
+    setup.add_argument("--role", choices=sorted(set(ROLES) - {"owner"}))
+    setup.add_argument("--output", type=Path, help="New private member connection file")
+    setup.add_argument("--start-service", action="store_true", help="Install and start the per-user API service")
+    # Reuse the same flags and validation for the short, discoverable entry points.
+    for name, mode in [("host", "host"), ("join", "join")]:
+        command = sub.add_parser(name, parents=[setup], add_help=False, help="Guided " + name + " setup")
+        command.set_defaults(setup_entry=mode)
     connection = sub.add_parser("connect", help="Verify and save a remote connection without copying its database")
     connection.add_argument("name")
     connection.add_argument("--endpoint", required=True, dest="connect_endpoint")
@@ -239,6 +252,7 @@ def execute(args):
         base = ["atmet-brain", "--home", str(args.home.expanduser().resolve())]
         return {"version": __version__, "initialized": (args.home / "brain.sqlite3").exists(),
                 "home": str(args.home), "start": shlex.join(base + ["setup"]), "inspect": shlex.join(base + ["status"]),
+                "host": shlex.join(base + ["host"]), "join": shlex.join(base + ["join"]),
                 "help": "atmet-brain --help", "connections": list_connections(args.home)}
     if args.command == "connect":
         require(not args.connection and not args.endpoint, "invalid_connection", "Use connect's own endpoint and token-file arguments.")
@@ -249,16 +263,29 @@ def execute(args):
             return list_connections(args.home)
         require(args.name, "connection_missing", "Choose a connection name to remove.")
         return remove_connection(args.home, args.name)
-    if args.command == "setup":
-        require(not args.connection and (not args.endpoint or args.mode == "connect"), "invalid_connection", "Use setup --mode connect for a remote Brain.")
+    if args.command in {"setup", "host", "join"}:
+        require(not args.connection, "invalid_connection", "Host and Join configure connections; omit --connection.")
+        require(type(args.port) is int and 1 <= args.port <= 65535, "invalid_port", "Choose a port between 1 and 65535.")
         from .setup import guided_setup
+        from .sharing import create_share, join_share
         def initialize(organization, owner, spaces):
-            initialized = execute(argparse.Namespace(**{**vars(args), "command": "init", "organization": organization, "owner": owner}))
+            initialized = execute(argparse.Namespace(**{**vars(args), "command": "init", "endpoint": None, "organization": organization, "owner": owner}))
             local = Brain(args.home)
             actor = local.authenticate(Path(initialized["token_file"]).read_text().strip())
             initialized["spaces"] = [local.create_space(actor, name) for name in spaces]
             return initialized
-        return guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca))
+        def local_status():
+            return execute(argparse.Namespace(**{**vars(args), "command": "status", "endpoint": None}))
+        def share_member(*values, **options):
+            local = Brain(args.home)
+            actor = local.authenticate(read_token(args))
+            return create_share(local, actor, *values, **options)
+        def start_api(port):
+            from .services import manage_service, service_spec
+            return manage_service("install", service_spec(args.home, "api", None, None, port), True)
+        return guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca),
+                            inspect_local=local_status, share=share_member,
+                            join=lambda path, name, ca, record: join_share(args.home, path, name, ca, record), start_service=start_api)
     if args.command == "mcp-config":
         require(not args.endpoint, "invalid_connection", "Save a named connection first, or use a dedicated local token file.")
         command = ["-m", "atmet_brain", "--home", str(args.home.expanduser().resolve())]
@@ -398,7 +425,7 @@ def main():
                 if args.command is None:
                     console.welcome(result)
                 else:
-                    if args.command == "setup" and sys.stdin.isatty():
+                    if args.command in {"setup", "host", "join"} and sys.stdin.isatty():
                         console.line("\n  Setup complete", accent=True)
                     else:
                         console.banner(compact=True)

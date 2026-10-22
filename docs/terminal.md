@@ -12,7 +12,7 @@ Global options go before the command. No model key is needed for setup or the lo
 atmet-brain setup
 ```
 
-The wizard asks whether to create a local Brain, prepare a company server or connect to an existing server. Creating a Brain collects a company slug, owner name and explicit department-space names. It validates the answers before provisioning. Repeating setup refuses an existing installation instead of replacing its owner credential.
+The wizard offers local, Host and Join. Local creates a fresh private Brain. Host creates or reuses a company Brain, selects a secure route and prepares scoped teammate access. Join imports a private connection file and verifies it against the server. Local initialization still refuses an existing installation; Host reuses it without replacing its owner credential.
 
 For scripts:
 
@@ -21,7 +21,18 @@ atmet-brain --json setup --mode local --organization example-company --owner "Co
 atmet-brain --json status
 ```
 
-`--mode team` adds private-access instructions while keeping the server bound to loopback. Setup does not install a VPN, open firewall ports or infer/approve business procedures. Add sources and reviewed workflows through the [company walkthrough](use-for-your-company.md).
+## Host and Join a team
+
+```bash
+atmet-brain host
+atmet-brain join
+```
+
+Run Host on the company device and Join on each teammate's device. Host lets you select workspace names, role and a private output file, then offers explicit background service installation. Join displays the file's destination, checks actual server identity and lists permitted spaces. Automatic SSH connections manage forwarding per request; HTTPS uses existing trusted ingress. The company administrator must prepare SSH accounts/keys/known hosts or HTTPS ingress first. Choose the Host route `later` to stop before networking/member setup.
+
+For scripts use `host --transport https --endpoint https://brain.example.com --member "Sales employee" --member-spaces sales --output /private/sales.atmet-join.json`, then `join --file /private/sales.atmet-join.json` on the teammate's device. Add organization/spaces flags only for a new Brain. Connection files contain scoped credentials and must be transferred privately. See the [full Host/Join guide](team-server.md#guided-host-and-join).
+
+`setup --mode host|join` supports the same flows; `--mode team` aliases Host. Setup does not install a VPN, open firewall ports or infer/approve business procedures. Add sources and reviewed workflows through the [company walkthrough](use-for-your-company.md).
 
 ## Common tasks
 
@@ -52,7 +63,7 @@ Alternatively, `atmet-brain setup --mode connect` guides those choices. Non-inte
 
 Supported remote commands: `status`, `space`, `principal`, `grant`, `token`, `team-add`, `ingest`, `search`, `context`, `propose`, `review`, `sync`, `rpc` and `mcp`. File ingestion uploads the explicitly selected local text file to the server. Installation-owner operations, skill-directory import, connector registration, services, backups, recovery and workers remain local. Unsupported remote commands fail instead of opening a local database.
 
-Connections are always selected explicitly with `--connection NAME`. A one-off `--endpoint URL --token-file FILE` is also available. There is no implicit active-company setting. Named profiles bind the verified organization/principal and store their credential privately in `~/.atmet-brain/client-tokens`. The client uses direct connections, refuses redirects and plaintext non-loopback HTTP, and bounds responses. Configure an HTTPS ingress or SSH tunnel rather than disabling these controls.
+Connections are always selected explicitly with `--connection NAME`. A one-off `--endpoint URL --token-file FILE` is also available. There is no implicit active-company setting. Named profiles bind the verified organization/principal and store their credential privately in `~/.atmet-brain/client-tokens`. The client uses direct connections, refuses redirects and plaintext non-loopback HTTP, and bounds responses. Use Join with an automatic SSH connection file or configure trusted HTTPS ingress. Legacy loopback profiles can still use a manually managed SSH tunnel. Keep verification enabled.
 
 ```bash
 atmet-brain connections remove company

@@ -230,24 +230,28 @@ flowchart TB
     Auth --> Server
 ```
 
-On the server, run guided setup and issue an individual credential:
+On the company device, open Host. It creates a new Brain or reuses the existing one:
 
 ```bash
-atmet-brain setup --mode team --organization example-company --spaces shared,sales
-atmet-brain team-add "Sales employee" --space SALES_SPACE_ID --role reader --output /private/employee.token
-atmet-brain service install --start
+npx atmet-brain@latest host
 ```
 
-After configuring private HTTPS ingress or an SSH tunnel and securely delivering the scoped credential, each employee connects:
+Choose the secure route, enter a teammate's name, select allowed workspaces by name and choose a role. Host creates a private `.atmet-join.json` connection file and offers to install/start the local background API service. Run Host again to add another teammate.
+
+Give that file privately to its intended recipient. On their device:
 
 ```bash
-atmet-brain connect company --endpoint https://brain.example.com --token-file /private/employee.token
+npx atmet-brain@latest join
+```
+
+Join asks for the file, displays the server/access details, verifies the actual identity and lists permitted workspaces. The default saved connection name is `company`. For regular use, install the CLI globally, then:
+
+```bash
 atmet-brain --connection company space
-atmet-brain --connection company context "Prepare a quotation" --space SALES_SPACE_ID
 atmet-brain --json --connection company mcp-config
 ```
 
-The example domain is a placeholder, not an Atmet-hosted endpoint. Team setup keeps loopback binding and does not configure the network automatically. API/worker background services use explicit per-user launchd/systemd installation; login-session limits and actual OS-manager validation remain deployment-specific. Do not share owner keys or the database directory. [Full company-server guide](docs/team-server.md) · [Terminal commands](docs/terminal.md).
+Automatic SSH mode opens and closes forwarding for each request; no separate tunnel terminal is needed. An administrator must first configure the forwarding-only SSH account, each teammate's SSH key and trusted host key. Alternatively use existing HTTPS ingress. Host does not configure OS accounts, firewalls, certificates or a VPN. The connection file contains a scoped credential, not a public or single-use invitation; keep it private. [Step-by-step Host and Join guide](docs/team-server.md) · [Terminal commands](docs/terminal.md).
 
 ## Documentation
 

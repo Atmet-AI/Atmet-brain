@@ -1,13 +1,13 @@
 # Implementation status
 
-Atmet Brain 0.2.6 is a local/private-pilot alpha using database schema 1. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.3.0 is a local/private-pilot alpha using database schema 1. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
 | Organizations/spaces | Local provisioning, stable IDs and tested company/space isolation |
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
 | Registry distribution | npm includes the matching checksum-verified Python core and isolated runtime bootstrap; public Ubuntu CLI and anonymous macOS arm64 setup/MCP checks passed. See [installation](install.md) and [validation](validation.md). |
-| Terminal setup | Guided create/connect choices, company/department setup, orange pixel welcome, compact command headers, responsive/plain fallbacks and JSON for scripts; no AI onboarding interview |
+| Terminal setup | Guided Local/Host/Join, existing-Brain reuse, workspace-name member selection, private scoped connection files, server identity/scope verification and explicit service-start option; orange/plain/JSON presentation; no AI onboarding interview |
 | Background services | Explicit per-user launchd/systemd API and worker definitions plus controls; templates/dispatch tested, actual OS-manager lifecycle needs deployment validation |
 | Source ingestion | Working UTF-8 text/Markdown/CSV/JSON capture with revisions and current audience |
 | Memory learning | Working local line extractor, explicit authoritative-fact activation, observations, reviewable inference/conflict |
@@ -17,7 +17,7 @@ Atmet Brain 0.2.6 is a local/private-pilot alpha using database schema 1. Use th
 | Search | Working permission-first lexical ranking; no semantic/vector index in this release |
 | Context | Working bounded approved/reference separation and source/artifact manifest |
 | History | Working artifact effective/known time lookup and retained source versions; no universal historical state replay |
-| REST and remote CLI | Local HTTP adapter; named HTTPS/SSH-loopback client connections with identity pinning, private credential files, CA validation and no redirects; real loopback HTTP/TLS tests; no production gateway or SSO |
+| REST and remote CLI | Local HTTP adapter; named HTTPS/manual SSH-loopback/automatic SSH client connections with identity pinning, private credential files, CA validation and no redirects; real loopback HTTP/TLS tests; no production gateway or SSO |
 | MCP | Local stdio and stdio-to-REST remote bridge with subprocess/revocation tests; generated client configuration; no remote MCP HTTP/OAuth transport or named-client certification |
 | File connector | Working bounded POSIX selected-directory sync, changes, omissions and tombstones |
 | Gmail | Read-only selected-label adapter with fixture tests; no live account validation or token refresh |

@@ -5,7 +5,7 @@ The terminal entry point for the open-source Atmet Brain Python engine. The matc
 With Node.js 22.14 or newer and npm installed:
 
 ```bash
-npx atmet-brain setup
+npx atmet-brain@latest setup
 ```
 
 Or install the command for regular use:
@@ -44,7 +44,9 @@ All core arguments are forwarded literally. Bootstrap messages go to stderr; MCP
 npx atmet-brain --connection company mcp
 ```
 
-Save the company connection first using the core's `connect` command. Each user/agent needs individual scoped access. No company data is uploaded by merely installing this launcher.
+On the company device run `npx atmet-brain@latest host`. It creates or reuses the Brain and prepares a private scoped connection file for each teammate. On their device run `npx atmet-brain@latest join` and choose that file. Join checks the real server identity and lists allowed workspaces. Treat the connection file as a credential, not a public invitation.
+
+SSH connections manage their own forwarding per request after an administrator configures the forwarding-only account, SSH keys and trusted host key. HTTPS uses existing company ingress. The wizard does not configure OS accounts, firewall rules or certificates. The manual `connect` command remains available. Each user/agent needs individual scoped access. No company data is uploaded by merely installing this launcher. [Host and Join](https://github.com/anashamad9/Atmet-brain/blob/main/docs/team-server.md).
 
 Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have local macOS arm64 and Linux CI coverage; the other archive targets need deployment checks. Windows is not validated. On other Linux libc variants, an administrator can select a compatible uv with `ATMET_UV_BIN`; core support still needs evaluation.
 

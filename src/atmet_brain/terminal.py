@@ -69,6 +69,7 @@ class Console:
         self.wrapped("Home  " + value["home"], "  ", muted=True)
         self.line()
         for title, command in [("Set up a Brain", value["start"]), ("Inspect this Brain", value["inspect"]),
+                               ("Host a team Brain", value["host"]), ("Join your team", value["join"]),
                                ("Browse commands", value["help"])]:
             self.line("  " + title)
             self.wrapped(command, "    ", accent=True)

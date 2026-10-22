@@ -57,6 +57,7 @@ flowchart TB
 | Connections | `connector_service.py`, `connectors/` | Selected-resource bindings, source reconciliation and bounded provider adapters |
 | Persistence | `db.py`, `schema.sql` | Transactions, durable canonical state, source/permission references and audit metadata |
 | Recovery | `backups.py` | Coherent encrypted snapshots, quarantined restoration and deletion/revocation reconciliation |
+| Team setup | `setup.py`, `sharing.py`, `connections.py`, `ssh.py` | Guided Host/Join, private scoped connection files, verified profiles and bounded per-request SSH forwarding |
 | Interfaces | `cli.py`, `rpc.py`, `server.py`, `mcp.py`, `client.py` | Thin request/transport adapters, including the local stdio-to-REST bridge, over the same service methods |
 | Operator/client setup | `terminal.py`, `setup.py`, `connections.py`, `services.py` | Human rendering, explicit onboarding, private identity-bound remote profiles and per-user service definitions |
 

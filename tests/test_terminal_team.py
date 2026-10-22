@@ -22,7 +22,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
-from atmet_brain import Brain, BrainError
+from atmet_brain import Brain, BrainError, __version__
 from atmet_brain.cli import execute, parser
 from atmet_brain.client import Client
 from atmet_brain.connections import connect, load_connection, remove_connection
@@ -368,7 +368,7 @@ class TerminalTeamCase(unittest.TestCase):
     def test_installer_verifies_checksum_before_invoking_uv(self):
         tools = self.root / "tools"
         tools.mkdir()
-        fixture = self.root / "atmet_brain-0.2.0-py3-none-any.whl"
+        fixture = self.root / f"atmet_brain-{__version__}-py3-none-any.whl"
         fixture.write_bytes(b"fictional release wheel")
         sums = self.root / "SHA256SUMS.txt"
         sums.write_text(hashlib.sha256(fixture.read_bytes()).hexdigest() + "  " + fixture.name + "\n")
