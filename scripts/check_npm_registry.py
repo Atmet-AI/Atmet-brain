@@ -14,6 +14,10 @@ from urllib.request import Request, urlopen
 REGISTRY = "https://registry.npmjs.org/atmet-brain/"
 
 
+class RegistryPending(ValueError):
+    """The accepted release has not propagated to public metadata yet."""
+
+
 def version_parts(version):
     if not isinstance(version, str) or not re.fullmatch(r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)", version):
         raise ValueError("Automatic latest publication requires MAJOR.MINOR.PATCH.")
@@ -53,17 +57,29 @@ def after(version, archive, fetch=fetch_metadata):
     version_parts(version)
     metadata = fetch(version)
     latest = fetch("latest")
-    if not metadata or metadata.get("name") != "atmet-brain" or metadata.get("version") != version:
-        raise ValueError("Published package identity is not visible yet.")
+    if not metadata:
+        raise RegistryPending("Published package identity is not visible yet.")
+    if metadata.get("name") != "atmet-brain" or metadata.get("version") != version:
+        raise ValueError("Unexpected public package identity.")
     expected = "sha512-" + base64.b64encode(hashlib.sha512(archive).digest()).decode("ascii")
     dist = metadata.get("dist", {})
     if dist.get("integrity") != expected or dist.get("shasum") != hashlib.sha1(archive).hexdigest():
         raise ValueError("Public npm archive does not match the reviewed build.")
     if not latest or latest.get("version") != version:
-        raise ValueError("npm latest does not resolve to the published version.")
+        raise RegistryPending("npm latest does not resolve to the published version.")
     return {"package": "atmet-brain", "version": version, "latest": version,
             "integrity": expected, "sha256": hashlib.sha256(archive).hexdigest(),
             "registry_verified": True, "provenance": dist.get("attestations")}
+
+
+def wait_after(version, archive, fetch=fetch_metadata, attempts=121, interval=5):
+    for attempt in range(attempts):
+        try:
+            return after(version, archive, fetch)
+        except RegistryPending:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(interval)
 
 
 def main():
@@ -76,14 +92,7 @@ def main():
     version = tomllib.loads((root / "pyproject.toml").read_text())["project"]["version"]
     archive = args.archive.read_bytes()
     # The workflow checks archive contents/version before reaching this guard.
-    for attempt in range(6 if args.phase == "after" else 1):
-        try:
-            result = before(version) if args.phase == "before" else after(version, archive)
-            break
-        except ValueError:
-            if attempt == 5 or args.phase == "before":
-                raise
-            time.sleep(5)
+    result = before(version) if args.phase == "before" else wait_after(version, archive)
     if args.receipt:
         args.receipt.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))

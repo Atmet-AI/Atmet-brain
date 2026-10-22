@@ -1,6 +1,6 @@
 # Automatic npm releases
 
-Atmet Brain 0.2.4 is live on [npm](https://www.npmjs.com/package/atmet-brain), including the orange terminal and the matching Python core. The 0.2.5 source adds automatic release publishing. An npm account is the only registry account needed; no Atmet PyPI publication is required.
+Atmet Brain 0.2.5 is live on [npm](https://www.npmjs.com/package/atmet-brain), including the orange terminal and the matching Python core. GitHub OIDC publishing is active and the first upload is verified. Version 0.2.6 improves the wait for public registry propagation. An npm account is the only registry account needed; no Atmet PyPI publication is required.
 
 ## Everyday updates
 
@@ -10,7 +10,7 @@ Ask the maintainer or coding agent to make the change and release it. They handl
 2. Synchronize pyproject.toml, src/atmet_brain/_version.py, npm version/engineVersion, OpenAPI and CHANGELOG.md. Run the [release checks](releasing.md).
 3. Commit on main, create an annotated matching tag and push both atomically.
 4. GitHub tests, builds and inspects the wheel/npm archive. It refuses tag/version mismatches, lightweight tags and release commits outside main.
-5. With the publishing switch enabled, GitHub refuses duplicate npm versions or latest downgrades, then publishes through OIDC with provenance. It checks public identity/digests/latest, runs a fresh public CLI install and saves a registry receipt.
+5. With the publishing switch enabled, GitHub refuses duplicate npm versions or latest downgrades, then publishes through OIDC with provenance. It waits up to ten minutes for public metadata/latest, checks identity/digests, runs a fresh public CLI install and saves a registry receipt.
 6. Check the Actions result before announcing availability. A successful build with a skipped npm job is not a published release.
 
 Ordinary branch commits do not publish. This lets documentation work and unfinished changes remain separate from releases. Immutable version tags are the release signal. Existing installations do not update themselves: users run `npx atmet-brain@latest setup`, or update a global install with `npm install --global atmet-brain@latest`.
@@ -46,7 +46,7 @@ gh variable set NPM_PUBLISH_ENABLED --body true --repo anashamad9/Atmet-brain
 gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag=v0.2.5 -f publish_npm=true
 ```
 
-The manual command above is for the first prepared tag or recovery. Subsequent new tag pushes publish automatically. No npm publishing secret or PyPI job is used. The workflow uses GitHub-hosted Ubuntu, Node 24, npm 11.17.0 and a job-scoped OIDC identity. Keep the workflow filename/environment consistent with npm trust.
+The manual command above records the first 0.2.5 activation. That version is now published and must not be uploaded again; use the next unused version for future releases. Manual dispatch remains for build-only checks or recovery before an upload has been accepted. Subsequent new tag pushes publish automatically. No npm publishing secret or PyPI job is used. The workflow uses GitHub-hosted Ubuntu, Node 24, npm 11.17.0 and a job-scoped OIDC identity. Keep the workflow filename/environment consistent with npm trust.
 
 ## Build-only validation
 
@@ -56,7 +56,7 @@ Before account setup, leave NPM_PUBLISH_ENABLED absent or false. Tag pushes stil
 gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag=v0.2.5 -f publish_npm=false
 ```
 
-Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete checked tgz). Successful publication additionally saves `npm-publication-receipt`. Generated vendor files stay out of Git; [local build commands](releasing.md#npm-distribution) describe preparing the exact archive.
+Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete checked tgz). Successful publication additionally saves `npm-publication-receipt`. A delayed registry response never triggers another upload; a digest/identity mismatch fails immediately. Generated vendor files stay out of Git; [local build commands](releasing.md#npm-distribution) describe preparing the exact archive.
 
 ## Failure and recovery
 

@@ -7,7 +7,7 @@ on:
       release_tag:
         description: Reviewed immutable release tag
         required: true
-        default: v0.2.5
+        default: v0.2.6
         type: string
       publish_npm:
         description: Publish the launcher through an existing npm trusted publisher
@@ -62,6 +62,7 @@ jobs:
     if: vars.NPM_PUBLISH_ENABLED == 'true' && (github.event_name == 'push' || inputs.publish_npm)
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment:
       name: npm
       url: https://www.npmjs.com/package/atmet-brain

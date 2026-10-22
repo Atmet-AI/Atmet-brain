@@ -48,3 +48,5 @@ Version 0.2.4 adds terminal presentation and stderr-only setup prompts. The same
 Version 0.2.4 is now live on npm. Exact registry integrity/latest and fresh anonymous pinned/unversioned installs, setup and MCP were checked on macOS arm64.
 
 Version 0.2.5 adds tag-triggered npm releases, annotated-tag/main-history guards, duplicate/downgrade protection and post-publication integrity/install checks. Initial account trust and activation are required before its first OIDC upload; source preparation alone does not establish npm availability.
+
+Version 0.2.6 fixes the public-registry propagation timeout observed after the first accepted OIDC upload. The metadata verifier can wait ten minutes, with no duplicate upload or integrity-check relaxation.

@@ -62,3 +62,7 @@ Public npm metadata matched the reviewed archive SHA-1 and SHA-512, and latest r
 ## Automatic release guards, 0.2.5
 
 Release tests exercise actual annotated/lightweight tags in a temporary Git repository, checkout mismatch and main ancestry. Registry tests reject duplicate versions, missing package metadata, malformed versions, downgrades, non-404 HTTP errors, mismatched public digests and an incorrect latest tag. They also check numeric version ordering. These tests do not substitute for a successful OIDC upload; record that separately after account activation.
+
+## Registry propagation handling, 0.2.6
+
+The first accepted OIDC upload was not visible within the previous 25-second metadata window. The verifier now polls missing metadata/latest for up to ten minutes without publishing again. Regression cases cover delayed version/latest visibility, exhausted attempts and immediate integrity-mismatch failure. The npm job has a fifteen-minute execution bound.

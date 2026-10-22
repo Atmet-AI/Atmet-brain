@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-from scripts.check_npm_registry import after, before, fetch_metadata
+from scripts.check_npm_registry import after, before, fetch_metadata, wait_after
 from scripts.check_release_tag import check_release
 
 
@@ -49,6 +49,25 @@ class RegistryGuardTests(unittest.TestCase):
             after("0.2.5", archive, lambda key: {"version": "0.2.4"} if key == "latest" else metadata)
         with self.assertRaisesRegex(ValueError, "identity"):
             after("0.2.5", archive, lambda key: None)
+
+    def test_propagation_delay_retries_without_another_publish(self):
+        archive = b"reviewed release archive"
+        metadata = {"name": "atmet-brain", "version": "0.2.5", "dist": {
+            "integrity": "sha512-" + base64.b64encode(hashlib.sha512(archive).digest()).decode(),
+            "shasum": hashlib.sha1(archive).hexdigest()}}
+        responses = iter([None, metadata, metadata, {"version": "0.2.4"}, metadata, metadata])
+        self.assertTrue(wait_after("0.2.5", archive, lambda key: next(responses), attempts=3, interval=0)["registry_verified"])
+        with self.assertRaisesRegex(ValueError, "visible"):
+            wait_after("0.2.5", archive, lambda key: None, attempts=2, interval=0)
+
+    def test_integrity_mismatch_fails_immediately_without_retry(self):
+        calls = []
+        def fetch(key):
+            calls.append(key)
+            return {"name": "atmet-brain", "version": "0.2.5", "dist": {}}
+        with self.assertRaisesRegex(ValueError, "match"):
+            wait_after("0.2.5", b"archive", fetch, attempts=3, interval=0)
+        self.assertEqual(calls, ["0.2.5", "latest"])
 
 
 class ReleaseTagTests(unittest.TestCase):

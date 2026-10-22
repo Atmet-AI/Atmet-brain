@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.6 - registry propagation handling, 2026-10-22
+
+- Wait up to ten minutes for an accepted npm upload to appear in public metadata and latest. Retry visibility checks without uploading the version again.
+- Fail immediately for mismatched package identity or archive integrity. Bound the publishing job to fifteen minutes and test delayed metadata/latest responses.
+- This fixes the first OIDC upload's premature post-publication timeout. Core runtime, API and schema are unchanged.
+
 ## 0.2.5 - automated npm releases, 2026-10-22
 
 - Annotated version tags automatically build, test and publish through GitHub OIDC after one-time trusted-publisher activation. No stored npm publishing token or per-release browser approval is needed for that route.
