@@ -12,7 +12,7 @@ atmet-brain journal --output /independent/storage/recovery-journal.json
 
 The snapshot uses SQLite's backup API, then verifies database integrity. Its encrypted payload contains a manifest, canonical database and safe deployment settings. The database contains sources, memories, workflows, skills, permissions, audit metadata, jobs and recovery decisions. A SHA-256 manifest checks content integrity inside authenticated Fernet encryption. Version 0.1 supports database snapshots up to 256 MiB and loads the encrypted payload into memory.
 
-Keep the key separate from backup storage. Losing it prevents decryption. No plaintext backup mode is provided. Runtime provider credentials live outside this payload. Raw bearer tokens are not stored in the database.
+Keep the key separate from backup storage. Losing it prevents decryption. No plaintext backup mode is provided. Runtime provider credentials live outside this payload. Raw bearer tokens are not stored in the database. Device-specific remote connection profiles/token files and OS service definitions are also outside the canonical payload. Reinstall services and reconnect clients with newly issued credentials after recovery; do not copy old raw keys back into service.
 
 ## Keep the journal current
 

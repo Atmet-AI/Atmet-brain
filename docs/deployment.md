@@ -1,6 +1,6 @@
 # Deployment
 
-Start locally, run the acceptance tests and choose a bounded company workflow before handling sensitive information. Version 0.1 is a reference local alpha, without a production security or availability claim.
+Start locally, run the acceptance tests and choose a bounded company workflow before handling sensitive information. Version 0.2 is a local/private-pilot alpha, without a production security or availability claim.
 
 ## Processes
 
@@ -13,7 +13,7 @@ atmet-brain --home /private/brain-data --token-file /private/worker.token worker
 
 SQLite WAL supports the local process model. Jobs use leases and bounded retries. There is no distributed lease service or multi-node deployment contract. Long model calls and large data volumes require measurements before scaling.
 
-Connector synchronization is explicit. Run `sync` from an operator-managed scheduler or invoke it deliberately. Closing a separate UI has no effect on a worker process that is still running, but this repository does not install an operating-system service automatically.
+Connector synchronization is explicit. Run `sync` from an operator-managed scheduler or invoke it deliberately. API and worker processes can run in the foreground or as explicitly installed per-user services. See [team server setup](team-server.md) for launchd/systemd installation, login-session limits and separate worker selection. No service is installed during package installation or company setup.
 
 ## Network
 

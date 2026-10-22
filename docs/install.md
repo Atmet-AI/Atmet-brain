@@ -1,6 +1,6 @@
 # Installation
 
-Choose the route that matches how you use the Brain. Version 0.1.1 is an alpha distributed through GitHub releases. No PyPI or npm package is published by this release.
+Choose the route that matches how you use the Brain. Version 0.2.0 is an alpha distributed through GitHub releases. No PyPI or npm package is published by this release.
 
 | Goal | Route | Requires source checkout? |
 | --- | --- | --- |
@@ -11,13 +11,25 @@ Choose the route that matches how you use the Brain. Version 0.1.1 is an alpha d
 
 Use Python 3.11+. The commands below request 3.12 where uv selects the interpreter. The CLI and core are validated on macOS locally and Ubuntu in CI; the selected-directory connector relies on POSIX behavior. Windows has not been validated.
 
+## Guided release installer
+
+With [uv installed](https://docs.astral.sh/uv/getting-started/installation/) and curl available, download the versioned installer, inspect it if desired, then run it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.2.0/install.sh -o install-atmet.sh
+sh install-atmet.sh
+atmet-brain setup
+```
+
+The script downloads the selected GitHub wheel and release checksum manifest, checks the SHA-256 digest, then installs it into the current user's isolated uv tool environment. No sudo or repository clone is needed. The checksum protects release download consistency; authenticity still depends on trusting the repository/release and HTTPS. The script does not install uv, initialize company data, open network ports or start a service. If uv is missing, it exits with its official installation link. `sh install-atmet.sh 0.2.0` selects an explicit version; review schema compatibility and back up before changing versions.
+
 ## Regular CLI use
 
 First [install uv](https://docs.astral.sh/uv/getting-started/installation/). Then:
 
 ```bash
 uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.1.1/atmet_brain-0.1.1-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
 atmet-brain --help
 ```
 
@@ -27,7 +39,7 @@ uv installs the tool into an isolated environment and exposes its executable. If
 
 ```bash
 uvx --python 3.12 \
-  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.1.1/atmet_brain-0.1.1-py3-none-any.whl" \
+  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl" \
   atmet-brain --help
 ```
 
@@ -37,7 +49,7 @@ To use a Git source instead, this also works with Git installed:
 
 ```bash
 uvx --python 3.12 \
-  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.1.1" \
+  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.2.0" \
   atmet-brain --help
 ```
 
@@ -49,7 +61,7 @@ Inside your own Python 3.11+ project:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.1.1/atmet_brain-0.1.1-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
 ```
 
 The package provides `from atmet_brain import Brain` and the `atmet-brain` executable. Keep this environment activated when using its CLI. On Windows, the activation command is `.venv\Scripts\activate`; Windows support still needs validation.
@@ -57,7 +69,7 @@ The package provides `from atmet_brain import Brain` and the `atmet-brain` execu
 ## Source, examples and contributions
 
 ```bash
-git clone --branch v0.1.1 https://github.com/anashamad9/Atmet-brain.git
+git clone --branch v0.2.0 https://github.com/anashamad9/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate
@@ -70,6 +82,6 @@ A tagged clone is a detached checkout of a reproducible release. Contributors ca
 
 ## Data and upgrades
 
-Installation and company initialization are separate. Installing a package does not create a company or import company information. Continue with the [quickstart](quickstart.md) or the [company walkthrough](use-for-your-company.md).
+Installation and company initialization are separate. Installing a package does not create a company or import company information. Run `atmet-brain setup` for guided initialization, or continue with the [quickstart](quickstart.md) / [company walkthrough](use-for-your-company.md). For a shared installation, follow [team server setup](team-server.md).
 
 For an upgrade, read the release notes, back up the installation and check schema compatibility. Install a deliberate new release URL rather than assuming a pinned Git tag or wheel URL follows future releases. Never assume a package upgrade also approves new workflow instructions. [Release versioning](release-versioning.md) and [recovery](backup-and-recovery.md) describe these boundaries.

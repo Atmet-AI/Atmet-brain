@@ -29,8 +29,9 @@ AUTOMATION_TOOLS = {
 
 
 class MCPServer:
-    def __init__(self, brain, token, allow_writes=False, allow_automations=False):
+    def __init__(self, brain, token, allow_writes=False, allow_automations=False, client=None):
         self.brain, self.token, self.initialized = brain, token, False
+        self.client = client
         self.tools = {**READ_TOOLS, **(WRITE_TOOLS if allow_writes else {}), **(AUTOMATION_TOOLS if allow_automations else {})}
 
     def handle(self, request):
@@ -46,7 +47,7 @@ class MCPServer:
         if not isinstance(params, dict):
             return failure(-32602, "Invalid parameters")
         try:
-            actor = self.brain.authenticate(self.token)
+            actor = self.client.call("identity.me") if self.client else self.brain.authenticate(self.token)
             if method == "initialize":
                 self.initialized = True
                 result = {"protocolVersion": "2025-11-25", "capabilities": {"tools": {"listChanged": False}},
@@ -59,7 +60,8 @@ class MCPServer:
             elif method == "tools/list":
                 result = {"tools": []}
                 for name, (operation, description) in self.tools.items():
-                    schema = input_schema(self.brain, operation)
+                    from .brain import Brain
+                    schema = input_schema(Brain if self.client else self.brain, operation)
                     if name == "brain_list_skills":
                         schema["properties"].pop("kind", None)
                     result["tools"].append({"name": name, "description": description, "inputSchema": schema,
@@ -74,7 +76,8 @@ class MCPServer:
                         return failure(-32602, "Invalid tool arguments")
                     arguments["kind"] = "skill"
                 try:
-                    value = dispatch(self.brain, actor, self.tools[name][0], arguments)
+                    value = (self.client.call(self.tools[name][0], **arguments) if self.client
+                             else dispatch(self.brain, actor, self.tools[name][0], arguments))
                     result = {"content": [{"type": "text", "text": dumps(value)}], "isError": False}
                 except BrainError as error:
                     result = {"content": [{"type": "text", "text": dumps({"error": error.as_dict()})}], "isError": True}

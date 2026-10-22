@@ -1,6 +1,6 @@
 # MCP integration
 
-This release implements MCP over stdio using the 2025-11-25 protocol version. The client launches a local subprocess. Messages are newline-delimited JSON-RPC and stdout contains only protocol messages. No remote MCP HTTP/OAuth transport is claimed.
+This release implements MCP over stdio using the 2025-11-25 protocol version. The client launches a local subprocess, which can use a local Brain or bridge to an explicitly selected remote REST service. Messages are newline-delimited JSON-RPC and stdout contains only protocol messages. No remote MCP HTTP/OAuth transport is claimed.
 
 ## Configuration
 
@@ -51,3 +51,13 @@ Each request rechecks the bound credential, its lineage and current grants. Mode
 6. Submit a sourced observation or proposal when useful. Opted-in trusted runtimes can report accepted task outcomes for repeated-task learning.
 
 Keep approved instructions separate from untrusted retrieved source text in the host's prompt construction. The Brain can enforce access to returned content, but arbitrary external model obedience remains the host/runtime's responsibility.
+
+## Use a company Brain remotely
+
+After saving an individual connection, print a client configuration:
+
+```bash
+atmet-brain --json --connection company mcp-config
+```
+
+Or configure your MCP client to launch `atmet-brain --connection company mcp` with an absolute executable and data-home path. The local stdio bridge authenticates on each request and forwards selected tools through REST. It uses the same exact operation schemas, tool opt-in flags and current authorization as local MCP. No company database or owner credential needs to be copied to the employee device. MCP stdout remains protocol-only. This is not an HTTP MCP/OAuth server. Follow [team setup](team-server.md) for HTTPS or restricted SSH forwarding.

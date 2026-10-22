@@ -39,5 +39,8 @@ The current implementation supports deployment settings and versioned shared/dep
 | `ATMET_MODEL_BASE_URL` | Compatible endpoint including its API version prefix |
 | `ATMET_MODEL` | Explicitly selected extraction model |
 | `ATMET_MODEL_API_KEY` | Private provider credential |
+| `NO_COLOR` | Disable ANSI terminal accents when present |
 
 Gmail bindings name an operator-managed `ATMET_...` environment variable. Tokens are not stored in connector configuration. Raw credentials are excluded from portable exports and public examples. Backups contain credential hashes, not the original bearer tokens; restore revokes them all.
+
+Remote client profiles are separate private JSON records under `connections/`, with copied credentials in `client-tokens/`. They do not modify server settings or confer grants. A named connection is always explicit; it uses its saved credential instead of an ambient `ATMET_TOKEN`. User-session services do not automatically inherit interactive shell provider configuration. See [terminal](terminal.md) and [team services](team-server.md).

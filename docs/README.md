@@ -29,4 +29,8 @@ Start with the [quickstart](quickstart.md), then read the pages for the part you
 | Design rationale | [Architecture decisions](adr/0001-local-core.md) |
 | Prior work and protocol references | [References](references.md) |
 
-Diagrams are Mermaid source so they remain editable and render directly on GitHub. The README has six diagrams covering company spaces, the shared core, learning, task retrieval, pure scripts and change handling. The architecture guide maps the current modules, data records and trust boundaries. [Standalone chart sources](diagrams) are generated from Markdown by `scripts/generate_diagrams.py`; the project checker rejects missing, stale or obsolete copies.
+Diagrams are Mermaid source so they remain editable and render directly on GitHub. The README has seven diagrams covering company spaces, the shared core, learning, task retrieval, pure scripts change handling and company-server access. The architecture guide maps the current modules, data records and trust boundaries. [Standalone chart sources](diagrams) are generated from Markdown by `scripts/generate_diagrams.py`; the project checker rejects missing, stale or obsolete copies.
+
+## Terminal and private teams
+
+[Terminal guide](terminal.md) covers guided setup, JSON output and explicit remote connections. [Company server](team-server.md) covers individual credentials, SSH/HTTPS access, MCP bridging and background services.

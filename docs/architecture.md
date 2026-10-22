@@ -14,7 +14,7 @@ flowchart TB
         Agent["MCP agent client"]
     end
     subgraph Adapters["Interface layer"]
-        CLI["cli.py"]
+        CLI["cli.py: local or remote selection"]
         REST["server.py and rpc.py"]
         MCP["mcp.py and rpc.py"]
     end
@@ -22,6 +22,8 @@ flowchart TB
     Remote --> REST
     Agent --> MCP
     CLI --> Identity["auth.py: identity, grants and audiences"]
+    CLI --> Client["client.py: HTTPS or SSH-loopback REST"]
+    Client --> REST
     REST --> Identity
     MCP --> Identity
     Identity --> Facade["brain.py: shared core facade"]
@@ -55,7 +57,8 @@ flowchart TB
 | Connections | `connector_service.py`, `connectors/` | Selected-resource bindings, source reconciliation and bounded provider adapters |
 | Persistence | `db.py`, `schema.sql` | Transactions, durable canonical state, source/permission references and audit metadata |
 | Recovery | `backups.py` | Coherent encrypted snapshots, quarantined restoration and deletion/revocation reconciliation |
-| Interfaces | `cli.py`, `rpc.py`, `server.py`, `mcp.py`, `client.py` | Thin request/transport adapters over the same service methods |
+| Interfaces | `cli.py`, `rpc.py`, `server.py`, `mcp.py`, `client.py` | Thin request/transport adapters, including the local stdio-to-REST bridge, over the same service methods |
+| Operator/client setup | `terminal.py`, `setup.py`, `connections.py`, `services.py` | Human rendering, explicit onboarding, private identity-bound remote profiles and per-user service definitions |
 
 `rpc.py` exposes an explicit operation allowlist, not every facade method. Provisioning, filesystem binding selection and installation backup/recovery are local operator actions outside RPC. No adapter supplies a privileged path around the core's checks.
 
@@ -150,3 +153,7 @@ Task observations, automation blocks and execution hashes use additive schema-1 
 | Deployment | Local reference interfaces and recovery tools | Trusted ingress/TLS, host access, provider identity and operating targets |
 
 The Brain platform and Playground are future clients of this core. Their UI and action runtimes are not required for self-hosted use and are not implemented by drawing an arrow in the architecture.
+
+## 9. Terminal and company-server operation
+
+Local operator commands keep their existing trust boundary. Remote CLI/MCP operations use the explicit RPC registry and never fall back to opening a local database. Device-specific connection/token files stay outside the canonical database and encrypted installation payload; restore issues fresh credentials. `team.add` provisions a non-admin principal, bounded grants and a credential in one transaction. Network access does not establish company data authority. Services keep API and worker processes separate, bind the managed API to loopback and require explicit installation. [Terminal](terminal.md) and [company server](team-server.md) document limits and operation.

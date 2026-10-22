@@ -1,0 +1,8 @@
+flowchart TB
+    People["Employee CLI clients"] --> Transport["Restricted SSH tunnel or trusted private HTTPS ingress"]
+    Agents["Local MCP bridges for agents"] --> Transport
+    Transport --> API["Company REST service"]
+    API --> Check["Current credentials, grants and source audiences"]
+    Check --> Shared["Shared space"]
+    Check --> Sales["Sales space"]
+    Check --> Finance["Finance space"]

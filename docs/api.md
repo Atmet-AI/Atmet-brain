@@ -51,7 +51,7 @@ Use [the Python HTTP client](../examples/rest_client.py) to read a private token
 
 | Group | Methods |
 | --- | --- |
-| Identity | `identity.me`, `principals.create`, `credentials.create`, `credentials.revoke` |
+| Identity | `team.add`, `identity.me`, `principals.create`, `credentials.create`, `credentials.revoke` |
 | Scope | `spaces.list`, `spaces.create`, `grants.create`, `grants.revoke`, `groups.create`, `groups.remove_member` |
 | Sources | `sources.put`, `sources.get`, `sources.list`, `sources.access`, `sources.erase` |
 | Memory | `memories.propose`, `memories.review`, `memories.list` |
@@ -91,3 +91,7 @@ Credentials and grants are separate. Minting a key does not create a space grant
 ## Export
 
 `space.export` returns the current permitted sources, memories and approved artifact bodies. It excludes raw credentials, installation state and a complete operational recovery set. It is not a backup. This release does not implement automatic cross-installation import or identity/ID remapping; use the backup process for installation recovery.
+
+## Private remote clients
+
+The CLI can save verified HTTPS or SSH-loopback connections and call the same operations using `--connection NAME`. `team.add` atomically creates an individual non-admin identity, chosen space/role grants and a narrowed expiring credential; prefer `team-add --output FILE` to keep the returned token out of terminal output. Connection profiles are not grants. See [terminal usage](terminal.md) and [team server](team-server.md).

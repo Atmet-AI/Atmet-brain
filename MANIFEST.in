@@ -1,5 +1,6 @@
 include LICENSE NOTICE README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md
 include AGENTS.md Dockerfile Makefile compose.yaml .gitignore .dockerignore .env.example
+include install.sh
 recursive-include .github *.yml *.md
 recursive-include src *.py *.sql py.typed
 recursive-include docs *.md *.json *.mmd

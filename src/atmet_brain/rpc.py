@@ -7,6 +7,7 @@ from .errors import BrainError, require
 
 METHODS = {
     "identity.me": "whoami", "spaces.list": "list_spaces", "spaces.create": "create_space",
+    "team.add": "add_team_member",
     "principals.create": "create_principal", "grants.create": "grant", "grants.revoke": "revoke_grant",
     "credentials.create": "create_credential", "credentials.revoke": "revoke_credential",
     "groups.create": "create_group", "groups.remove_member": "remove_group_member",
@@ -31,7 +32,7 @@ def parameters(brain, method):
     require(method in METHODS, "unknown_method", "Unknown public operation.", 404)
     function = getattr(brain, METHODS[method])
     return {name: value for name, value in inspect.signature(function).parameters.items()
-            if name != "actor" and not name.startswith("_") and name != "extractor"}
+            if name not in {"self", "actor", "extractor"} and not name.startswith("_")}
 
 
 def dispatch(brain, actor, method, params=None):

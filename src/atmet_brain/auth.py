@@ -118,6 +118,32 @@ def issue(conn, principal_id, operations=None, space_ids=None, expires_at=None, 
 
 
 class IdentityMixin:
+    def add_team_member(self, actor, name, space_ids, role="reader", kind="human", expires_at=None):
+        """Atomic, bounded team provisioning. Returns the new credential once."""
+        require(role in ROLES and role != "owner" and kind in {"human", "service"},
+                "invalid_role", "Choose a non-owner team role and a human or service identity.")
+        require(isinstance(space_ids, list) and 0 < len(space_ids) <= 100 and all(isinstance(s, str) for s in space_ids),
+                "invalid_input", "Choose one or more space IDs.")
+        name = text(name, maximum=120)
+        expiry = timestamp(expires_at) if expires_at is not None else now() + 30 * 86400
+        require(expiry > now(), "invalid_time", "The credential must expire in the future.")
+        spaces, operations = sorted(set(space_ids)), ROLES[role]
+        with self.store.transaction(write=True) as conn:
+            principal = organization_admin(conn, actor)
+            require(principal["expires_at"] is None or expiry <= principal["expires_at"],
+                    "forbidden", "A credential cannot outlive its issuer.", 403)
+            for sid in spaces:
+                authorize(conn, actor, sid, "manage")
+                for operation in operations:
+                    authorize(conn, actor, sid, operation)
+            pid = uid("principal")
+            conn.execute("INSERT INTO principals VALUES(?,?,?,?,0,1,?)", (pid, actor.org_id, name, kind, now()))
+            for sid in spaces:
+                conn.execute("INSERT INTO grants VALUES(?,?,?,?,?,0)", (uid("grant"), pid, sid, dumps(operations), expiry))
+            issued = issue(conn, pid, operations, spaces, expiry, actor.credential_id)
+            audit(conn, actor, "team.add", pid, details={"space_ids": spaces, "role": role, "expires_at": expiry})
+            return {"principal_id": pid, **issued, "space_ids": spaces, "role": role, "expires_at": expiry}
+
     def bootstrap(self, organization="example", owner="Owner", _allow_existing=False):
         """Local operator only. Never exposed through RPC or MCP."""
         with self.store.transaction(write=True) as conn:

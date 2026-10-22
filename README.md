@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**v0.1.1 is a local alpha.** The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**v0.2.0 is a local/private-pilot alpha.** The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -58,14 +58,16 @@ For regular CLI use, install the published wheel in an isolated tool environment
 
 ```bash
 uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.1.1/atmet_brain-0.1.1-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
 
-atmet-brain --help
+atmet-brain setup
 ```
 
 If the command is not on your shell's PATH, run `uv tool update-shell` and open a new terminal. This route does not require cloning or Git. Python 3.11+ is required; the command requests Python 3.12.
 
 Use [the installation guide](docs/install.md) for one-off `uvx`, a Python-project installation or a source checkout. The project is published on GitHub; no PyPI or npm package is published by this release.
+
+For an interactive first visit, run `atmet-brain` or `atmet-brain setup`. The wizard creates a local/company installation or connects to an existing server. Terminal results are readable; redirected output remains JSON. Use `--json` for scripts and `--plain` to disable colors. A [versioned installer](docs/install.md#guided-release-installer) verifies the release wheel checksum before installing it.
 
 ### Create a first company Brain
 
@@ -84,14 +86,14 @@ atmet-brain worker --space "$SALES_SPACE"
 atmet-brain context "What delivery window should a sales quotation use?" --space "$SALES_SPACE"
 ```
 
-The default private data home is `~/.atmet-brain`. It starts empty. `init` creates the company, owner credential and configuration; it does not start a chat interview. `context` returns structured context for an agent, not a generated customer reply. [Continue with a company workflow](docs/use-for-your-company.md).
+The default private data home is `~/.atmet-brain`. It starts empty. `init` creates the company, owner credential and configuration; it does not start a chat interview. `setup` adds guided company/department questions; business workflow discovery still needs sources and reviewed instructions. `context` returns structured context for an agent, not a generated customer reply. [Continue with a company workflow](docs/use-for-your-company.md).
 
 ### Run the repository examples
 
 For a disposable demonstration or code changes, clone the tagged source:
 
 ```bash
-git clone --branch v0.1.1 https://github.com/anashamad9/Atmet-brain.git
+git clone --branch v0.2.0 https://github.com/anashamad9/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate
@@ -180,7 +182,7 @@ History explains who changed an artifact and which evidence it used. Rollback cr
 | Procedures | Reviewed policies, workflows, nested instructions, skills and typed configuration |
 | Retrieval | Permission-first lexical search, bounded context and revision manifests |
 | Reuse | Two pure Python recipe templates, reviewed publication, guarded routing and conflict pauses |
-| Interfaces | Python, CLI, REST and MCP stdio |
+| Interfaces | Python, guided CLI, remote HTTPS/SSH-loopback connections, REST and local/bridged MCP stdio |
 | Connections | Selected-directory sync; bounded read-only Gmail with fixture coverage |
 | Inspection | Artifact history, diffs and permissioned JSON graph/export |
 | Recovery | Encrypted snapshots, integrity checks, journal reconciliation and quarantined restoration |
@@ -201,13 +203,44 @@ Or configure an MCP client to launch:
 atmet-brain --token-file /absolute/path/to/worker.token mcp
 ```
 
-The API defaults to loopback port 7310. It needs trusted ingress before remote deployment. MCP uses a local subprocess. [Company setup](docs/use-for-your-company.md) · [MCP guide](docs/mcp.md) · [Deployment](docs/deployment.md).
+The API defaults to loopback port 7310. A remote CLI or local MCP bridge can connect through HTTPS or an SSH loopback tunnel. Remote hosting still needs trusted private ingress; no public production gateway/SSO is included. [Company setup](docs/use-for-your-company.md) · [MCP guide](docs/mcp.md) · [Deployment](docs/deployment.md).
+
+## Share one Brain with your team
+
+```mermaid
+flowchart TB
+    Server["One company device: Atmet Brain"] --> Spaces["Shared, Sales and Finance spaces"]
+    CLI["Employee terminals"] --> Secure["Private HTTPS or restricted SSH tunnel"]
+    MCP["Agent clients via local MCP bridge"] --> Secure
+    Secure --> Auth["Individual credential and current grants"]
+    Auth --> Server
+```
+
+On the server, run guided setup and issue an individual credential:
+
+```bash
+atmet-brain setup --mode team --organization example-company --spaces shared,sales
+atmet-brain team-add "Sales employee" --space SALES_SPACE_ID --role reader --output /private/employee.token
+atmet-brain service install --start
+```
+
+After configuring private HTTPS ingress or an SSH tunnel and securely delivering the scoped credential, each employee connects:
+
+```bash
+atmet-brain connect company --endpoint https://brain.example.com --token-file /private/employee.token
+atmet-brain --connection company space
+atmet-brain --connection company context "Prepare a quotation" --space SALES_SPACE_ID
+atmet-brain --json --connection company mcp-config
+```
+
+The example domain is a placeholder, not an Atmet-hosted endpoint. Team setup keeps loopback binding and does not configure the network automatically. API/worker background services use explicit per-user launchd/systemd installation; login-session limits and actual OS-manager validation remain deployment-specific. Do not share owner keys or the database directory. [Full company-server guide](docs/team-server.md) · [Terminal commands](docs/terminal.md).
 
 ## Documentation
 
 | Goal | Start here |
 | --- | --- |
-| Install or try the CLI | [Installation](docs/install.md) |
+| Install or try the CLI | [Installation](docs/install.md), [terminal guide](docs/terminal.md) |
+| Share a private company server | [Team access and background services](docs/team-server.md) |
 | Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
 | Understand modules and data boundaries | [Architecture](docs/architecture.md) |
 | Learn from information and changes | [Memory](docs/memory-and-learning.md), [workflows](docs/workflows.md), [skills](docs/skills.md) |

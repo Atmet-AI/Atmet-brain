@@ -4,26 +4,71 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shlex
 import sys
 import time
 
 from .auth import ROLES
 from .backups import generate_backup_key
 from .brain import Brain
+from ._version import __version__
+from .client import Client
+from .connections import connect, list_connections, load_connection, remove_connection
 from .config import default_home
-from .errors import BrainError
+from .errors import BrainError, require
 from .mcp import MCPServer
 from .rpc import dispatch, openapi
 from .server import make_server
 from .skills import install_skill
 from .util import private_write, uid
+from .terminal import Console
 
 
 def parser():
-    root = argparse.ArgumentParser(prog="atmet-brain", description="Company memory, workflows and skills for AI agents.")
+    root = argparse.ArgumentParser(prog="atmet-brain", description="Company memory, workflows and skills for AI agents.",
+                                   epilog="First visit: atmet-brain setup | Team client: atmet-brain connect --help")
+    root.add_argument("--version", action="version", version="Atmet Brain " + __version__)
+    root.add_argument("--json", action="store_true", help="Machine-readable output, including in a terminal")
+    root.add_argument("--plain", action="store_true", help="Disable terminal colors")
+    root.add_argument("--connection", help="Use an explicitly saved remote connection")
+    root.add_argument("--endpoint", help="One-off remote HTTPS endpoint or SSH loopback URL")
+    root.add_argument("--ca-file", type=Path, help="CA certificate file for a private HTTPS server")
     root.add_argument("--home", type=Path, default=default_home(), help="Private data directory")
     root.add_argument("--token-file", type=Path, help="Scoped credential file; defaults to ATMET_TOKEN_FILE or home/owner.token")
-    sub = root.add_subparsers(dest="command", required=True)
+    sub = root.add_subparsers(dest="command")
+    sub.add_parser("status", help="Show current local or selected remote Brain status")
+    sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
+    setup = sub.add_parser("setup", help="Guided company initialization or connection")
+    setup.add_argument("--mode", choices=["local", "team", "connect"])
+    setup.add_argument("--organization")
+    setup.add_argument("--owner")
+    setup.add_argument("--spaces", help="Comma-separated department space slugs")
+    setup.add_argument("--name", help="Connection name for connect mode")
+    setup.add_argument("--endpoint", default=argparse.SUPPRESS)
+    setup.add_argument("--token-file", type=Path, default=argparse.SUPPRESS)
+    setup.add_argument("--ca-file", type=Path, default=argparse.SUPPRESS)
+    connection = sub.add_parser("connect", help="Verify and save a remote connection without copying its database")
+    connection.add_argument("name")
+    connection.add_argument("--endpoint", required=True, dest="connect_endpoint")
+    connection.add_argument("--token-file", type=Path, required=True, dest="connect_token_file")
+    connection.add_argument("--ca-file", type=Path, dest="connect_ca_file")
+    connections = sub.add_parser("connections", help="List or remove saved connections")
+    connections.add_argument("action", choices=["list", "remove"], default="list", nargs="?")
+    connections.add_argument("name", nargs="?")
+    team = sub.add_parser("team-add", help="Create a member, scoped grants and an expiring credential")
+    team.add_argument("name")
+    team.add_argument("--space", action="append", required=True)
+    team.add_argument("--role", choices=sorted(set(ROLES) - {"owner"}), default="reader")
+    team.add_argument("--kind", choices=["human", "service"], default="human")
+    team.add_argument("--expires-at", help="Defaults to 30 days; cannot outlive the issuer")
+    team.add_argument("--output", type=Path, required=True)
+    service = sub.add_parser("service", help="Render or manage an explicit per-user background service")
+    service.add_argument("action", choices=["render", "install", "start", "stop", "status", "remove"])
+    service.add_argument("--kind", choices=["api", "worker"], default="api")
+    service.add_argument("--space")
+    service.add_argument("--port", type=int, default=7310)
+    service.add_argument("--platform", choices=["darwin", "linux"], help="For render only")
+    service.add_argument("--start", action="store_true", help="Start after install")
     init = sub.add_parser("init", help="Initialize a fresh installation")
     init.add_argument("--organization", default="example")
     init.add_argument("--owner", default="Owner")
@@ -125,7 +170,124 @@ def read_token(args):
     return path.read_text().strip()
 
 
+def save_credential(path, create):
+    """Reserve a private destination before minting a once-returned credential."""
+    path = path.expanduser()
+    private_write(path, "", overwrite=False)
+    try:
+        result = create()
+        private_write(path, result.pop("token") + "\n")
+    except BaseException:
+        path.unlink(missing_ok=True)
+        raise
+    return {**result, "token_file": str(path.resolve())}
+
+
+def remote_execute(args, client):
+    command = args.command
+    if command == "mcp":
+        MCPServer(None, None, args.allow_proposals, args.allow_automations, client=client).serve()
+        return None
+    if command == "status":
+        return {"mode": "remote", "endpoint": client.endpoint, "identity": client.call("identity.me"),
+                "spaces": client.call("spaces.list")}
+    if command == "rpc":
+        params = json.loads(Path(args.params[1:]).read_text() if args.params.startswith("@") else args.params)
+        require(isinstance(params, dict), "invalid_params", "params must be an object.")
+        return client.call(args.method, **params)
+    if command == "space":
+        return client.call("spaces.create", name=args.name) if args.name else client.call("spaces.list")
+    if command == "principal":
+        return client.call("principals.create", name=args.name, kind=args.kind)
+    if command == "grant":
+        return client.call("grants.create", principal_id=args.principal, space_id=args.space, operations=ROLES[args.role])
+    if command == "token":
+        return save_credential(args.output, lambda: client.call("credentials.create", principal_id=args.principal,
+                                                               operations=args.operation, space_ids=args.space, expires_at=args.expires_at))
+    if command == "team-add":
+        return save_credential(args.output, lambda: client.call("team.add", name=args.name, space_ids=args.space,
+                                                               role=args.role, kind=args.kind, expires_at=args.expires_at))
+    if command == "search":
+        return client.call("search", space_id=args.space, query=args.query)
+    if command == "context":
+        return client.call("context.get", space_id=args.space, query=args.query, artifact_ids=args.artifact,
+                           task_path=args.task_path, max_chars=args.max_chars)
+    if command == "ingest":
+        from .connectors.files import MIMES
+        mime = MIMES.get(args.file.suffix.lower())
+        require(mime, "unsupported_format", "Use .txt, .md, .json or .csv.")
+        return client.call("sources.put", space_id=args.space, external_id=args.external_id or args.file.name,
+                           title=args.title or args.file.name, content=args.file.read_text(encoding="utf-8"), mime=mime,
+                           audience=args.audience, authority=args.authority, expected_revision=args.expected_revision)
+    if command == "propose":
+        params = json.loads(args.specification.read_text())
+        params.setdefault("idempotency_key", uid("request"))
+        return client.call("artifacts.propose", **params)
+    if command == "review":
+        return client.call("artifacts.review", artifact_id=args.artifact_id, expected_revision=args.revision,
+                           approve=args.approve, reason=args.reason)
+    if command == "sync":
+        return client.call("connectors.sync", connector_id=args.connector_id)
+    raise BrainError("local_only", "This command requires the server's local installation. Remote mode never falls back to a local Brain.")
+
+
 def execute(args):
+    require(not (args.connection and args.endpoint), "invalid_connection", "Choose --connection or --endpoint.")
+    if args.command is None and (args.connection or args.endpoint):
+        args.command = "status"
+    if args.command is None:
+        base = ["atmet-brain", "--home", str(args.home.expanduser().resolve())]
+        return {"version": __version__, "initialized": (args.home / "brain.sqlite3").exists(),
+                "home": str(args.home), "start": shlex.join(base + ["setup"]), "inspect": shlex.join(base + ["status"]),
+                "help": "atmet-brain --help", "connections": list_connections(args.home)}
+    if args.command == "connect":
+        require(not args.connection and not args.endpoint, "invalid_connection", "Use connect's own endpoint and token-file arguments.")
+        return connect(args.home, args.name, args.connect_endpoint, args.connect_token_file, args.connect_ca_file)
+    if args.command == "connections":
+        require(not args.connection and not args.endpoint, "local_only", "Connection management is local.")
+        if args.action == "list":
+            return list_connections(args.home)
+        require(args.name, "connection_missing", "Choose a connection name to remove.")
+        return remove_connection(args.home, args.name)
+    if args.command == "setup":
+        require(not args.connection and (not args.endpoint or args.mode == "connect"), "invalid_connection", "Use setup --mode connect for a remote Brain.")
+        from .setup import guided_setup
+        def initialize(organization, owner, spaces):
+            initialized = execute(argparse.Namespace(**{**vars(args), "command": "init", "organization": organization, "owner": owner}))
+            local = Brain(args.home)
+            actor = local.authenticate(Path(initialized["token_file"]).read_text().strip())
+            initialized["spaces"] = [local.create_space(actor, name) for name in spaces]
+            return initialized
+        return guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca))
+    if args.command == "mcp-config":
+        require(not args.endpoint, "invalid_connection", "Save a named connection first, or use a dedicated local token file.")
+        command = ["-m", "atmet_brain", "--home", str(args.home.expanduser().resolve())]
+        if args.connection:
+            require(not args.token_file, "invalid_connection", "A named connection uses its own credential.")
+            load_connection(args.home, args.connection)
+            command += ["--connection", args.connection]
+        else:
+            require(args.token_file and args.token_file.is_file(), "credential_missing", "Use --token-file with a dedicated scoped agent credential.")
+            command += ["--token-file", str(args.token_file.expanduser().resolve())]
+        return {"mcpServers": {"atmet-brain": {"command": str(Path(sys.executable).absolute()), "args": command + ["mcp"]}}}
+    if args.connection or args.endpoint:
+        require(not args.connection or not args.token_file, "invalid_connection", "A saved connection uses its own credential. Reconnect to change it.")
+        client = load_connection(args.home, args.connection)[0] if args.connection else Client(args.endpoint, read_token(args), args.ca_file)
+        return remote_execute(args, client)
+    if args.command == "service":
+        from .services import manage_service, service_spec
+        require(not args.platform or args.action == "render", "invalid_service", "--platform is for render only.")
+        require(not args.start or args.action == "install", "invalid_service", "--start is for install only.")
+        spec = service_spec(args.home, args.kind, args.space, args.token_file, args.port, args.platform)
+        return manage_service(args.action, spec, args.start)
+    if args.command == "status":
+        if not (args.home / "brain.sqlite3").is_file():
+            return {"mode": "local", "state": "not_initialized", "next": shlex.join(["atmet-brain", "--home", str(args.home.expanduser().resolve()), "setup"])}
+        local = Brain(args.home)
+        actor = local.authenticate(read_token(args))
+        return {"version": __version__, "mode": "local", "home": str(local.store.home),
+                "identity": local.whoami(actor), "spaces": local.list_spaces(actor),
+                "next": shlex.join(["atmet-brain", "--home", str(local.store.home), "serve"])}
     if args.command == "backup-key":
         return generate_backup_key(args.output)
     if args.command == "restore":
@@ -163,7 +325,12 @@ def execute(args):
         return openapi(brain)
     if args.command == "serve":
         server = make_server(brain, args.host, args.port, args.allow_network)
-        print(f"Atmet Brain listening on {args.host}:{server.server_port}", file=sys.stderr)
+        console = Console(plain=args.plain)
+        if sys.stderr.isatty():
+            console.banner("Your company Brain is listening.")
+        console.result({"url": f"http://{args.host}:{server.server_port}", "storage": str(brain.store.home),
+                        "access": "Scoped credentials required. Use private ingress for remote access.",
+                        "stop": "Ctrl+C stops this foreground server. Use service for background operation."})
         try:
             server.serve_forever()
         finally:
@@ -181,9 +348,9 @@ def execute(args):
     if args.command == "grant":
         return brain.grant(actor, args.principal, args.space, ROLES[args.role])
     if args.command == "token":
-        result = brain.create_credential(actor, args.principal, args.operation, args.space, args.expires_at)
-        private_write(args.output, result.pop("token") + "\n", overwrite=False)
-        return {**result, "token_file": str(args.output)}
+        return save_credential(args.output, lambda: brain.create_credential(actor, args.principal, args.operation, args.space, args.expires_at))
+    if args.command == "team-add":
+        return save_credential(args.output, lambda: brain.add_team_member(actor, args.name, args.space, args.role, args.kind, args.expires_at))
     if args.command == "ingest":
         from .connectors.files import MIMES
         mime = MIMES.get(args.file.suffix.lower())
@@ -222,13 +389,22 @@ def execute(args):
 
 def main():
     args = parser().parse_args()
+    human = sys.stdout.isatty() and not args.json and args.command not in {"mcp-config", "openapi"}
     try:
         result = execute(args)
         if result is not None:
-            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            if human:
+                console = Console(sys.stdout, args.plain)
+                console.banner()
+                console.result(result)
+            else:
+                print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         return 0
     except BrainError as error:
-        print(json.dumps({"error": error.as_dict()}), file=sys.stderr)
+        if human:
+            Console(plain=args.plain).line(f"  {error.code}: {error.message}", accent=True)
+        else:
+            print(json.dumps({"error": error.as_dict()}), file=sys.stderr)
         return 1
     except (OSError, ValueError, KeyError):
         print(json.dumps({"error": {"code": "local_input_error", "message": "Check the input file, credential, format and destination."}}), file=sys.stderr)

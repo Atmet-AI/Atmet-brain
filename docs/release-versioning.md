@@ -2,7 +2,7 @@
 
 The first public source release is **v0.1.0**, a local alpha. Package versions use `0.1.0`; Git tags add the `v` prefix. The changelog records the scope and date of each release.
 
-The current patch is **v0.1.1**, covering clearer company/setup/architecture documentation and diagram synchronization checks. It preserves the 0.1.0 core behavior and API. Documentation or release-maintenance changes can ship in a patch without moving the previous tag.
+The current feature release is **v0.2.0**, adding guided terminal setup, private remote connections, a stdio-to-REST MCP bridge, bounded team provisioning and user-session service management. Schema version 1 is unchanged. Agent profile/release bundles remain a separate design; these are engine software versions. Previous release tags remain immutable.
 
 ## Version numbers
 

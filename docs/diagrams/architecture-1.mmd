@@ -5,7 +5,7 @@ flowchart TB
         Agent["MCP agent client"]
     end
     subgraph Adapters["Interface layer"]
-        CLI["cli.py"]
+        CLI["cli.py: local or remote selection"]
         REST["server.py and rpc.py"]
         MCP["mcp.py and rpc.py"]
     end
@@ -13,6 +13,8 @@ flowchart TB
     Remote --> REST
     Agent --> MCP
     CLI --> Identity["auth.py: identity, grants and audiences"]
+    CLI --> Client["client.py: HTTPS or SSH-loopback REST"]
+    Client --> REST
     REST --> Identity
     MCP --> Identity
     Identity --> Facade["brain.py: shared core facade"]

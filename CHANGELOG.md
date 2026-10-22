@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0 - 2026-10-22
+
+Terminal experience and private team access feature release. Canonical schema version 1 is unchanged.
+
+- Guided local/team/connect setup, welcome/status screens, readable TTY results, plain output and explicit JSON mode.
+- Versioned release installer with wheel checksum verification and isolated per-user uv installation.
+- Explicit remote CLI profiles using HTTPS or SSH-loopback HTTP, private copied credentials, identity binding, optional trusted CA, no redirects and no plaintext LAN fallback.
+- Local stdio-to-REST MCP bridge and generated client configuration, with current authorization and clean protocol stdout.
+- Atomic team provisioning with non-admin identities, selected-space roles, expiring grants/credentials and private CLI token output.
+- Explicit launchd/systemd user-session API/worker service rendering, installation, controls and modified-file protection. Actual OS-manager lifecycle remains deployment-specific validation.
+- Terminal/team-server documentation and diagrams. No VPN/SSO/public ingress, remote HTTP MCP transport, AI onboarding interview or agent profile/release bundles are introduced.
+
 ## 0.1.1 - 2026-10-22
 
 Documentation and release-maintenance update. Core behavior and public API are unchanged.
