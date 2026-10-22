@@ -1,6 +1,6 @@
 # Installation
 
-Version 0.2.2 is prepared for **npm-only distribution**. The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. **The first npm upload and public command verification are pending owner login.** [Publisher checklist](package-publishing.md).
+Version 0.2.3 is prepared for **npm-only distribution**. The npm archive includes the matching core wheel, so no Atmet PyPI release or PyPI account is needed. **The first npm upload and public command verification are pending owner login.** [Publisher checklist](package-publishing.md).
 
 ## npm and npx
 
@@ -17,7 +17,7 @@ npm install --global atmet-brain
 atmet-brain setup
 ```
 
-Pin an explicit release with `npx atmet-brain@0.2.2 setup`. The npm launcher verifies and installs the exact matching Python wheel included in the npm archive, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
+Pin an explicit release with `npx atmet-brain@0.2.3 setup`. The npm launcher verifies and installs the exact matching Python wheel included in the npm archive, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
 
 Runtime storage is separate from company data; [launcher details](../npm/atmet-brain/README.md) documents its paths, environment overrides, platform scope and network requirements. A service or MCP configuration may reference its persistent Python environment: do not remove that runtime directory while it is in use. The npm tarball includes the launcher and engine software, never company data. There is one core and one authorization model. Python and dependencies may still require public downloads on first use.
 

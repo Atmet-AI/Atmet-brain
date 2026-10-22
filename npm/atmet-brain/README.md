@@ -1,8 +1,8 @@
 # Atmet Brain launcher
 
-The terminal entry point for the open-source Atmet Brain Python engine. This package is prepared for its first npm publication; the short commands are not available until this package is published by the maintainer. Only an npm account is needed for publication; the core wheel is included.
+The terminal entry point for the open-source Atmet Brain Python engine. The matching core wheel is included in this npm package. No Atmet PyPI release or account is needed.
 
-After official publication, with Node.js 22.14 or newer and npm installed:
+With Node.js 22.14 or newer and npm installed:
 
 ```bash
 npx atmet-brain setup

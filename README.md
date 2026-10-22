@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**The core is a local/private-pilot alpha.** Version 0.2.2 prepares npm-only distribution with the matching Python core included; first npm publication still needs the owner login. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**The core is a local/private-pilot alpha.** Version 0.2.3 prepares npm-only distribution with the matching Python core included; first npm publication still needs the owner login. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 

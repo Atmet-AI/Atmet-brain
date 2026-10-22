@@ -1,12 +1,12 @@
 # npm-only publication and account setup
 
-Version 0.2.2 includes the matching Atmet Brain Python wheel inside the npm archive. **An npm account is the only publishing account needed.** There is no dependency on an Atmet PyPI project. The first npm upload and fresh public command checks are still pending; a public name check does not reserve ownership.
+Version 0.2.3 includes the matching Atmet Brain Python wheel inside the npm archive. **An npm account is the only publishing account needed.** There is no dependency on an Atmet PyPI project. The first npm upload and fresh public command checks are still pending; a public name check does not reserve ownership.
 
 The owner has created an npm account. Verify its email and enable two-factor authentication. Do not send passwords, tokens, recovery codes, one-time codes or `.npmrc` contents in chat. The npm username and confirmation of completed local login are enough for coordination.
 
 ## 1. Build the exact release
 
-The [publish workflow](../.github/workflows/publish.yml) is manually dispatched. Select the reviewed immutable `v0.2.2` tag and leave `publish_npm=false` for the first build. It checks tag/version identity, runs Python and launcher tests, builds the universal wheel, checks it with twine, copies it into the npm archive with a SHA-256 manifest, then inspects the archive.
+The [publish workflow](../.github/workflows/publish.yml) is manually dispatched. Select the reviewed immutable `v0.2.3` tag and leave `publish_npm=false` for the first build. It checks tag/version identity, runs Python and launcher tests, builds the universal wheel, checks it with twine, copies it into the npm archive with a SHA-256 manifest, then inspects the archive.
 
 The workflow produces:
 
@@ -24,7 +24,7 @@ With Node.js 24 and npm installed, use a private terminal:
 ```bash
 npm login --registry=https://registry.npmjs.org
 npm whoami --registry=https://registry.npmjs.org
-npm publish /path/to/atmet-brain-0.2.2.tgz --access public --registry=https://registry.npmjs.org
+npm publish /path/to/atmet-brain-0.2.3.tgz --access public --registry=https://registry.npmjs.org
 ```
 
 Replace the path with the exact reviewed `.tgz` from the build. Complete browser login/2FA prompts yourself. No shared API token is needed. The first successful upload establishes package ownership; it is not an OIDC-attested CI publication. [npm's first-publication instructions](https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/).
@@ -36,8 +36,8 @@ If `atmet-brain` is taken, stop and choose an owner-approved alternative before 
 After npm confirms the upload, use a fresh runtime directory and npm cache for the explicit release:
 
 ```bash
-npx atmet-brain@0.2.2 --version
-npx atmet-brain@0.2.2 setup
+npx atmet-brain@0.2.3 --version
+npx atmet-brain@0.2.3 setup
 ```
 
 Then the ordinary user route is:
@@ -65,4 +65,4 @@ npm trusted-publisher settings belong to an existing package, so configure them 
 
 Configure it when ready to use it; npm currently requires the first successful use of a new configuration within two days. Future release tags can use the workflow's `publish_npm=true` switch. It selects Node 24 and npm 11.17.0 for OIDC publication with automatic provenance. No PyPI job or registry-token secret is required. [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
-Do not republish version 0.2.2 from CI after uploading it locally. Published package versions and Git tags are immutable; ship a new version for corrections. A standalone Atmet package on PyPI can be added later as an independent distribution route.
+Do not republish version 0.2.3 from CI after uploading it locally. Published package versions and Git tags are immutable; ship a new version for corrections. A standalone Atmet package on PyPI can be added later as an independent distribution route.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3 - first npm publication candidate, 2026-10-22
+
+- Prepare the first public npm package with installation instructions that describe the included core and normal user commands.
+- Preserve the v0.2.2 preparation tag; the npm launcher and Python core use the same new version. Runtime behavior and schema are unchanged.
+
 ## 0.2.2 - npm-only publication prepared, 2026-10-22
 
 - Include the exact matching universal core wheel and SHA-256 manifest inside the npm package; verify both before execution. No Atmet PyPI release or PyPI account is required.

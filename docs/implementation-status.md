@@ -1,6 +1,6 @@
 # Implementation status
 
-This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.2 (npm-only publication prepared). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
+This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.3 (npm-only publication prepared). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
 
 | Capability | Evidence and scope |
 | --- | --- |
