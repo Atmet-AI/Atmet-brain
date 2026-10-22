@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 - registry publication prepared, 2026-10-22
 
 - Added a copy-and-follow history walkthrough for creating, comparing, publishing and restoring workflow revisions, context manifests, source reads, audit records and common errors.
 - Linked practical history usage from the README/docs index, clarified whole-agent snapshot limits, and distinguished guided setup from manual initialization to prevent repeated init.
-- Documentation only; engine behavior, schema and released v0.2.0 assets are unchanged.
+- PyPI-ready build/validation and manually dispatched OIDC publishing workflow; first registry account configuration/publication is still pending.
+- Version-matched npm launcher with verified uv bootstrap, isolated persistent runtime, literal command forwarding and clean MCP stdout.
+- npm archive checks and launcher CI; maintainer account checklist and registry-first README/install instructions.
+- Core API, schema and prior release assets remain unchanged; software versions are synchronized for the first registry release.
 
 ## 0.2.0 - 2026-10-22
 

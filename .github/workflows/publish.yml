@@ -1,0 +1,100 @@
+name: publish packages
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Reviewed immutable release tag
+        required: true
+        default: v0.2.1
+        type: string
+      publish_pypi:
+        description: Publish the Python distribution through the configured PyPI trusted publisher
+        default: false
+        type: boolean
+      publish_npm:
+        description: Publish the launcher through an existing npm trusted publisher
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: registry-${{ inputs.release_tag }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify release identity
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: python scripts/check_release_tag.py
+      - run: python -m pip install -e . build twine
+      - run: python -m unittest discover -s tests -v
+      - run: node --test npm/atmet-brain/test/*.test.mjs
+      - run: python scripts/check_project.py
+      - run: python -m build --outdir dist/python
+      - run: python -m twine check dist/python/*
+      - run: mkdir -p dist/npm && npm pack ./npm/atmet-brain --pack-destination dist/npm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/python/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-launcher
+          path: dist/npm/*.tgz
+  pypi:
+    if: ${{ inputs.publish_pypi }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/atmet-brain
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+  npm:
+    if: ${{ always() && inputs.publish_npm && needs.build.result == 'success' && (!inputs.publish_pypi || needs.pypi.result == 'success') }}
+    needs: [build, pypi]
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/atmet-brain
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - run: npm install --global npm@11.17.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-launcher
+          path: dist/npm
+      - name: Require the matching engine on PyPI first
+        run: python scripts/check_registry_release.py
+      - run: npm publish dist/npm/*.tgz --access public

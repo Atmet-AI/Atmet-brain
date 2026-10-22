@@ -29,3 +29,11 @@ The repository checker verifies Python syntax, JSON, portable local links, packa
 Runtime validation used Python 3.12 locally. CI targets additional Python versions; consult the repository's Actions runs for their results. Actual launchd/systemd start/stop and before-login behavior were not exercised on this workstation; service templates/dispatch use controlled fixtures. SSH, VPN and external HTTPS ingress were not deployed. No Docker executable was available locally, so container files are unvalidated by an actual container build/run. There is no live-provider, named external MCP-client, load, penetration or disaster-recovery service-level certification.
 
 Loopback HTTP tests needed socket access outside the restricted local execution sandbox. They used temporary fictional data and contacted no external service.
+
+## Registry packaging preparation, 0.2.1
+
+The core API/schema are unchanged. The 130 Python tests pass with the synchronized version. Seven Node launcher tests cover exact engine pins, controlled package configuration, literal arguments, stderr-only bootstrap, protected MCP input/output, failure/exit codes and uv archive/cache integrity. The npm tarball allowlist contains only metadata, executable/library code, README and license/notice files.
+
+A real macOS arm64 uv bootstrap download matched the pinned SHA-256 and its executable reported the expected version. Packed local-tarball npx setup was exercised using an explicit trusted local-wheel adapter because the registry engine does not exist yet. This is local packaging evidence, not a successful public npm/PyPI install. Automatic bootstrap targets other than local macOS arm64 and the CI fixture scope require deployment evaluation.
+
+Actual registry uploads, trusted-publisher authentication, new-name ownership and fresh public npx/uvx resolution remain pending owner account configuration. The publisher checklist identifies the exact account fields.

@@ -1,11 +1,12 @@
 # Implementation status
 
-This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.0. This feature release adds terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
+This repository is a working local/private-pilot alpha of Atmet Brain, version 0.2.1 (registry publication prepared). The 0.2.0 feature release added terminal setup/presentation, private remote CLI connections, an MCP bridge, atomic scoped team provisioning and per-user service management. The canonical database schema remains version 1. The broader product design also includes managed hosting, richer interfaces and additional providers. Those are separate development tracks.
 
 | Capability | Evidence and scope |
 | --- | --- |
 | Organizations/spaces | Local provisioning, stable IDs and tested company/space isolation |
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
+| Registry distribution | PyPI metadata/build and OIDC workflow prepared; npm launcher implemented/tested with private runtime bootstrap. First registry account setup and public install validation remain pending. |
 | Terminal setup | Guided create/connect choices, company/department setup, human TTY output and JSON for scripts; no AI onboarding interview |
 | Background services | Explicit per-user launchd/systemd API and worker definitions plus controls; templates/dispatch tested, actual OS-manager lifecycle needs deployment validation |
 | Source ingestion | Working UTF-8 text/Markdown/CSV/JSON capture with revisions and current audience |

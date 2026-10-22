@@ -1,0 +1,19 @@
+{
+  "name": "atmet-brain",
+  "version": "0.2.1",
+  "description": "Run the Atmet Brain company memory core from your terminal.",
+  "type": "module",
+  "bin": {"atmet-brain": "bin/atmet-brain.mjs"},
+  "files": ["bin/", "lib/", "README.md", "LICENSE", "NOTICE"],
+  "scripts": {"test": "node --test test/*.test.mjs"},
+  "engines": {"node": ">=22.14.0"},
+  "os": ["darwin", "linux"],
+  "cpu": ["x64", "arm64"],
+  "license": "Apache-2.0",
+  "author": "Atmet",
+  "repository": {"type": "git", "url": "git+https://github.com/anashamad9/Atmet-brain.git", "directory": "npm/atmet-brain"},
+  "homepage": "https://github.com/anashamad9/Atmet-brain#readme",
+  "bugs": {"url": "https://github.com/anashamad9/Atmet-brain/issues"},
+  "publishConfig": {"access": "public", "registry": "https://registry.npmjs.org/"},
+  "atmetBrain": {"engineVersion": "0.2.1", "python": "3.12", "uv": "0.13.5"}
+}

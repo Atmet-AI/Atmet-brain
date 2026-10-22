@@ -14,9 +14,17 @@ from atmet_brain.rpc import openapi
 from generate_diagrams import diagram_errors
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORE = {".git", ".venv", "__pycache__", "build", "dist"}
+IGNORE = {".git", ".venv", "__pycache__", "build", "dist", "node_modules"}
 errors, count = [], 0
 package = tomllib.loads((ROOT / "pyproject.toml").read_text())
+launcher = json.loads((ROOT / "npm/atmet-brain/package.json").read_text())
+if launcher["version"] != __version__ or launcher["atmetBrain"]["engineVersion"] != __version__:
+    errors.append("npm launcher and Python engine versions differ")
+for name in ("LICENSE", "NOTICE"):
+    if (ROOT / name).read_bytes() != (ROOT / "npm/atmet-brain" / name).read_bytes():
+        errors.append("npm " + name + " differs from the public core")
+if set(launcher.get("scripts", {})) - {"test"}:
+    errors.append("Review new npm lifecycle scripts; no implicit installation hooks are allowed")
 if package["project"]["version"] != __version__:
     errors.append("Package and runtime versions differ")
 if not re.search(r"^## " + re.escape(__version__) + r"(?:\s|$)", (ROOT / "CHANGELOG.md").read_text(), re.M):

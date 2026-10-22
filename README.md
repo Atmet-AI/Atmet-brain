@@ -6,7 +6,7 @@ Atmet Brain is the open-source core for keeping business context in one place: c
 
 Run the same core from a terminal, a Python application, REST or MCP. Your company information belongs to your installation. The repository contains the engine and fictional examples, not a preconfigured company Brain.
 
-**v0.2.0 is a local/private-pilot alpha.** The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
+**The core is a local/private-pilot alpha.** Version 0.2.1 prepares PyPI and npm distribution; registry publication still needs the owner account steps. The previously published GitHub release remains available. The hosted Atmet Brain platform and Atmet Playground are separate future applications. The [support matrix](docs/implementation-status.md) describes what works, what has fixture coverage and what is planned.
 
 [Install](#install) · [Company walkthrough](docs/use-for-your-company.md) · [History walkthrough](docs/history-walkthrough.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [MCP](docs/mcp.md) · [Changelog](CHANGELOG.md)
 
@@ -54,20 +54,31 @@ The Brain supplies context and checks access. The agent/runtime chooses its mode
 
 ## Install
 
-For regular CLI use, install the published wheel in an isolated tool environment. With [uv installed](https://docs.astral.sh/uv/getting-started/installation/):
+The intended default entry point, **after the official npm/PyPI packages are published**, is:
 
 ```bash
-uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.2.0/atmet_brain-0.2.0-py3-none-any.whl"
+npx atmet-brain setup
+```
 
+With Node.js 22.14+ and npm, the launcher prepares an isolated Python runtime and the exact matching engine from PyPI. Users do not need to clone the repository or manually install Python/uv. Bootstrap downloads are verified and the company data home remains separate. The first automatic bootstrap supports macOS and glibc Linux on x64/arm64; Windows is not validated.
+
+**Publication pending:** the short registry commands below are prepared, not yet available from official registry packages. See the maintainer's [account setup and first-publication checklist](docs/package-publishing.md). Until publication is verified, use the existing [GitHub release fallback](docs/install.md#github-release-fallback).
+
+For regular use after publication:
+
+```bash
+npm install --global atmet-brain
 atmet-brain setup
 ```
 
-If the command is not on your shell's PATH, run `uv tool update-shell` and open a new terminal. This route does not require cloning or Git. Python 3.11+ is required; the command requests Python 3.12.
+Python users can install the same engine through PyPI:
 
-Use [the installation guide](docs/install.md) for one-off `uvx`, a Python-project installation or a source checkout. The project is published on GitHub; no PyPI or npm package is published by this release.
+```bash
+uv tool install --python 3.12 atmet-brain
+atmet-brain setup
+```
 
-For an interactive first visit, run `atmet-brain` or `atmet-brain setup`. The wizard creates a local/company installation or connects to an existing server. Terminal results are readable; redirected output remains JSON. Use `--json` for scripts and `--plain` to disable colors. A [versioned installer](docs/install.md#guided-release-installer) verifies the release wheel checksum before installing it.
+Use [installation](docs/install.md) for version pinning, one-off `uvx`, Python imports and source contributions. `npx` requires Node/npm; the Python route requires uv. A terminal welcome/setup screen, plain/JSON output and remote company connections are part of the same engine. Registry packaging does not launch the hosted platform or Playground.
 
 ### Create a first company Brain
 
@@ -244,6 +255,7 @@ The example domain is a placeholder, not an Atmet-hosted endpoint. Team setup ke
 | Goal | Start here |
 | --- | --- |
 | Install or try the CLI | [Installation](docs/install.md), [terminal guide](docs/terminal.md) |
+| Publish official registry packages | [Owner account setup and publishing](docs/package-publishing.md) |
 | Share a private company server | [Team access and background services](docs/team-server.md) |
 | Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
 | Understand modules and data boundaries | [Architecture](docs/architecture.md) |

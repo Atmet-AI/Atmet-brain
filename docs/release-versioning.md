@@ -28,3 +28,7 @@ Database schema, source revisions, workflow versions and recipe-runtime versions
 5. Verify the remote tag, release and CI results. Never move a published version tag; ship a new version for corrections.
 
 See [releasing](releasing.md) for commands. PyPI upload is a separate publishing step.
+
+## Registry preparation
+
+Version 0.2.1 prepares registry packaging without changing the Brain API/schema. The npm launcher version and its exact Python engine pin match the Python package/runtime version. The project checker enforces this parity. GitHub assets, PyPI publication and npm publication have separate availability states; preparation is not a successful registry upload. [Publishing/account steps](package-publishing.md).

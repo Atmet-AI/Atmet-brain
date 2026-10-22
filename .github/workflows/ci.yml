@@ -21,3 +21,12 @@ jobs:
       - run: python examples/demo.py
       - run: python examples/automation_demo.py
       - run: python -m pip wheel --no-deps . -w dist
+  launcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test npm/atmet-brain/test/*.test.mjs
+      - run: npm pack ./npm/atmet-brain --dry-run

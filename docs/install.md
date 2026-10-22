@@ -1,15 +1,42 @@
 # Installation
 
-Choose the route that matches how you use the Brain. Version 0.2.0 is an alpha distributed through GitHub releases. No PyPI or npm package is published by this release.
+The Python distribution and npm launcher are prepared as version 0.2.1. **First registry publication is pending owner account setup.** The following registry commands become available only after both official packages are uploaded and verified. A name's current availability does not reserve it. [Publisher checklist](package-publishing.md).
 
-| Goal | Route | Requires source checkout? |
-| --- | --- | --- |
-| Use the CLI regularly | Install the released wheel with `uv tool install` | No |
-| Try one command or launch MCP | `uvx --from` the released wheel | No |
-| Import the Brain in a Python application | Install the wheel in that application's virtual environment | No |
-| Run repository demos or change code | Clone a tagged version and install the checkout | Yes |
+## npm and npx
 
-Use Python 3.11+. The commands below request 3.12 where uv selects the interpreter. The CLI and core are validated on macOS locally and Ubuntu in CI; the selected-directory connector relies on POSIX behavior. Windows has not been validated.
+With Node.js 22.14+ and npm:
+
+```bash
+npx atmet-brain setup
+```
+
+For regular use:
+
+```bash
+npm install --global atmet-brain
+atmet-brain setup
+```
+
+Pin an explicit release with `npx atmet-brain@0.2.1 setup`. The npm launcher prepares the exact matching Python engine from PyPI, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
+
+Runtime storage is separate from company data; [launcher details](../npm/atmet-brain/README.md) documents its paths, environment overrides, platform scope and network requirements. A service or MCP configuration may reference its persistent Python environment: do not remove that runtime directory while it is in use. The npm tarball is a launcher, not a second engine or a bundled company Brain.
+
+## Python package registry
+
+After the official PyPI upload, with [uv installed](https://docs.astral.sh/uv/getting-started/installation/):
+
+```bash
+uv tool install --python 3.12 atmet-brain
+atmet-brain setup
+```
+
+One-off use is `uvx --python 3.12 atmet-brain setup`; pin with `uvx --python 3.12 atmet-brain@0.2.1 --help`. A Python application can use `python -m pip install atmet-brain` inside its Python 3.11+ virtual environment. It provides `from atmet_brain import Brain` and the same CLI.
+
+The core is locally validated on macOS and Ubuntu CI. Automatic uv bootstrap has pinned assets for macOS/glibc Linux x64/arm64; the non-local/non-CI targets need deployment checks. Windows is not validated.
+
+## GitHub release fallback
+
+Until registry publication is verified, existing v0.2.0 GitHub release wheels remain an available fallback. The following paths are alternatives, not prerequisites for the registry route. A normal npm/PyPI install does not require Git or a source checkout.
 
 ## Guided release installer
 

@@ -1,6 +1,6 @@
 # Security
 
-Version 0.2.0 is a local/private-pilot alpha. It has behavior tests for scope isolation, current authorization, source revocation, reviewed publication and recovery. It has not received an independent production security audit.
+The 0.2 series is a local/private-pilot alpha. It has behavior tests for scope isolation, current authorization, source revocation, reviewed publication and recovery. It has not received an independent production security audit.
 
 ## Reporting
 

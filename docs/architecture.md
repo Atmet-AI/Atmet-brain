@@ -157,3 +157,7 @@ The Brain platform and Playground are future clients of this core. Their UI and 
 ## 9. Terminal and company-server operation
 
 Local operator commands keep their existing trust boundary. Remote CLI/MCP operations use the explicit RPC registry and never fall back to opening a local database. Device-specific connection/token files stay outside the canonical database and encrypted installation payload; restore issues fresh credentials. `team.add` provisions a non-admin principal, bounded grants and a credential in one transaction. Network access does not establish company data authority. Services keep API and worker processes separate, bind the managed API to loopback and require explicit installation. [Terminal](terminal.md) and [company server](team-server.md) document limits and operation.
+
+## npm entry point
+
+`npm/atmet-brain` is a thin launcher. It verifies the pinned uv bootstrap archive, installs an exact PyPI engine into version-specific private runtime storage and forwards core arguments without a shell. There is no second database, permission model or agent runtime in the npm package. Installation/configuration happens on first execution, not in npm lifecycle hooks. [Distribution/account setup](package-publishing.md) distinguishes tested local packaging from pending public registry uploads.

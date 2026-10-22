@@ -23,3 +23,6 @@ recovery-journal.json
 data/
 backups/
 secrets/
+node_modules/
+*.tgz
+.npmrc
