@@ -8,6 +8,8 @@ Install the CLI persistently and select the initialized data home you intend to 
 
 Use a new key-file/output name for a new example. Keep the encryption key away from the backup, and keep the recovery journal outside the Brain disk's failure domain. A copy on the same disk can test the procedure but is not independent recovery storage.
 
+For an ordinary software update, keep the existing home and follow the [safe update procedure](upgrading.md). Restore is a separate recovery operation; a successful normal update does not need it.
+
 ## Create
 
 ```bash

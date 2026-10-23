@@ -20,7 +20,7 @@ A task guide should identify its prerequisites, files/IDs the user supplies, com
 
 Use one canonical CHANGELOG.md for release history. Add meaningful user-visible items under Unreleased, grouped as Added, Changed, Fixed, Security or Breaking changes where useful. At a release, move those entries into its version/date section and include migration steps if needed. Keep current user guides in the present tense; keep dated evidence in release-validation.md. Changelog entries complement working instructions, rather than replacing them.
 
-Check versioned install URLs, explicit installer arguments, schemas, protocol/config examples and cross-links when preparing a release. Preserve historical version references in changelog/evidence/ADRs. A new version does not require a paragraph announcing it on every page.
+Check versioned install URLs, explicit installer arguments, the target/version examples in upgrading.md and the README, schemas, protocol/config examples and cross-links when preparing a release. Preserve historical version references in changelog/evidence/ADRs. A new version does not require a paragraph announcing it on every page.
 
 ## Which files to review
 

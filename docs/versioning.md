@@ -1,5 +1,7 @@
 # Versions and history
 
+For a software update that keeps your existing company/workspaces, use the [safe update walkthrough](upgrading.md). Engine updates and business-record revisions are separate.
+
 For exact terminal commands, start with the [history walkthrough](history-walkthrough.md). It creates revisions 1 and 2, compares them, records a context manifest and restores revision 1 as reviewed revision 3 using the released CLI.
 
 | Goal | Operation / guide |
@@ -69,9 +71,9 @@ Task envelopes include a manifest ID. `context.manifest` returns referenced arti
 
 Engine 0.8.0 adds human-reviewed administration, rule versions and restricted document intake. Supported schemas 1/2/3 upgrade transactionally on first open. Existing active documents keep their existing access until changed or a policy change makes classification stale. Every newly captured/changed document uses restricted intake by default; update your ingestion flow before expecting worker/search results.
 
-Before the first 0.8.0 command that opens an existing Brain, stop old services, workers and MCP processes. Create an encrypted backup and independent current journal with the old compatible engine. For a 0.7.0/schema-3 installation, pin npx atmet-brain@0.7.0 for backup/journal; @latest would already migrate it. Do this separately for each company. Follow [backup commands](backup-and-recovery.md).
+Before the first schema-4 engine command (0.8.0+) that opens an existing Brain, stop old services, workers and MCP processes. Create an encrypted backup and independent current journal with the old compatible engine. For a 0.7.0/schema-3 installation, pin npx atmet-brain@0.7.0 for backup/journal; @latest would already migrate it. Do this separately for each company. Follow [backup commands](backup-and-recovery.md).
 
-Open with 0.8.0, inspect doctor/status and restart every service/client with the new installed runtime. Replace old runtime-specific service definitions deliberately. Do not mix engines; older engines reject schema 4 and there is no in-place downgrade. Restore an old snapshot to a separate home to use its old engine.
+Open with the selected schema-4 engine (currently 0.8.1), inspect doctor/status and restart every service/client with the new installed runtime. Replace old runtime-specific service definitions deliberately. Do not mix engines; older engines reject schema 4 and there is no in-place downgrade. Restore an old snapshot to a separate home to use its old engine.
 
 Enroll/sign in to a human administrator account, connect the administration agent and classify imports as shown in the [new flow](conversational-administration.md). Restored controls/approvals/rules are not reactivated; fresh recovery identities must deliberately review documents and rebuild approved rules.
 
@@ -87,6 +89,6 @@ Existing API credentials keep their current scope; password accounts are explici
 
 ## Schema 2 upgrade
 
-This historical step was introduced by engine 0.4.0; use the schema-3 procedure above for the current engine. Schema 2 for explicit task reporting and separate report-source classification. Supported schema-1 installations upgrade in one transaction while retaining existing identity/source/artifact records. Unknown schemas are rejected. Back up before opening an existing Brain with the new engine, stop old local processes, and restart all local services with the compatible runtime. Older engines cannot open schema 2; there is no in-place downgrade. Restore an old snapshot into a separate home if an older-engine recovery path is needed. Schema-1 backups can also be restored with the current engine, upgraded and quarantined before normal recovery.
+This historical step was introduced by engine 0.4.0; use the schema-4 procedure above for the current engine. Schema 2 for explicit task reporting and separate report-source classification. Supported schema-1 installations upgrade in one transaction while retaining existing identity/source/artifact records. Unknown schemas are rejected. Back up before opening an existing Brain with the new engine, stop old local processes, and restart all local services with the compatible runtime. Older engines cannot open schema 2; there is no in-place downgrade. Restore an old snapshot into a separate home if an older-engine recovery path is needed. Schema-1 backups can also be restored with the current engine, upgraded and quarantined before normal recovery.
 
 For the pre-upgrade snapshot, use your currently installed schema-1-compatible engine. If using npx, pin atmet-brain@0.3.1 for those backup/journal commands rather than @latest. The first 0.4.0 command that opens an existing Brain already performs the migration. Follow the [backup procedure](backup-and-recovery.md) before that first open; use a fresh home when restoring an older snapshot.

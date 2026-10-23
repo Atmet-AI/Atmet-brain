@@ -1,0 +1,6 @@
+flowchart TD
+    Old["Old compatible engine"] --> Backup["Stop processes and save backup plus journal"]
+    Backup --> New["Install/select new engine"]
+    New --> Home["Open the same company data home"]
+    Home --> Check["Check IDs, data, history and permissions"]
+    Check --> Resume["Reconnect agents and restart services"]

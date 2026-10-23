@@ -2,6 +2,8 @@
 
 Install the CLI with Node.js 22.14+ and npm on macOS or glibc Linux x64/arm64. The launcher includes the matching Python core and prepares its runtime on first use. Company data is stored separately from that runtime. Windows is not validated.
 
+Already have a company Brain? Follow [update without losing company data](upgrading.md) before opening it with a newer engine. Preserve the same data home, back up with the old compatible version, and refresh saved MCP/service runtime paths. First-time setup is not the update procedure.
+
 ## npm and npx
 
 With Node.js 22.14+ and npm:

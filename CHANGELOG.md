@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Documentation
+
+- Add a safe software-update walkthrough covering old-version backups, retained company homes/workspace IDs, schema migration, multiple companies, remote clients and refreshed MCP/service runtime paths.
+
 ## 0.8.1 - organization publishing and project identity, 2026-10-23
 
 ### Documentation and maintenance

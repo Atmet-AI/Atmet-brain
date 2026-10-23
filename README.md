@@ -26,7 +26,7 @@ Run the same core from a terminal, a Python application, REST or MCP. Your compa
 
 **Status: local/private-pilot alpha.** See the [support matrix](docs/implementation-status.md) for implemented features, tested integrations and planned capabilities.
 
-[Start from scratch](#from-an-empty-brain-to-daily-work) · [Memory types](#what-the-brain-stores) · [Install](#install) · [Existing projects](#add-the-brain-to-an-existing-project) · [Agent setup](#connect-an-agent) · [Team access](#share-one-brain-with-your-team) · [All guides](#documentation) · [Changelog](CHANGELOG.md)
+[Start from scratch](#from-an-empty-brain-to-daily-work) · [Memory types](#what-the-brain-stores) · [Install](#install) · [Update safely](#update-an-existing-brain) · [Existing projects](#add-the-brain-to-an-existing-project) · [Agent setup](#connect-an-agent) · [Team access](#share-one-brain-with-your-team) · [All guides](#documentation) · [Changelog](CHANGELOG.md)
 
 ## From an empty Brain to daily work
 
@@ -192,6 +192,17 @@ atmet-brain setup
 ```
 
 You can also run commands through `npx atmet-brain@latest` without a global installation.
+
+### Update an existing Brain
+
+Your company data and workspaces live in the selected private Brain home, separately from the installed package. Keep the same --brain label or --home path when changing versions. Do not create a new company or delete the database to update the software.
+
+1. Identify the old compatible version, stop its agents/services and save an encrypted backup plus current recovery journal using that old version.
+2. Select the new launcher. For the current maintenance version, run npx atmet-brain@0.8.1 --version; for a global install, run npm install --global atmet-brain@0.8.1.
+3. Open the same company home with the new engine, inspect doctor/status and compare the original workspace IDs.
+4. Refresh old runtime paths in MCP/service definitions, then restart and check the same permitted data.
+
+0.8.0 to 0.8.1 keeps schema 4 unchanged. Older supported schemas migrate on first open, so running @latest against old data before its backup can already perform the migration. Follow the [complete update walkthrough](docs/upgrading.md) for copyable backup/update commands, multiple companies, shared teams and recovery. The software update does not require a fresh setup.
 
 ### Use the terminal
 

@@ -19,6 +19,7 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 
 | What you want to do | Guide |
 | --- | --- |
+| Update software while keeping company data and workspaces | [Safe update walkthrough](upgrading.md) |
 | Choose a company, sign in and manage employee workspace permissions | [Employee accounts](employee-accounts.md) |
 | Configure an agent with workspace names and scoped access | [Guided agent setup](agent-setup.md) |
 | Use terminal commands or a saved remote connection | [Terminal](terminal.md) |

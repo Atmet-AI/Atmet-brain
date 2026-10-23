@@ -19,7 +19,7 @@ Start with `atmet-brain --version`, `atmet-brain status` and, for a local instal
 | Remote CLI cannot connect | Check server health, trusted HTTPS/CA or administrator-configured SSH key/known host/forwarding account, saved profile and individual credential. Automatic SSH profiles manage the tunnel; legacy loopback profiles still need their own tunnel. Plaintext non-loopback HTTP and redirects are refused. See [team setup](team-server.md). |
 | MCP connects but has fewer tools than expected | Tool opt-in flags and credential grants are separate. Proposal/automation flags expose tools but do not grant publish or external-action authority. Check [MCP](mcp.md). |
 | Service stops after logout or cannot find Python | These are per-user services. Check login-session requirements and the persistent interpreter path. After an environment move/upgrade, remove and reinstall its managed definition. Actual OS lifecycle needs deployment validation. |
-| Old version still runs | Use npx atmet-brain@latest --version or update the global install. A pinned version, old virtual environment or saved MCP executable continues to select that version. Regenerate saved configuration as needed. |
+| Old version still runs | Use npx atmet-brain@latest --version or update the global install. A pinned version, old virtual environment or saved MCP executable continues to select that version. Regenerate saved configuration as needed. Follow the [safe update walkthrough](upgrading.md); retain the original data home. |
 
 Share only redacted error codes, engine version and reproduction steps when asking for help. Keep token files, provider keys and real company sources private. For lost storage, use [encrypted recovery](backup-and-recovery.md); for one changed instruction, use [history](history-walkthrough.md).
 
@@ -69,3 +69,7 @@ Several company Brains are supported. Use brains create/add/list and explicit --
 ## An imported document is missing from search
 
 New/changed imports default to restricted intake, with processing blocked until classified. Use a human administrator session to run admin intake and admin classify SOURCE_ID, or configure an approved explicit access rule. If a rule changed, earlier classifications may be stale. An approved hold rule must be revised through human policy review before release. Existing restrictive source-history audiences still apply after wording changes. A connector with staged/revoked sources may need this explicit revalidation before another sync can succeed. Do not use sources.access to bypass pending intake. [Classification guide](conversational-administration.md).
+
+## My company or workspaces appear missing after updating
+
+Check the exact --home, ATMET_HOME, catalog root and --brain label used before the update. A named remote --connection selects a server, while an unqualified local command selects a local installation. A newer package does not move your company into a new data folder. If status returns not_initialized or a setup interview, stop and re-select the existing home; do not create a replacement company or restore over the original database. Compare the old recorded organization/workspace IDs. The [update walkthrough](upgrading.md) explains the checks and the difference between normal updating and recovery.
