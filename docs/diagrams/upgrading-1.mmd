@@ -1,6 +1,7 @@
 flowchart TD
-    Old["Old compatible engine"] --> Backup["Stop processes and save backup plus journal"]
-    Backup --> New["Install/select new engine"]
-    New --> Home["Open the same company data home"]
-    Home --> Check["Check IDs, data, history and permissions"]
-    Check --> Resume["Reconnect agents and restart services"]
+    Choose["Choose existing company and review paths"] --> Stop["Close agents and stop managed services"]
+    Stop --> Backup["Read-only snapshot of old schema"]
+    Backup --> Verify["Encrypt and verify backup plus journal"]
+    Verify --> Open["Open same home with target engine"]
+    Open --> Check["Verify records, workspaces and permissions"]
+    Check --> Services["Refresh managed services and reconnect MCP"]

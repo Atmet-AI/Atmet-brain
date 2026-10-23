@@ -56,7 +56,7 @@ Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have
 
 Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/task-history-and-learning.md).
 
-Current engine 0.8.1 upgrades supported schema-1/2/3 data transactionally to schema 4. Back up with the existing pinned engine first, stop old local processes and restart services with the new runtime. Older engines cannot open schema 4. [Upgrade and recovery](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/versioning.md#schema-4-upgrade).
+Current engine 0.9.0 upgrades supported schema-1/2/3 data transactionally to schema 4. Use the guided update below before opening existing data; its manual fallback uses the old compatible engine for backup. Older engines cannot open schema 4. [Upgrade and recovery](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/versioning.md#schema-4-upgrade).
 
 ## Automatic agent feedback
 
@@ -75,3 +75,11 @@ This adds local password accounts and single-use invitations, not SSO/MFA, email
 ## Manage company changes through your agent
 
 Run npx atmet-brain@latest --brain COMPANY admin agent --name company-assistant to prepare an administration MCP entry. Your external agent translates requests into pending changes; you use admin review CHANGE_ID in your human session and enter the password privately. New/changed documents stay in restricted intake until an approved explicit rule or human classification releases them. admin classify SOURCE_ID guides manual onboarding. Reader/User/Editor are everyday presets; company administration stays separate. [Full guide](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/conversational-administration.md).
+
+## Update an existing company Brain
+
+```bash
+npx atmet-brain@latest update
+```
+
+On the Brain host, choose your existing company, close its agents/external processes and approve the plan. The wizard saves and verifies an encrypted pre-migration backup plus journal with a separate key, opens the same data home, verifies retained records/permissions and refreshes unchanged Atmet-managed services. Reconnect saved MCP entries afterward. Multiple companies update separately; remote employees update their launcher separately. A global shortcut still needs npm install --global atmet-brain@latest. [Prompts, backups and failure recovery](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/upgrading.md).

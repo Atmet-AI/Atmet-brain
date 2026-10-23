@@ -90,3 +90,7 @@ Back up each company Brain and its independent recovery journal separately. A sn
 ## Administration and source classification snapshots
 
 Schema-4 snapshots also contain protected control-credential references, pending proposals, access-rule history and source classification state. Restore accepts supported schemas 1/2/3/4, upgrades before quarantine, rejects pending changes, disables active rules and resets classification decisions/clauses for deliberate recovery revalidation. Old controls remain revoked. The new recovery owner and fresh groups must rebuild explicit access before serving restored documents; a prior proposal/approval never executes merely because it was restored. Preserve your independent latest journal.
+
+## Backup-first software updates
+
+Use [the guided update](upgrading.md) for ordinary software upgrades. It creates a uniquely named encrypted snapshot and matching journal without opening the old schema through the new core, verifies the saved envelope, then checks retained data after migration. The backup manifest records the snapshot writer's engine version and the actual pre-migration schema. Its separately protected key is never included in the snapshot/report contents. Device credentials and external files remain in place and need their own protected backup. Update does not use quarantined restore as a normal migration step.

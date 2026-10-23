@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.9.0 - guided backup-first company updates, 2026-10-23
+
+### Added
+
+- Guided local update with company selection, exact npm target handoff, review/maintenance confirmation, encrypted read-only pre-migration snapshots and matching recovery journals with separate keys.
+- Retained table/record, identity, workspace, credential/configuration and catalog verification; private phase reports on success/failure without automatic database rollback.
+- Cooperative maintenance leases and unchanged managed-service refresh preserving API port, worker scope and prior running/inactive state.
+
+### Scope
+
+- Schema 4 is unchanged. Older supported schemas migrate only after backup verification. Close old/custom processes and reconnect saved MCP entries manually. The updater is local-only, bounded to 256 MiB snapshots and does not change global npm installations, provision networking, provide remote backup storage or run through agent RPC.
+
+
 ### Documentation
 
 - Add a safe software-update walkthrough covering old-version backups, retained company homes/workspace IDs, schema migration, multiple companies, remote clients and refreshed MCP/service runtime paths.

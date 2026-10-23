@@ -2,7 +2,84 @@
 
 Update the installed software and open the same company data home. Your workspaces, documents, memory, workflows, skills, task history and permissions belong to that home. They are not stored in the npm package.
 
-This guide uses 0.8.1 as the target. Updating from 0.8.0 keeps schema 4 unchanged and needs no data migration. Older supported schemas migrate on first open with the new engine. Make the backup with the old compatible version before that happens. Read the target release's [changelog](../CHANGELOG.md) and [schema notes](versioning.md#schema-4-upgrade) first.
+Use the guided updater below for the npm terminal installation on macOS/Linux. Version 0.9.0 keeps schema 4; supported older schemas migrate only after their backup is verified. Read the target release's [changelog](../CHANGELOG.md) and [schema notes](versioning.md#schema-4-upgrade). Installing/preparing a runtime does not open the company database.
+
+## Guided update
+
+On the computer hosting the Brain, run:
+
+```bash
+npx atmet-brain@latest update
+```
+
+This also works when your previous version does not yet have an update command: npx prepares the new launcher first. From 0.9.0 onward, atmet-brain update checks npm latest and hands off to its exact version when needed. An older globally installed shortcut still needs the npx command above for this first guided update.
+
+1. **Choose the company.** The wizard lists existing catalog entries and a legacy Brain in the selected home. Choose the actual company. It refuses an empty folder and never creates a replacement company. With several companies, update each separately.
+2. **Review the plan.** Check the company/workspace names, existing data path, target version, new encrypted backup folder, separate key path and managed-service count.
+3. **Close other access.** Disconnect this company's MCP in your agent app. Stop foreground servers/workers and pause scripts/scheduled access. Confirm this is done. The wizard handles unchanged Atmet-managed services itself; external containers/service managers remain your responsibility. Older engines/custom applications do not honor its cooperative maintenance lock.
+4. **Approve the update.** Answer yes to back up and update. Answer no or /cancel before approval to leave the company unchanged.
+5. **Wait for verification.** It stops managed services, checks for remaining recognizable Brain processes, takes a maintenance lease, snapshots the existing schema without running migrations, encrypts it, reads it back to authenticate/check its checksum and exports the matching recovery journal. Only then does it construct the new core and run supported transactional migrations.
+6. **Check completion.** It checks every existing database table's original columns/records, company/workspace IDs, credentials and configuration files. It refreshes unchanged managed definitions with the same API port or worker workspace/credential file, preserving their prior running/inactive state. It prints backup, key, journal and private progress-report paths.
+7. **Reconnect agents.** Regenerate saved MCP entries with the new runtime, original server-entry name, same scoped token file and same opt-in flags. The wizard cannot edit arbitrary agent-app settings or stop every possible custom Python application. Follow the reconnect section below. Never use an old engine against migrated data.
+
+The default backup is a uniquely named folder under ~/Atmet-backups; its new key is under ~/.atmet-backup-keys. They are outside the company home and separate from each other. The snapshot is encrypted; the private journal/report contain operational metadata and must also be protected. For disk-loss protection copy the snapshot and journal to independent storage, keeping the key separately accessible. The automatic local backup is not a remote backup service.
+
+```mermaid
+flowchart TD
+    Choose["Choose existing company and review paths"] --> Stop["Close agents and stop managed services"]
+    Stop --> Backup["Read-only snapshot of old schema"]
+    Backup --> Verify["Encrypt and verify backup plus journal"]
+    Verify --> Open["Open same home with target engine"]
+    Open --> Check["Verify records, workspaces and permissions"]
+    Check --> Services["Refresh managed services and reconnect MCP"]
+```
+
+### Select a company, release or backup location
+
+Global options go before update; update-specific flags go after it. Replace acme and the example paths with your existing company and fresh private destinations:
+
+```bash
+npx atmet-brain@latest --brain acme update
+npx atmet-brain@latest --home /absolute/company/path update
+npx atmet-brain@0.9.0 --brain acme update --to 0.9.0 \
+  --backup-dir /private/backup-storage/acme-before-0.9.0 \
+  --key-file /private/separate-keys/acme-before-0.9.0.key
+```
+
+Both destination names must be new. The key cannot be inside the backup folder, and neither can be inside the company data home. --to selects a reviewed exact release and avoids the latest-metadata lookup. The updater refuses a target older than its running version; it also refuses unknown/future schemas and a home still in recovery.
+
+For deliberate unattended operator use only, after stopping every external reader/writer:
+
+```bash
+npx atmet-brain@0.9.0 --json --brain acme update --to 0.9.0 --yes --confirm-stopped
+```
+
+JSON output contains paths and IDs, never raw tokens. --yes does not replace the explicit --confirm-stopped attestation. Each invocation creates a fresh backup; it does not automatically delete old snapshots or keys. Manage retention yourself.
+
+### Global shortcut and shared teams
+
+After the guided update, npx atmet-brain@latest uses the selected new package. If you also use the global atmet-brain shortcut, update it explicitly:
+
+```bash
+npm install --global atmet-brain@0.9.0
+atmet-brain --version
+```
+
+The wizard does not silently change a global npm prefix or require sudo. Runtime preparation and company migration are separate. The company home, catalog and connection credentials stay in place.
+
+Run the company update on its host. A remote employee's local update command cannot migrate the remote database. Joined employees update their launcher/MCP runtime and retain their named connection, endpoint and scoped credential; sign in again normally if their session expired.
+
+### If the guided update stops
+
+Read the error and the private update-report.json path. Before migration, a failed/missing/tampered backup prevents opening the target core. After a possible migration, the updater keeps the original company home, snapshot/key/journal and completed-phase report, and attempts to leave managed services stopped. It never automatically overwrites the database, revives old credentials or restarts an old runtime.
+
+Fix the reported cause. If no migration occurred, close remaining access and rerun with fresh destinations. If company verification failed or the migration phase was reached, keep access stopped and inspect the schema/report first. If data verified and only service replacement/start failed, inspect the private service logs and use the selected target runtime to repair/reinstall that service with its recorded port/scope. The report retains old/new definitions for this review; it is not an executable resume script. Do not blindly downgrade or restore over the company folder. Recovery uses a fresh home and deliberate journal reconciliation as described in [backup and recovery](backup-and-recovery.md).
+
+Snapshots cover canonical SQLite data plus supported settings, with the existing 256 MiB database limit. They exclude raw token files, device catalog/profiles, connector-provider secrets, external files and service definitions. Those stay in place and must have their own protected device/configuration backup. A successful preservation check is not a production security audit or an independent deployment/restore guarantee.
+
+## Manual fallback
+
+The steps below remain useful for source/uv installations, older updater versions and externally managed deployment procedures. Unlike the guided read-only snapshot, the ordinary backup command constructs a core, so use the old compatible engine for its pre-migration backup.
 
 ## What stays where
 
@@ -27,7 +104,7 @@ Set these values in one terminal. The old version below is an example: replace i
 
 ```bash
 BRAIN_CURRENT_VERSION="0.8.0"
-BRAIN_NEW_VERSION="0.8.1"
+BRAIN_NEW_VERSION="0.9.0"
 BRAIN_HOME_PATH="$HOME/.atmet-brain"
 ```
 
@@ -66,8 +143,8 @@ An npm update alone does not stop a running Python server or MCP process. Do not
 Choose fresh output names for this update. The example creates private local backup/key folders; for protection against disk loss, put the encrypted snapshot and current recovery journal on independent storage, keeping the key separately protected.
 
 ```bash
-BRAIN_BACKUP_DIR="$HOME/Atmet-backups/before-0.8.1"
-BRAIN_KEY_FILE="$HOME/.atmet-backup-keys/before-0.8.1.key"
+BRAIN_BACKUP_DIR="$HOME/Atmet-backups/before-0.9.0"
+BRAIN_KEY_FILE="$HOME/.atmet-backup-keys/before-0.9.0.key"
 umask 077
 mkdir -p "$BRAIN_BACKUP_DIR" "$HOME/.atmet-backup-keys"
 
@@ -96,7 +173,7 @@ For npx users, no uninstall or fresh company setup is required:
 npx "atmet-brain@$BRAIN_NEW_VERSION" --version
 ```
 
-Expected output for this example: Atmet Brain 0.8.1. This command prepares the matching runtime without opening the company database.
+Expected output for this example: Atmet Brain 0.9.0. This command prepares the matching runtime without opening the company database.
 
 If you use a globally installed command, update that package too:
 
@@ -137,16 +214,9 @@ npx "atmet-brain@$BRAIN_NEW_VERSION" --brain YOUR_COMPANY status
 
 Replace YOUR_COMPANY with the existing label. Keep any custom catalog-root --home before --brain. If you instead see not_initialized, a setup interview or a different organization, stop and check the selected home/catalog/environment. Do not initialize the apparently empty location.
 
-```mermaid
-flowchart TD
-    Old["Old compatible engine"] --> Backup["Stop processes and save backup plus journal"]
-    Backup --> New["Install/select new engine"]
-    New --> Home["Open the same company data home"]
-    Home --> Check["Check IDs, data, history and permissions"]
-    Check --> Resume["Reconnect agents and restart services"]
-```
 
-## 6. Reconnect agents and restart services
+
+## Reconnect agents and restart services
 
 Changing the npm version does not rewrite saved MCP JSON. Regenerate the MCP entry using the new runtime, the same home/connection and the same scoped credential and opt-in flags as before. For a local agent with an existing dedicated token file:
 

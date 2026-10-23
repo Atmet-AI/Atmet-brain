@@ -1,6 +1,6 @@
 # Versions and history
 
-For a software update that keeps your existing company/workspaces, use the [safe update walkthrough](upgrading.md). Engine updates and business-record revisions are separate.
+For a software update that keeps your existing company/workspaces, run npx atmet-brain@latest update on its host and follow the [guided update walkthrough](upgrading.md). The wizard verifies a read-only old-schema backup before migration; the manual fallback uses an old compatible engine. Engine updates and business-record revisions are separate.
 
 For exact terminal commands, start with the [history walkthrough](history-walkthrough.md). It creates revisions 1 and 2, compares them, records a context manifest and restores revision 1 as reviewed revision 3 using the released CLI.
 
@@ -71,9 +71,9 @@ Task envelopes include a manifest ID. `context.manifest` returns referenced arti
 
 Engine 0.8.0 adds human-reviewed administration, rule versions and restricted document intake. Supported schemas 1/2/3 upgrade transactionally on first open. Existing active documents keep their existing access until changed or a policy change makes classification stale. Every newly captured/changed document uses restricted intake by default; update your ingestion flow before expecting worker/search results.
 
-Before the first schema-4 engine command (0.8.0+) that opens an existing Brain, stop old services, workers and MCP processes. Create an encrypted backup and independent current journal with the old compatible engine. For a 0.7.0/schema-3 installation, pin npx atmet-brain@0.7.0 for backup/journal; @latest would already migrate it. Do this separately for each company. Follow [backup commands](backup-and-recovery.md).
+Run npx atmet-brain@latest update for the guided read-only backup-before-migration flow, separately for every company. If following the manual fallback instead, before the first schema-4 engine command (0.8.0+) opens an existing Brain, stop old services/workers/MCP and create an encrypted backup plus independent current journal with the old compatible engine. For a 0.7.0/schema-3 installation, pin npx atmet-brain@0.7.0 for backup/journal; @latest would already migrate it. Do this separately for each company. Follow [backup commands](backup-and-recovery.md).
 
-Open with the selected schema-4 engine (currently 0.8.1), inspect doctor/status and restart every service/client with the new installed runtime. Replace old runtime-specific service definitions deliberately. Do not mix engines; older engines reject schema 4 and there is no in-place downgrade. Restore an old snapshot to a separate home to use its old engine.
+Open with the selected schema-4 engine (currently 0.9.0), inspect doctor/status and restart every service/client with the new installed runtime. The guided updater refreshes unchanged Atmet-managed definitions; other deployments need deliberate runtime replacement. Reconnect saved MCP entries separately. Do not mix engines; older engines reject schema 4 and there is no in-place downgrade. Restore an old snapshot to a separate home to use its old engine.
 
 Enroll/sign in to a human administrator account, connect the administration agent and classify imports as shown in the [new flow](conversational-administration.md). Restored controls/approvals/rules are not reactivated; fresh recovery identities must deliberately review documents and rebuild approved rules.
 

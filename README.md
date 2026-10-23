@@ -58,7 +58,7 @@ The Sales walkthrough and existing-project walkthrough are alternative starting 
 
 Already have code, project notes or memory files? Start with [add the Brain to an existing project](#add-the-brain-to-an-existing-project). A coding agent with terminal access can perform the setup when instructed. An ordinary chat without tools cannot install the Brain or attach it to your application. MCP settings may need to be added in the client and the client restarted.
 
-Already set up a Brain? Follow the [schema-4 upgrade](docs/versioning.md#schema-4-upgrade) before using the new engine, then run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
+Already set up a Brain? Run the [guided update](docs/upgrading.md) before opening existing data with the new engine, then run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
 
 For teammates on other networks and the Finance/payroll example, read [team access explained](docs/team-access-explained.md). Workspace grants control access, source audiences restrict selected information, and authentication uses individual credentials. Company-local password login and single-use invitations are available; SSO/MFA and numeric company discovery remain planned. [Employee accounts and company chooser](docs/employee-accounts.md).
 
@@ -75,7 +75,7 @@ Add the generated atmet-admin MCP entry to your chosen agent app. The first comm
 
 New and changed documents start restricted until an approved rule or a human-reviewed classification releases them. Unmatched means restricted. After an import, use admin intake and admin classify SOURCE_ID before running extraction, or configure an approved trusted ingestion rule for repeat imports. Existing active pre-upgrade documents retain their current access until changed or a policy update makes their classification stale.
 
-Everyday presets are Reader (read), User (work/report/draft) and Editor (edit/review/publish business artifacts). Company administration is a separate privilege. Neither a department name nor a model instruction grants salary access. Schema 4 requires the [old-engine backup and stop/restart procedure](docs/versioning.md#schema-4-upgrade) before opening an existing Brain.
+Everyday presets are Reader (read), User (work/report/draft) and Editor (edit/review/publish business artifacts). Company administration is a separate privilege. Neither a department name nor a model instruction grants salary access. Schema 4 requires the [guided update or manual backup and stop/restart procedure](docs/upgrading.md) before opening an existing Brain.
 
 ## Company logins and several company Brains
 
@@ -93,7 +93,7 @@ Use a fresh example company, or register your existing data home with brains add
 
 Employees run join with their private invitation, choose a password, then use their saved company connection with login or agent. Passwords are entered privately and are not saved by the client. Sessions expire after 12 hours; permission changes revoke existing credentials and require sign-in again. Invitations are not public company IDs. SSO, MFA, verified email and a global company-number directory are not implemented. Each company needs its own backup/journal and a different port if several servers run on the device. [Complete employee/company walkthrough](docs/employee-accounts.md).
 
-For an existing installation, [back up and stop old processes before the schema-4 upgrade](docs/versioning.md#schema-4-upgrade). A CLI error does not close the Terminal app: recoverable wizard fields re-prompt, /cancel cancels an operation, and successful completion returns to your shell.
+For an existing installation, [run the guided update before opening existing data](docs/upgrading.md). A CLI error does not close the Terminal app: recoverable wizard fields re-prompt, /cancel cancels an operation, and successful completion returns to your shell.
 
 ## What your company builds
 
@@ -195,14 +195,17 @@ You can also run commands through `npx atmet-brain@latest` without a global inst
 
 ### Update an existing Brain
 
-Your company data and workspaces live in the selected private Brain home, separately from the installed package. Keep the same --brain label or --home path when changing versions. Do not create a new company or delete the database to update the software.
+Run the guided updater on the device hosting your company Brain:
 
-1. Identify the old compatible version, stop its agents/services and save an encrypted backup plus current recovery journal using that old version.
-2. Select the new launcher. For the current maintenance version, run npx atmet-brain@0.8.1 --version; for a global install, run npm install --global atmet-brain@0.8.1.
-3. Open the same company home with the new engine, inspect doctor/status and compare the original workspace IDs.
-4. Refresh old runtime paths in MCP/service definitions, then restart and check the same permitted data.
+```bash
+npx atmet-brain@latest update
+```
 
-0.8.0 to 0.8.1 keeps schema 4 unchanged. Older supported schemas migrate on first open, so running @latest against old data before its backup can already perform the migration. Follow the [complete update walkthrough](docs/upgrading.md) for copyable backup/update commands, multiple companies, shared teams and recovery. The software update does not require a fresh setup.
+Choose your company, close its agents and other foreground processes, then approve the update. The wizard stops unchanged Atmet-managed services, creates and verifies an encrypted snapshot plus recovery journal before opening the database with the new engine, and checks that company IDs, workspaces, records, permissions and credential/configuration files remain intact. It refreshes managed service runtime paths and restarts only services that were already running.
+
+For a specific company, use `npx atmet-brain@latest --brain acme update`, or pass its existing `--home /absolute/company/path` before update. Each company is updated separately. The company folder stays in place; no fresh setup is required.
+
+The terminal shows the private backup, separate decryption key and update-report paths. Keep the key protected and copy the backup/journal to independent storage. Reconnect saved MCP entries using the new runtime and their existing scoped credentials. Joined employees update their client software separately; the host administrator updates the shared Brain. See the [update guide](docs/upgrading.md) for every prompt, custom backup destinations, global shortcuts, failures and the manual fallback.
 
 ### Use the terminal
 

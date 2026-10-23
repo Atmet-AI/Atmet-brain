@@ -47,6 +47,19 @@ class Console:
             return "\033[" + code + "m" + value + "\033[0m"
         return value
 
+    def update_ready(self, value):
+        self.banner("Company Brain updated. Your workspaces are ready.", compact=True)
+        self.line("  Version: " + value["version"], accent=True)
+        self.wrapped("Company data: " + value["home"], "  ")
+        self.line("  Workspaces: " + ", ".join(v["slug"] for v in value["workspaces"]))
+        self.line("\n  Keep these recovery files", accent=True)
+        for label, key in [("Encrypted backup", "backup"), ("Separate key", "key_file"), ("Recovery journal", "journal"), ("Update report", "report")]:
+            self.wrapped(label + ": " + value[key], "  ")
+        self.line("\n  Next steps", accent=True)
+        for item in value["next"]:
+            self.wrapped(item, "  ")
+        self.wrapped("New MCP Python: " + value["mcp_runtime"], "  ")
+
     def line(self, value="", accent=False, muted=False):
         print(self.styled(value, accent, muted), file=self.stream)
 

@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.8.1 is a local/private-pilot alpha using database schema 4. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.9.0 is a local/private-pilot alpha using database schema 4. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
@@ -18,6 +18,7 @@ Atmet Brain 0.8.1 is a local/private-pilot alpha using database schema 4. Use th
 | Policy/workflow/skill lifecycle | Working proposal/publication, optimistic revisions, schedules, retirement and rollback |
 | Skills | Text package/resource import, dependency-aware retrieval and explicit task-outcome skill drafts; exact-revision publication remains separate; no script execution |
 | Task reports/history | Authenticated reports, default-private audiences, permission-first lexical history and explicit steps/corrections. Opt-in Python/host completion hooks automatically submit and attempt pending skill candidates; MCP completion instructions depend on the agent. No automatic external transcript capture or independent outcome verification |
+| Guided update | Local macOS/Linux operator wizard, npm target handoff, read-only encrypted pre-migration snapshot/journal, retained record/file checks and canonical service refresh; cooperative maintenance lock. Stop old/custom processes, reconnect external MCP manually. OS service lifecycle still needs host validation |
 | Schema upgrades | Transactional schema-1/2/3 to schema-4 migration and old-backup upgrade before quarantine; old accounts/invites/sessions disabled on restore; stop old engines and back up before upgrading |
 | Search | Working permission-first lexical ranking; no semantic/vector index in this release |
 | Context | Working bounded approved/reference separation and source/artifact manifest |

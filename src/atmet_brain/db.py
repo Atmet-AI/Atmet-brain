@@ -6,9 +6,19 @@ from pathlib import Path
 import sqlite3
 
 from .errors import require
+from .maintenance import acquire, release
 from .util import dumps, now, uid
 
 SCHEMA_VERSION = 4
+
+
+class Connection(sqlite3.Connection):
+    def close(self):
+        try:
+            super().close()
+        finally:
+            release(getattr(self, "maintenance_lease", None))
+            self.maintenance_lease = None
 
 
 class Store:
@@ -47,13 +57,22 @@ class Store:
         os.chmod(self.path, 0o600)
 
     def connect(self):
-        conn = sqlite3.connect(self.path, timeout=20, isolation_level=None)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys=ON")
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=20000")
-        conn.execute("PRAGMA secure_delete=ON")
-        return conn
+        lease = acquire(self.home)
+        try:
+            conn = sqlite3.connect(self.path, timeout=20, isolation_level=None, factory=Connection)
+            conn.maintenance_lease = lease
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA foreign_keys=ON")
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA busy_timeout=20000")
+            conn.execute("PRAGMA secure_delete=ON")
+            return conn
+        except BaseException:
+            if "conn" in locals():
+                conn.close()
+            else:
+                release(lease)
+            raise
 
     @contextmanager
     def transaction(self, write=False):

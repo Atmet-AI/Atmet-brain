@@ -213,3 +213,9 @@ flowchart LR
 ```
 
 Schema 4 adds security_heads, security_rules/history, source_security, control_credentials and admin_changes. Earlier active source rows remain governed by existing permissions until changed or a policy epoch requires reclassification. Rule changes invalidate earlier classification epochs; source revisions preserve prior restrictive clauses. The read-only admin catalog includes known hosting route metadata, not OS command execution or secrets. [Usage](conversational-administration.md) and [upgrade](versioning.md#schema-4-upgrade).
+
+## Local update boundary
+
+The update command is a filesystem-owner operation, absent from REST/MCP. It checks the selected existing home without constructing Store, then stops canonical unchanged managed services and acquires a cooperative exclusive maintenance lease. Ordinary core connections hold shared leases until close. Only the operator's current execution context can open the target core during that lease; it cannot be bypassed through public request arguments. Older releases/custom direct SQLite programs do not participate, so explicit external-process shutdown remains required.
+
+The updater snapshots the old schema through SQLite's backup API without running migrations, creates and authenticates the encrypted envelope plus matching journal, then opens the same home and compares original table columns/records, IDs and private files. New migration metadata/tables are allowed; unexpected changes fail closed. Managed definitions retain port/workspace/credential paths, are rewritten only after verification and restart only after releasing maintenance. Failures retain a private phase report and backups without automatic database rollback. See [operator steps and limits](upgrading.md).

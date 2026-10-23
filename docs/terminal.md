@@ -6,6 +6,10 @@ For unstyled output, use `atmet-brain --plain status`. For machine-readable outp
 
 Global options go before the command. No model key is needed for setup or the local line extractor. Setting up a remote connection does not enable model-based extraction or send company data to a model.
 
+## Guided software update
+
+Run npx atmet-brain@latest update on the host to choose an existing company, review backup/key paths and approve a backup-first update. Close its agents and external processes when prompted. The wizard verifies the encrypted pre-migration snapshot and retained company records, refreshes unchanged Atmet-managed services and prints a recovery report. Use --brain NAME or the actual --home PATH before update to select a company directly. Reconnect MCP entries afterward with the same scope. See [the full guide](upgrading.md), including unattended flags, separate global shortcuts and failure recovery.
+
 ## Company chooser, login and employees
 
 Run brains for a guided company chooser; brains create NAME creates an independent data home, and brains add NAME --path HOME registers existing data. Use --brain NAME explicitly before other commands. Each company has separate accounts, data and backups; concurrent servers need different ports. Run account setup once for the owner, login to sign in, and team for employee invitations and per-workspace access. Employee enrollment happens through join with a private single-use invitation. [Full account walkthrough](employee-accounts.md).

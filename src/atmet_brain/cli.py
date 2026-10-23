@@ -38,6 +38,12 @@ def parser():
     root.add_argument("--token-file", type=Path, help="Scoped credential file; defaults to ATMET_TOKEN_FILE or home/owner.token")
     sub = root.add_subparsers(dest="command")
     sub.add_parser("status", help="Show current local or selected remote Brain status")
+    update = sub.add_parser("update", help="Guided local update: back up, preserve company data and refresh managed services")
+    update.add_argument("--to", help="Reviewed exact release; default: current npm latest")
+    update.add_argument("--backup-dir", type=Path, help="New private backup directory outside the company home")
+    update.add_argument("--key-file", type=Path, help="New private decryption-key filename outside the backup directory")
+    update.add_argument("--yes", action="store_true", help="Approve the displayed update without prompts")
+    update.add_argument("--confirm-stopped", action="store_true", help="Attest all external agents, scripts and foreground processes are stopped")
     brains = sub.add_parser("brains", help="Choose, create or register independent company Brains")
     brains.add_argument("action", nargs="?", choices=["list", "open", "create", "add"])
     brains.add_argument("name", nargs="?")
@@ -364,6 +370,9 @@ def execute(args):
             from .companies import select
             args.home = select(args.catalog_home, args.brain)
     require(not (args.connection and args.endpoint), "invalid_connection", "Choose --connection or --endpoint.")
+    if args.command == "update":
+        from .updating import guided_update
+        return guided_update(args)
     if args.command == "admin":
         from .admin_cli import admin_command
         return admin_command(args, read_token)
@@ -597,6 +606,8 @@ def main():
                     console.welcome(result)
                 elif args.command == "agent":
                     console.agent_ready(result)
+                elif args.command == "update" and result.get("status") == "updated":
+                    console.update_ready(result)
                 elif isinstance(result, dict) and result.get("signed_in"):
                     console.login_ready(result)
                 elif isinstance(result, dict) and result.get("invitation_id"):
