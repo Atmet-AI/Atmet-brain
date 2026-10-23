@@ -22,7 +22,7 @@ The local core supports local source capture, authorized learning, reviewed oper
 ## Clients and operations
 
 - Remote MCP HTTP with interoperable authorization and actual client compatibility checks.
-- Human login, trusted identity-provider mapping and delegated user access.
+- Company SSO/MFA, email verification/delivery, browser login and trusted identity-provider delegation beyond the implemented local password accounts.
 - A platform interface for sources, review, teams, skills, history, graphs and managed backups.
 - Atmet Playground as a separate desktop coding runtime using the same core interfaces.
 - Managed retention, recovery objectives, secret rotation and supported company-server packages.

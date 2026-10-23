@@ -1,0 +1,7 @@
+flowchart LR
+    Password["Private password entry"] --> Auth["Bounded verifier and persisted attempt limit"]
+    Auth --> Session["12-hour opaque session"]
+    Session --> Principal["Company principal"]
+    Principal --> Grants["Current workspace operation grants"]
+    Grants --> Audience["Current source audiences and evidence"]
+    Audience --> Context["Permitted context"]

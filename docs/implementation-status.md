@@ -1,10 +1,12 @@
 # Implementation status
 
-Atmet Brain 0.6.1 is a local/private-pilot alpha using database schema 2. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.7.0 is a local/private-pilot alpha using database schema 3. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
 | Organizations/spaces | Local provisioning, stable IDs and tested company/space isolation |
+| Employee login and invitations | Company-local password accounts, single-use expiring private enrollment, bounded scrypt work/attempts, 12-hour sessions, password change/reset, logout/disable and reviewed workspace roles; no SSO/MFA, verified email or browser UI |
+| Multiple company Brains | Device-local catalog, separate data homes and explicit --brain selection; no global discovery service. Backups/ports are per Brain |
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
 | Registry distribution | npm includes the matching checksum-verified Python core and isolated runtime bootstrap; public Ubuntu CLI and anonymous macOS arm64 setup/MCP checks passed. See [installation](install.md) and [validation](validation.md). |
 | Terminal setup | Guided Local/Host/Join, existing-Brain Local reuse/separate-home choice and Host reuse, workspace-name member selection, private scoped connection files, server identity/scope verification and explicit service-start option; orange/plain/JSON presentation; no AI onboarding interview |
@@ -16,7 +18,7 @@ Atmet Brain 0.6.1 is a local/private-pilot alpha using database schema 2. Use th
 | Policy/workflow/skill lifecycle | Working proposal/publication, optimistic revisions, schedules, retirement and rollback |
 | Skills | Text package/resource import, dependency-aware retrieval and explicit task-outcome skill drafts; exact-revision publication remains separate; no script execution |
 | Task reports/history | Authenticated reports, default-private audiences, permission-first lexical history and explicit steps/corrections. Opt-in Python/host completion hooks automatically submit and attempt pending skill candidates; MCP completion instructions depend on the agent. No automatic external transcript capture or independent outcome verification |
-| Schema upgrades | Transactional schema-1 to schema-2 migration and old-backup upgrade before quarantine; older engines cannot open schema 2 |
+| Schema upgrades | Transactional schema-1/2 to schema-3 migration and old-backup upgrade before quarantine; old accounts/invites/sessions disabled on restore; stop old engines and back up before upgrading |
 | Search | Working permission-first lexical ranking; no semantic/vector index in this release |
 | Context | Working bounded approved/reference separation and source/artifact manifest |
 | History | Working artifact effective/known time lookup and retained source versions; no universal historical state replay |

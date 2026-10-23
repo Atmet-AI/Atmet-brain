@@ -34,9 +34,45 @@ def parser():
     root.add_argument("--endpoint", help="One-off remote HTTPS endpoint or SSH loopback URL")
     root.add_argument("--ca-file", type=Path, help="CA certificate file for a private HTTPS server")
     root.add_argument("--home", type=Path, default=default_home(), help="Private data directory")
+    root.add_argument("--brain", help="Company label from the device-local brains catalog")
     root.add_argument("--token-file", type=Path, help="Scoped credential file; defaults to ATMET_TOKEN_FILE or home/owner.token")
     sub = root.add_subparsers(dest="command")
     sub.add_parser("status", help="Show current local or selected remote Brain status")
+    brains = sub.add_parser("brains", help="Choose, create or register independent company Brains")
+    brains.add_argument("action", nargs="?", choices=["list", "open", "create", "add"])
+    brains.add_argument("name", nargs="?")
+    brains.add_argument("--path", type=Path)
+    brains.add_argument("--owner")
+    brains.add_argument("--spaces")
+    login = sub.add_parser("login", help="Sign in to your company with a private password prompt")
+    login.add_argument("--username")
+    login.add_argument("--organization")
+    login.add_argument("--name", help="New remote connection name")
+    login.add_argument("--ssh-destination", help="Administrator-configured forwarding-only user@host")
+    login.add_argument("--port", type=int, default=7310)
+    login.add_argument("--password-stdin", action="store_true")
+    sub.add_parser("logout", help="Revoke the current password session and remove its local credential")
+    account = sub.add_parser("account", help="Enroll the owner login or change your password")
+    account.add_argument("action", choices=["setup", "password", "recover"])
+    account.add_argument("--username")
+    account.add_argument("--organization")
+    account.add_argument("--output", type=Path)
+    account.add_argument("--confirm-local-owner", action="store_true")
+    account.add_argument("--password-stdin", action="store_true")
+    team_ui = sub.add_parser("team", help="Guided employees, invitations and per-workspace access")
+    team_ui.add_argument("action", nargs="?", choices=["list", "invite", "access", "reset", "disable", "workspace", "invites", "revoke"])
+    for command in [team_ui, sub.add_parser("invite", help="Create a private single-use employee enrollment invitation")]:
+        command.add_argument("--username")
+        command.add_argument("--employee-name")
+        command.add_argument("--access-file", type=Path)
+        command.add_argument("--output", type=Path)
+        command.add_argument("--invite-endpoint")
+        command.add_argument("--ssh-destination")
+        command.add_argument("--port", type=int, default=7310)
+        command.add_argument("--expires-at")
+        command.add_argument("--reset-principal")
+        command.add_argument("--principal")
+        command.add_argument("--invite-id")
     agent = sub.add_parser("agent", help="Guided agent connection: workspace names, scoped access and ready setup files")
     agent.add_argument("--name", help="Agent slug, for example sales-assistant")
     agent.add_argument("--method", choices=["mcp", "terminal", "rest", "python"])
@@ -61,10 +97,12 @@ def parser():
     setup.add_argument("--ssh-destination", help="Administrator-configured forwarding-only user@host")
     setup.add_argument("--port", type=int, default=7310, help="Host loopback Brain port")
     setup.add_argument("--member", help="Teammate name to provision")
+    setup.add_argument("--member-username", help="Use a single-use password enrollment invitation for this employee; omit only for legacy bearer sharing")
     setup.add_argument("--member-spaces", help="Allowed workspace names, separated by commas")
     setup.add_argument("--role", choices=sorted(set(ROLES) - {"owner"}))
     setup.add_argument("--output", type=Path, help="New private member connection file")
     setup.add_argument("--start-service", action="store_true", help="Install and start the per-user API service")
+    setup.add_argument("--password-stdin", action="store_true", help="Private automation enrollment password, never a command argument")
     # Reuse the same flags and validation for the short, discoverable entry points.
     for name, mode in [("host", "host"), ("join", "join")]:
         command = sub.add_parser(name, parents=[setup], add_help=False, help="Guided " + name + " setup")
@@ -214,6 +252,9 @@ def read_token(args):
         return args.token_file.expanduser().read_text().strip()
     if os.environ.get("ATMET_TOKEN"):
         return os.environ["ATMET_TOKEN"].strip()
+    if not os.environ.get("ATMET_TOKEN_FILE") and (args.home / "login.json").is_file():
+        require((args.home / "session.token").is_file(), "sign_in_required", "You are signed out. Run login for this company; owner access requires explicit --token-file.", 401)
+        return (args.home / "session.token").read_text().strip()
     path = args.token_file or Path(os.environ.get("ATMET_TOKEN_FILE", args.home / "owner.token"))
     return path.read_text().strip()
 
@@ -306,7 +347,28 @@ def task_request(args):
 
 
 def execute(args):
+    if not hasattr(args, "catalog_home"):
+        args.catalog_home = args.home.expanduser().resolve()
+        if getattr(args, "brain", None):
+            require(not args.connection and not args.endpoint, "invalid_company", "Choose a local --brain or a remote connection.")
+            from .companies import select
+            args.home = select(args.catalog_home, args.brain)
     require(not (args.connection and args.endpoint), "invalid_connection", "Choose --connection or --endpoint.")
+    if args.command == "brains":
+        require(not args.connection and not args.endpoint, "local_only", "Company catalog management is local.")
+        from .companies import guided_companies
+        return guided_companies(args)
+    if args.command in {"login", "logout", "account", "team", "invite"}:
+        from .account_cli import account_command, core_client, invite_employee, login_employee, logout_employee, team_command
+        if args.command == "login":
+            return login_employee(args)
+        if args.command == "logout":
+            return logout_employee(args)
+        if args.command == "account":
+            return account_command(args, read_token)
+        if args.command == "invite":
+            return invite_employee(args, core_client(args, read_token))
+        return team_command(args, read_token)
     if args.command is None and (args.connection or args.endpoint):
         args.command = "status"
     if args.command is None:
@@ -315,6 +377,7 @@ def execute(args):
                 "home": str(args.home), "start": shlex.join(base + ["setup"]), "inspect": shlex.join(base + ["status"]),
                 "host": shlex.join(base + ["host"]), "join": shlex.join(base + ["join"]),
                 "agent": shlex.join(base + ["agent"]),
+                "companies": shlex.join(base + ["brains"]), "team": shlex.join(base + ["team"]),
                 "help": "atmet-brain --help", "connections": list_connections(args.home)}
     if args.command == "connect":
         require(not args.connection and not args.endpoint, "invalid_connection", "Use connect's own endpoint and token-file arguments.")
@@ -345,9 +408,29 @@ def execute(args):
         def start_api(port):
             from .services import manage_service, service_spec
             return manage_service("install", service_spec(args.home, "api", None, None, port), True)
-        return guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca),
+        def invite_member(login, name, spaces, role, output, route):
+            from .feedback import LocalClient
+            from .invitations import save_invitation
+            local = Brain(args.home)
+            available = {s["slug"]: s["id"] for s in local.list_spaces(local.authenticate(read_token(args)))}
+            return save_invitation(LocalClient(local, read_token(args)), output, username_value=login, name=name,
+                                   access=[{"space_id": available[s], "role": role} for s in spaces], route=route)
+        result = guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca),
                             inspect_local=local_status, share=share_member,
-                            join=lambda path, name, ca, record: join_share(args.home, path, name, ca, record), start_service=start_api)
+                            join=lambda path, name, ca, record: join_share(args.home, path, name, ca, record), start_service=start_api, invite_member=invite_member)
+        if "connection" not in result and (args.home / "brain.sqlite3").is_file():
+            from .companies import catalog, remember
+            try:
+                records = catalog(args.catalog_home)
+                label = getattr(args, "brain", None) or result.get("company") or result.get("identity", {}).get("company") or args.organization or "company"
+                candidate, number = label, 2
+                while candidate in records and records[candidate] != str(args.home.resolve()):
+                    candidate = label[:70] + "-" + str(number)
+                    number += 1
+                result["company_catalog"] = remember(args.catalog_home, candidate, args.home)
+            except (BrainError, OSError, ValueError):
+                result["catalog_note"] = "Brain setup completed, but catalog registration failed. Keep using its explicit --home and register it with brains add later."
+        return result
     if args.command == "agent":
         from .agent_setup import guided_agent
         def join_team():
@@ -501,6 +584,12 @@ def main():
                     console.welcome(result)
                 elif args.command == "agent":
                     console.agent_ready(result)
+                elif isinstance(result, dict) and result.get("signed_in"):
+                    console.login_ready(result)
+                elif isinstance(result, dict) and result.get("invitation_id"):
+                    console.invitation_ready(result)
+                elif args.command == "team" and isinstance(result, dict) and result.get("employee"):
+                    console.employee_ready(result)
                 else:
                     if args.command in {"setup", "host", "join"} and sys.stdin.isatty():
                         console.line("\n  Setup complete", accent=True)

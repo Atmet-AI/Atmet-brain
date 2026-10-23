@@ -77,10 +77,10 @@ class GuidedSharingCase(unittest.TestCase):
         link = self.root / "link"; link.symlink_to(self.root / "absent", target_is_directory=True)
         for target in [folder, link]:
             args = parser().parse_args(["--home", str(self.home), "setup", "--mode", "local"])
-            with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=["new", str(target)]), contextlib.redirect_stderr(io.StringIO()):
+            with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=["new", str(target), "/cancel"]), contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(BrainError) as caught:
                     execute(args)
-            self.assertEqual("already_exists", caught.exception.code)
+            self.assertEqual("setup_cancelled", caught.exception.code)
         self.assertEqual("keep", (folder / "note.txt").read_text())
         self.assertFalse((folder / "brain.sqlite3").exists())
 

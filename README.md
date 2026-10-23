@@ -41,7 +41,25 @@ Already have code, project notes or memory files? Start with [add the Brain to a
 
 Already set up a Brain? Run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
 
-For teammates on other networks and the Finance/payroll example, read [team access explained](docs/team-access-explained.md). Workspace grants control access, source audiences restrict selected information, and authentication uses individual credentials. Login/SSO and numeric company discovery remain planned.
+For teammates on other networks and the Finance/payroll example, read [team access explained](docs/team-access-explained.md). Workspace grants control access, source audiences restrict selected information, and authentication uses individual credentials. Company-local password login and single-use invitations are available; SSO/MFA and numeric company discovery remain planned. [Employee accounts and company chooser](docs/employee-accounts.md).
+
+## Company logins and several company Brains
+
+Each company can have its own independent Brain on the same device. Create a catalog entry and select it explicitly:
+
+```bash
+npx atmet-brain@latest brains create acme --spaces shared,operations,finance-general,payroll
+npx atmet-brain@latest --brain acme account setup --username owner
+npx atmet-brain@latest --brain acme login --username owner
+npx atmet-brain@latest --brain acme host
+npx atmet-brain@latest --brain acme team
+```
+
+Use a fresh example company, or register your existing data home with brains add instead. Run brains for the company chooser. The team menu lets you choose an employee, set a role in each allowed workspace, prepare a single-use invitation, reset a login or disable access. Put general finance in finance-general and salaries in payroll, then grant payroll only to the intended people. Ordinary documents follow their destination workspace's readers; restricted sources can narrow access further.
+
+Employees run join with their private invitation, choose a password, then use their saved company connection with login or agent. Passwords are entered privately and are not saved by the client. Sessions expire after 12 hours; permission changes revoke existing credentials and require sign-in again. Invitations are not public company IDs. SSO, MFA, verified email and a global company-number directory are not implemented. Each company needs its own backup/journal and a different port if several servers run on the device. [Complete employee/company walkthrough](docs/employee-accounts.md).
+
+For an existing installation, [back up and stop old processes before the schema-3 upgrade](docs/versioning.md#schema-3-upgrade). A CLI error does not close the Terminal app: recoverable wizard fields re-prompt, /cancel cancels an operation, and successful completion returns to your shell.
 
 ## What your company builds
 
@@ -594,28 +612,23 @@ flowchart TB
     Auth --> Server
 ```
 
-On the company device, open Host. It creates a new Brain or reuses the existing one:
+On the company device, open Host using the selected --brain or --home. It creates or reuses that company Brain and defaults to a single-use employee invitation:
 
 ```bash
 npx atmet-brain@latest host
 ```
 
-Choose the secure route, enter a teammate's name, select allowed workspaces by name and choose a role. Host creates a private `.atmet-join.json` connection file and offers to install/start the local background API service. Run Host again to add another teammate.
+Choose the reachable SSH/HTTPS route, enter the employee's name and login username, select permitted workspaces/role and review. Give the private invitation file to its intended employee. Use team for different roles in different workspaces and later access changes.
 
-Give that file privately to its intended recipient. On their device:
+On their device:
 
 ```bash
 npx atmet-brain@latest join
 ```
 
-Join asks for the file, displays the server/access details, verifies the actual identity and lists permitted workspaces. The default saved connection name is `company`. For regular use, install the CLI globally, then:
+Join verifies the company route, enrolls the bound account with a privately chosen password and saves a scoped session. The default password-connection label is the company slug; use the label you selected for later login, status or agent commands. No company database is copied to the employee's device.
 
-```bash
-atmet-brain --connection company space
-atmet-brain --json --connection company mcp-config
-```
-
-Automatic SSH mode opens and closes forwarding for each request; no separate tunnel terminal is needed. An administrator must first configure the forwarding-only SSH account, each teammate's SSH key and trusted host key. Alternatively use existing HTTPS ingress. Host does not configure OS accounts, firewalls, certificates or a VPN. The connection file contains a scoped credential, not a public or single-use invitation; keep it private. [Step-by-step Host and Join guide](docs/team-server.md) · [Terminal commands](docs/terminal.md).
+Automatic SSH mode opens and closes forwarding for each request after an administrator configures SSH keys/host trust. HTTPS uses existing trusted ingress. Host does not configure firewalls, certificates or a VPN. New .atmet-invite.json files expire and are consumed once. Explicit legacy .atmet-join.json credential files remain supported and are reusable until expiry/revocation. [Employee login and permissions](docs/employee-accounts.md) · [Host/Join reference](docs/team-server.md).
 
 ## Documentation
 
@@ -626,6 +639,7 @@ Automatic SSH mode opens and closes forwarding for each request; no separate tun
 | Add knowledge from an existing project | [README project walkthrough](#add-the-brain-to-an-existing-project), [file sources](docs/connectors.md) |
 | Automate result reporting with approval | [Automatic task feedback](docs/automatic-task-feedback.md) |
 | Report tasks, search past work and propose skills | [Task history and learning](docs/task-history-and-learning.md) |
+| Sign in, invite employees or choose company Brains | [Employee accounts](docs/employee-accounts.md) |
 | Share a private company server | [Team access and background services](docs/team-server.md) |
 | Build your company's first workflow | [Company walkthrough](docs/use-for-your-company.md) |
 | Understand modules and data boundaries | [Architecture](docs/architecture.md) |

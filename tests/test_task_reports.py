@@ -241,7 +241,7 @@ class TaskReportCase(unittest.TestCase):
         same_actor=upgraded.authenticate(token)
         self.assertEqual(source['id'],upgraded.get_source(same_actor,source['id'])['id'])
         with upgraded.store.transaction() as conn:
-            self.assertEqual('2',conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0])
+            self.assertEqual(str(SCHEMA_VERSION),conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0])
             self.assertIn('category',[r['name'] for r in conn.execute('PRAGMA table_info(sources)')])
             conn.execute("UPDATE meta SET value='99' WHERE key='schema_version'")
         self.fails('schema_version',Store,home)
@@ -269,7 +269,7 @@ class TaskReportCase(unittest.TestCase):
         destination=self.home.parent/'legacy-restored';restored=Brain.restore_backup(backup,destination,key)
         self.assertEqual('quarantined',restored['status'])
         with Brain(destination).store.transaction() as conn:
-            self.assertEqual('2',conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0])
+            self.assertEqual(str(SCHEMA_VERSION),conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0])
             self.assertEqual(0,conn.execute('SELECT COUNT(*) FROM task_reports').fetchone()[0])
             self.assertEqual(0,conn.execute('SELECT COUNT(*) FROM credentials WHERE revoked=0').fetchone()[0])
 

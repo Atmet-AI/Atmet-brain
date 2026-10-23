@@ -44,7 +44,7 @@ All core arguments are forwarded literally. Bootstrap messages go to stderr; MCP
 npx atmet-brain --connection company mcp
 ```
 
-On the company device run `npx atmet-brain@latest host`. It creates or reuses the Brain and prepares a private scoped connection file for each teammate. On their device run `npx atmet-brain@latest join` and choose that file. Join checks the real server identity and lists allowed workspaces. Treat the connection file as a credential, not a public invitation.
+On the company device run `npx atmet-brain@latest host`. It creates or reuses the Brain and prepares a private scoped connection file for each teammate. On their device run `npx atmet-brain@latest join` and choose that file. Join checks the real server identity and lists allowed workspaces. Treat the invitation as private, expiring enrollment material. Explicit legacy bearer connection files remain supported and reusable.
 
 SSH connections manage their own forwarding per request after an administrator configures the forwarding-only account, SSH keys and trusted host key. HTTPS uses existing company ingress. The wizard does not configure OS accounts, firewall rules or certificates. The manual `connect` command remains available. Each user/agent needs individual scoped access. No company data is uploaded by merely installing this launcher. [Host and Join](https://github.com/anashamad9/Atmet-brain/blob/main/docs/team-server.md).
 
@@ -56,7 +56,7 @@ Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have
 
 Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/task-history-and-learning.md).
 
-Engine 0.4.0 upgrades schema-1 company data transactionally to schema 2. Back up first, stop old local processes and restart services with the compatible runtime. Older engines cannot open schema 2. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-2-upgrade).
+Current engine 0.7.0 upgrades supported schema-1/2 data transactionally to schema 3. Back up with the existing pinned engine first, stop old local processes and restart services with the new runtime. Older engines cannot open schema 3. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-3-upgrade).
 
 ## Automatic agent feedback
 
@@ -65,3 +65,9 @@ Configure `mcp-config --task-feedback` with a scoped reporter credential, or sen
 ## Guided agent connection
 
 Run `npx atmet-brain@latest agent`. Choose the Brain, connection method, workspace names and read-only or learning access. The wizard creates/verifies scoped access, displays a copyable MCP entry and saves private next-step files. Add that configuration to the app and test it there; no application settings, API services or host task hooks are installed automatically. [Agent setup](https://github.com/anashamad9/Atmet-brain/blob/main/docs/agent-setup.md).
+
+## Employee logins and several companies
+
+Use brains create COMPANY for independent company data homes, then --brain COMPANY account setup, login, host and team. The terminal team editor selects each employee's workspaces and a role in each; omitted payroll access stays denied. Employees consume a private invitation with join, choose a password privately and use their named connection with login, logout or agent. Passwords are never saved by the client. Sessions expire and permission changes require a new sign-in. Invalid wizard fields retry in place; /cancel cancels the current operation.
+
+This adds local password accounts and single-use invitations, not SSO/MFA, email verification or a global company-number resolver. Each company needs its own backup and server port. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/employee-accounts.md).

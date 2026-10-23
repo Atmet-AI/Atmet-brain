@@ -142,6 +142,7 @@ class IdentityMixin:
             for sid in spaces:
                 conn.execute("INSERT INTO grants VALUES(?,?,?,?,?,0)", (uid("grant"), pid, sid, dumps(operations), expiry))
             issued = issue(conn, pid, operations, spaces, expiry, actor.credential_id)
+            conn.execute("INSERT INTO member_versions VALUES(?,1)", (pid,))
             audit(conn, actor, "team.add", pid, details={"space_ids": spaces, "role": role, "expires_at": expiry})
             return {"principal_id": pid, **issued, "space_ids": spaces, "role": role, "expires_at": expiry}
 
@@ -181,7 +182,9 @@ class IdentityMixin:
             return {"principal_id": row["id"], "organization_id": row["org_id"], "name": row["name"],
                     "kind": row["kind"], "credential_id": actor.credential_id,
                     "credential_operations": loads(row["operations"]), "credential_spaces": loads(row["space_ids"]),
-                    "expires_at": row["expires_at"]}
+                    "expires_at": row["expires_at"],
+                    "company": conn.execute("SELECT slug FROM organizations WHERE id=?", (actor.org_id,)).fetchone()[0],
+                    "username": (account[0] if (account := conn.execute("SELECT username FROM user_accounts WHERE principal_id=?", (actor.principal_id,)).fetchone()) else None)}
 
     def check_access(self, actor, space_id):
         """Describe only this authenticated caller's current space permissions."""
@@ -238,6 +241,7 @@ class IdentityMixin:
                          (ident, principal_id, space_id, dumps(operations),
                           timestamp(expires_at) if expires_at is not None else None))
             audit(conn, actor, "grant.create", ident, space_id, {"principal_id": principal_id, "operations": operations})
+            conn.execute("INSERT INTO member_versions VALUES(?,1) ON CONFLICT(principal_id) DO UPDATE SET revision=revision+1", (principal_id,))
             return {"id": ident, "operations": operations}
 
     def revoke_grant(self, actor, grant_id):
@@ -246,6 +250,7 @@ class IdentityMixin:
             require(row is not None, "not_found", "Grant not found.", 404)
             authorize(conn, actor, row["space_id"], "manage")
             conn.execute("UPDATE grants SET revoked=1 WHERE id=?", (grant_id,))
+            conn.execute("INSERT INTO member_versions VALUES(?,1) ON CONFLICT(principal_id) DO UPDATE SET revision=revision+1", (row["principal_id"],))
             recovery_event(conn, "grant.revoke", grant_id)
             audit(conn, actor, "grant.revoke", grant_id, row["space_id"])
         self.flush_recovery_journal()

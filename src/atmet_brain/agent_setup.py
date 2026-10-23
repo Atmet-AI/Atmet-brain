@@ -81,7 +81,8 @@ def guided_agent(args, read_token, join_team):
         console.line("  2 / Choose workspaces", accent=True)
         for index, item in enumerate(available, 1):
             console.line("  #" + str(index) + "  " + item["slug"])
-    value = args.spaces or (ask("Workspace names or #numbers, separated by commas", "#1") if interactive else None)
+    value = args.spaces or (ask("Workspace names or #numbers, separated by commas", "#1",
+                               validate=lambda v: pick_spaces(v, available)) if interactive else None)
     require(value, "agent_answers_required", "Choose --spaces using permitted workspace names.")
     selected = pick_spaces(value, available)
     try:
@@ -115,7 +116,14 @@ def guided_agent(args, read_token, join_team):
     identity_mode = args.identity or (ask("Identity", "new" if can_create else "current", ["new", "current"] if can_create else ["current"]) if interactive else None)
     require(identity_mode in {"new", "current"}, "agent_answers_required", "Choose --identity new or current.")
     require(identity_mode != "new" or can_create, "forbidden", "Only an authorized administrator can create a separate agent identity.")
-    name = args.name or (ask("Agent slug", "project-assistant") if interactive else None)
+    def available_name(value):
+        slug(value)
+        require(len(value) <= 60, "invalid_slug", "Keep the agent name within 60 characters.")
+        destination = (args.output or home / "agents" / value).expanduser().absolute()
+        require(not destination.exists() and not destination.is_symlink(), "already_exists", "That private setup folder exists. Choose a new name or /cancel.")
+        if route:
+            require(not profile_path(home, "agent-" + value).exists(), "already_exists", "That agent connection exists. Choose another name.")
+    name = args.name or (ask("Agent slug", "project-assistant", validate=available_name) if interactive else None)
     require(name, "agent_answers_required", "Choose --name, for example project-assistant.")
     slug(name)
     require(len(name) <= 60, "invalid_slug", "Keep the agent slug within 60 characters.")

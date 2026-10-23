@@ -31,8 +31,17 @@ class Client(TaskClientMixin):
         self.opener = build_opener(ProxyHandler({}), NoRedirect(), HTTPSHandler(context=ssl.create_default_context(cafile=ca_file)))
 
     def call(self, method, **params):
-        request = Request(self.endpoint + "/v1/rpc", dumps({"method": method, "params": params}).encode(),
-                          {"Content-Type": "application/json", "Authorization": "Bearer " + self.token})
+        return self._request("/v1/rpc", {"method": method, "params": params}, True)
+
+    def auth(self, action, **params):
+        require(action in {"login", "accept"}, "invalid_auth", "Choose login or accept.")
+        return self._request("/v1/auth/" + action, params, False)
+
+    def _request(self, path, body, authenticated):
+        headers = {"Content-Type": "application/json"}
+        if authenticated:
+            headers["Authorization"] = "Bearer " + self.token
+        request = Request(self.endpoint + path, dumps(body).encode(), headers)
         try:
             with self.opener.open(request, timeout=60) as response:
                 data = response.read(4_000_001)

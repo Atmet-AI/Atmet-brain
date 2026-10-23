@@ -102,3 +102,7 @@ class SSHClient:
         # Each operation owns and closes its forwarding process, including MCP calls.
         with tunnel(self.settings) as endpoint:
             return Client(endpoint, self.token).call(method, **params)
+
+    def auth(self, action, **params):
+        with tunnel(self.settings) as endpoint:
+            return Client(endpoint, self.token).auth(action, **params)

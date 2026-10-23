@@ -8,6 +8,7 @@ import sys
 import textwrap
 
 from ._version import __version__
+from .util import iso
 
 # A terminal-only display treatment, not a replacement for the brand's SVG mark.
 PIXELS = {
@@ -70,6 +71,8 @@ class Console:
         self.wrapped("Home  " + value["home"], "  ", muted=True)
         self.line()
         for title, command in [("Set up a Brain", value["start"]), ("Inspect this Brain", value["inspect"]),
+                               ("Choose a company Brain", value.get("companies", "atmet-brain brains")),
+                               ("Manage employee access", value.get("team", "atmet-brain team")),
                                ("Connect an agent", value["agent"]),
                                ("Host a team Brain", value["host"]), ("Join your team", value["join"]),
                                ("Browse commands", value["help"])]:
@@ -78,6 +81,36 @@ class Console:
             self.line()
         if value["connections"]:
             self.wrapped("Saved connections: " + str(len(value["connections"])) + ". Use atmet-brain connections list.", "  ", muted=True)
+
+    def login_ready(self, value):
+        self.banner("Signed in to " + value["identity"]["company"] + ".", compact=True)
+        self.line("  Employee: " + value["username"], accent=True)
+        self.wrapped("Workspaces: " + ", ".join(s["slug"] for s in value["spaces"]), "  ")
+        self.line("  Session expires: " + iso(value["expires_at"]))
+        self.line("  Password was not saved. Each request still checks current permissions.")
+        for step in value.get("next", []):
+            self.wrapped(step, "  ", accent=True)
+
+    def invitation_ready(self, value):
+        self.banner("Employee invitation ready.", compact=True)
+        self.line("  Company: " + value["company"])
+        self.line("  Employee login: " + value["username"], accent=True)
+        self.line("  Expires: " + iso(value["expires_at"]))
+        self.wrapped("Private file: " + value["private_file"], "  ")
+        self.line("  Single use. Give it privately to this employee; they choose their password.")
+        self.line("  On their device: npx atmet-brain@latest join", accent=True)
+
+    def employee_ready(self, value):
+        self.banner("Employee access updated.", compact=True)
+        self.line("  Employee: " + value["employee"], accent=True)
+        if value.get("status") == "disabled":
+            self.line("  Access disabled. Credentials revoked and document groups removed.")
+        else:
+            for workspace in value["workspace_access"]:
+                self.line("  " + workspace)
+            if not value["workspace_access"]:
+                self.line("  No workspace access.")
+            self.line("  Previous credentials revoked. This employee must sign in again.")
 
     def option(self, name, title, description):
         self.line("  " + name + "  /  " + title, accent=True)
@@ -132,7 +165,7 @@ class Console:
                 self.line(line, accent, muted)
 
 
-def prompt(label, default=None, choices=None, *, console=None):
+def prompt(label, default=None, choices=None, *, console=None, validate=None):
     from .errors import BrainError
     console = console or Console()
     suffix = f" [{default}]" if default is not None else ""
@@ -144,6 +177,17 @@ def prompt(label, default=None, choices=None, *, console=None):
             value = input().strip() or default
         except EOFError:
             raise BrainError("setup_interrupted", "This guided flow needs answers. Use command flags for non-interactive use.") from None
+        if value == "/cancel":
+            raise BrainError("setup_cancelled", "Cancelled. Completed changes, if any, remain recorded.")
         if value and (not choices or value in choices):
-            return value
+            try:
+                if validate:
+                    validate(value)
+                return value
+            except BrainError as error:
+                console.line("  " + error.message + " Try again, or type /cancel.", accent=True)
+                continue
+            except (OSError, ValueError):
+                console.line("  Check that value or private file path. Try again, or type /cancel.", accent=True)
+                continue
         console.line("  Choose " + ", ".join(choices) if choices else "  Enter a value.")

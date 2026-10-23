@@ -12,7 +12,7 @@ from .terminal import Console, prompt
 from .util import slug, text, uid
 
 
-def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=None, join=None, start_service=None):
+def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=None, join=None, start_service=None, invite_member=None):
     args.home = args.home.expanduser().resolve()
     interactive = sys.stdin.isatty() and not args.json
     console = Console(plain=args.plain)
@@ -29,8 +29,15 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
     mode = {"team": "host"}.get(mode, mode)
     base = [str(Path(sys.executable).absolute()), "-m", "atmet_brain", "--home", str(args.home)]
     if mode == "join" or (mode == "connect" and args.file):
-        path = args.file or (ask("Private team connection file") if interactive else None)
+        def validate_file(value):
+            from .invitations import read_private_json, read_invitation
+            return read_invitation(value) if read_private_json(value).get("format") == "atmet-invite-v1" else read_share(value)
+        path = args.file or (ask("Private invitation or team connection file", validate=validate_file) if interactive else None)
         require(path, "setup_answers_required", "Use join --file PATH, or run join interactively.")
+        from .invitations import read_private_json
+        if read_private_json(path).get("format") == "atmet-invite-v1":
+            from .account_cli import join_invitation
+            return join_invitation(args, path)
         record = read_share(path)
         name = args.name or (ask("Save this connection as", "company") if interactive else "company")
         slug(name)
@@ -67,7 +74,10 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
             choice = ask("Existing Brain", "reuse", ["reuse", "new", "cancel"])
             require(choice != "cancel", "setup_cancelled", "Setup cancelled. Existing Brain kept.")
             if choice == "new":
-                target = Path(ask("New private data folder", str(args.home.with_name(args.home.name + "-other")))).expanduser()
+                def new_folder(value):
+                    chosen = Path(value).expanduser()
+                    require(not chosen.exists() and not chosen.is_symlink(), "already_exists", "Choose a new private folder that does not exist.")
+                target = Path(ask("New private data folder", str(args.home.with_name(args.home.name + "-other")), validate=new_folder)).expanduser()
                 require(not target.exists() and not target.is_symlink(), "already_exists",
                         "Choose a new folder that does not exist. Existing folders are never overwritten.")
                 args.home = target.resolve()
@@ -85,19 +95,35 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
             console.line("  1 / Reuse your existing Brain", accent=True)
             console.result({"home": result["home"], "signed_in_as": result["identity"]["name"], "workspaces": spaces})
     else:
-        organization = args.organization or (ask("Company slug", "my-company") if interactive else None)
+        organization = args.organization or (ask("Company slug", "my-company", validate=slug) if interactive else None)
         require(organization, "setup_answers_required", "New Brain setup needs --organization.")
         organization = slug(organization)
-        owner = args.owner or (ask("Your name", "Company owner") if interactive else "Company owner")
+        owner = args.owner or (ask("Your name", "Company owner", validate=lambda v: text(v, maximum=120)) if interactive else "Company owner")
         text(owner, maximum=120)
         spaces_value = args.spaces
         if spaces_value is None:
-            spaces_value = ask("Department workspaces, separated by commas", "shared,sales") if interactive else "shared"
+            def workspace_names(value):
+                names = [slug(item.strip()) for item in value.split(",") if item.strip()]
+                require(0 < len(names) <= 30 and len(set(names)) == len(names), "invalid_spaces", "Choose 1 to 30 distinct workspace names.")
+            spaces_value = ask("Department workspaces, separated by commas", "shared,sales", validate=workspace_names) if interactive else "shared"
         spaces = [slug(value.strip()) for value in spaces_value.split(",") if value.strip()]
         require(0 < len(spaces) <= 30 and len(set(spaces)) == len(spaces), "invalid_spaces", "Choose 1 to 30 distinct workspace slugs.")
 
     member, route, output, selected = args.member, args.transport, args.output, None
+    member_username = getattr(args, "member_username", None)
+    require(not member_username or member, "setup_answers_required", "Use --member NAME with --member-username LOGIN.")
     if mode == "host":
+        if interactive and args.port == 7310:
+            from .companies import catalog
+            records = catalog(getattr(args, "catalog_home", args.home))
+            if len(records) > 1:
+                def valid_port(value):
+                    require(value.isdigit() and 1 <= int(value) <= 65535, "invalid_port", "Choose a port between 1 and 65535.")
+                from .invitations import read_private_json
+                settings = read_private_json(args.home / "hosting.json") if (args.home / "hosting.json").exists() else {}
+                default_port = settings.get("port", (settings.get("ssh") or {}).get("port", 7310 + len(records) - 1))
+                console.line("  Each company server running on this device needs a different local port.")
+                args.port = int(ask("This company's Brain port", str(default_port), validate=valid_port))
         if interactive:
             console.line("  2 / How teammates reach this device", accent=True)
             console.option("ssh", "Automatic SSH forwarding", "Use administrator-configured SSH keys and a trusted host. Atmet opens and closes the tunnel for each request.")
@@ -107,11 +133,12 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         require(not args.endpoint or route == "https", "invalid_route", "Use --transport https with --endpoint.")
         require(not args.ssh_destination or route == "ssh", "invalid_route", "Use --transport ssh with --ssh-destination.")
         if route == "ssh":
-            destination = args.ssh_destination or (ask("Forwarding-only SSH user@host") if interactive else None)
+            destination = args.ssh_destination or (ask("Forwarding-only SSH user@host, for example forward@brain.example.com",
+                validate=lambda value: validate_route(ssh={"destination": value, "port": args.port})) if interactive else None)
             ssh, endpoint = {"destination": destination, "port": args.port}, None
             validate_route(ssh=ssh)
         elif route == "https":
-            endpoint = args.endpoint or (ask("Company Brain HTTPS address") if interactive else None)
+            endpoint = args.endpoint or (ask("Company Brain HTTPS address", validate=lambda value: validate_route(endpoint=value)) if interactive else None)
             ssh = None
             validate_route(endpoint=endpoint)
         else:
@@ -119,19 +146,25 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         if route != "later":
             if interactive:
                 console.line("  3 / Give one teammate access", accent=True)
-            if not member and interactive and ask("Create a private connection file", "yes", ["yes", "no"]) == "yes":
-                member = ask("Teammate name")
+            if not member and interactive and ask("Create a single-use employee invitation", "yes", ["yes", "no"]) == "yes":
+                from .accounts import username
+                member = ask("Employee display name", validate=lambda v: text(v, maximum=120))
+                member_username = ask("Employee work username or email", validate=username)
             if member:
                 text(member, maximum=120)
                 if interactive:
                     console.line("  Available workspaces: " + ", ".join(spaces))
-                selection = args.member_spaces or (ask("Allowed workspaces, separated by commas", spaces[0]) if interactive else None)
+                def permitted_names(value):
+                    names = [v.strip() for v in value.split(",") if v.strip()]
+                    require(names and len(names) <= 30 and len(set(names)) == len(names) and all(v in spaces for v in names),
+                            "invalid_spaces", "Choose distinct workspace names from the list.")
+                selection = args.member_spaces or (ask("Allowed workspaces, separated by commas", spaces[0], validate=permitted_names) if interactive else None)
                 require(selection, "setup_answers_required", "Choose --member-spaces using workspace names.")
                 selected = [value.strip() for value in selection.split(",") if value.strip()]
                 require(selected and len(selected) <= 30 and len(set(selected)) == len(selected) and all(value in spaces for value in selected),
                         "invalid_spaces", "Select distinct names from the listed workspaces.")
                 role = args.role or (ask("Role", "reader", sorted(set(ROLES) - {"owner"})) if interactive else "reader")
-                output = output or (args.home / "team-access" / (uid("member") + ".atmet-join.json"))
+                output = output or (args.home / "team-access" / (uid("member") + (".atmet-invite.json" if member_username else ".atmet-join.json")))
                 require(not output.expanduser().exists() and not output.expanduser().is_symlink(),
                         "already_exists", "Choose a new private connection file; existing files are never overwritten.")
                 if interactive:
@@ -143,17 +176,22 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         keep_running = ask("Install and start the local background API service", "no", ["yes", "no"]) == "yes"
     if not existing:
         result = initialize(organization, owner, spaces)
+        result["company"] = organization
     result["reused"] = existing
     result["access"] = "The API stays on loopback. SSH accounts and HTTPS ingress are configured by your administrator."
     result["next"] = [shlex.join(base + ["status"]), shlex.join(base + ["space"])]
     result["departments"] = "Add a department without repeating company setup: " + shlex.join(base + ["space", "DEPARTMENT_NAME"])
     if mode == "host":
         if member:
-            result["team"] = share(member, selected, role, output, endpoint=endpoint, ssh=ssh)
+            result["team"] = (invite_member(member_username, member, selected, role, output, {"endpoint": endpoint, "ssh": ssh})
+                              if member_username else share(member, selected, role, output, endpoint=endpoint, ssh=ssh))
             if interactive:
-                console.line("  Member access saved: " + result["team"]["connection_file"], accent=True)
+                console.line("  Member access saved: " + (result["team"].get("private_file") or result["team"]["connection_file"]), accent=True)
         result["server"] = {"port": args.port, "network_verified": False,
                             "next": shlex.join(base + ["serve", "--port", str(args.port)])}
+        if route != "later":
+            from .util import private_write, dumps
+            private_write(args.home / "hosting.json", dumps({"endpoint": endpoint, "ssh": ssh, "port": args.port}) + "\n")
         result["next"] = [result["server"]["next"], shlex.join(base + ["status"])]
         if keep_running:
             result["service"] = start_service(args.port)

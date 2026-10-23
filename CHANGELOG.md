@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+## 0.7.0 - employee accounts, invitations and company selection, 2026-10-23
+
+### Added
+
+- Company-local username/password accounts with salted scrypt verifiers, bounded persistent sign-in attempts and 12-hour opaque sessions. Passwords are prompted privately and never saved by the client.
+- Single-use, expiring employee invitations and explicit reset/enrollment of existing employees. Administrators choose a separate role for each workspace. Password change, logout, disabling and access changes revoke the relevant credentials and descendants.
+- Guided team menu for employee lists, invitations, per-workspace access reviews, disabling, password reset and new workspaces. Interactive Host defaults to password enrollment invitations; explicit legacy bearer sharing remains available.
+- Device-local company catalog with brains create/add/list/open and explicit --brain selection. Independent company data homes retain separate sources, users, permissions and backups. Multiple company servers need distinct local ports.
+- Local filesystem-owner account recovery with explicit confirmation, a privately saved operator key and no public recovery endpoint.
+
+### Fixed
+
+- Recoverable SSH/HTTPS, company, workspace and agent-name input errors re-prompt the relevant field. /cancel stops the current operation; the interactive team menu can continue without replaying completed operations.
+- Signed-out local sessions cannot silently fall back to the owner credential. Saved remote logins retain their verified route for explicit sign-in after expiry or permission changes.
+
+### Upgrade
+
+- Schema 3 adds account, invitation, membership-review and sign-in-attempt records. Back up using the existing engine before the first new open; stop old processes and restart services with 0.7.0. Supported schemas 1/2 upgrade transactionally. There is no in-place downgrade or rolling mixed-engine deployment.
+- Restored accounts lose password verifiers and remain disabled; old invitations and sessions are revoked. Journal recovery and deliberate identity/source revalidation remain required.
+- Local password login is implemented. SSO, MFA, email verification/delivery, a browser login UI and global numeric company discovery are not part of this release.
+
 ## 0.6.1 - existing Brain setup recovery, 2026-10-23
 
 ### Fixed

@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from ._version import __version__
 from .errors import BrainError, require
-from .rpc import dispatch, openapi
+from .rpc import AUTH_METHODS, dispatch, dispatch_auth, openapi
 from .util import dumps
 
 
@@ -59,6 +59,14 @@ def make_server(brain, host="127.0.0.1", port=7310, allow_network=False):
                     "unauthenticated", "Use a bearer credential.", 401)
             return brain.authenticate(header[7:])
 
+        def payload(self, maximum=1_000_000):
+            require(not self.headers.get("Transfer-Encoding") and len(self.headers.get_all("Content-Length", [])) == 1,
+                    "invalid_body", "Use one Content-Length header.")
+            length = int(self.headers.get("Content-Length", "0"))
+            require(0 < length <= maximum, "invalid_body", "Request body exceeds the endpoint limit.", 413)
+            require(self.headers.get_content_type() == "application/json", "invalid_body", "Use application/json.", 415)
+            return json.loads(self.rfile.read(length), parse_constant=lambda value: (_ for _ in ()).throw(ValueError()))
+
         def run_request(self):
             try:
                 self.guard()
@@ -69,17 +77,17 @@ def make_server(brain, host="127.0.0.1", port=7310, allow_network=False):
                 if self.command == "GET" and path == "/openapi.json":
                     self.respond(200, openapi(brain))
                     return
+                if self.command == "POST" and path.startswith("/v1/auth/"):
+                    action = path.removeprefix("/v1/auth/")
+                    require(action in AUTH_METHODS, "not_found", "Sign-in endpoint not found.", 404)
+                    self.respond(200, {"result": dispatch_auth(brain, action, self.payload(16384))})
+                    return
                 actor = self.actor()
                 if self.command == "GET" and path == "/v1/me":
                     self.respond(200, {"result": brain.whoami(actor)})
                     return
                 require(self.command == "POST" and path == "/v1/rpc", "not_found", "Endpoint not found.", 404)
-                require(not self.headers.get("Transfer-Encoding") and len(self.headers.get_all("Content-Length", [])) == 1,
-                        "invalid_body", "Use one Content-Length header.")
-                length = int(self.headers.get("Content-Length", "0"))
-                require(0 < length <= 1_000_000, "invalid_body", "Request body must be between 1 and 1000000 bytes.", 413)
-                require(self.headers.get_content_type() == "application/json", "invalid_body", "Use application/json.", 415)
-                payload = json.loads(self.rfile.read(length), parse_constant=lambda value: (_ for _ in ()).throw(ValueError()))
+                payload = self.payload()
                 require(isinstance(payload, dict) and set(payload) <= {"method", "params"}, "invalid_body", "Invalid RPC request.")
                 result = dispatch(brain, actor, payload.get("method"), payload.get("params"))
                 self.respond(200, {"result": result})

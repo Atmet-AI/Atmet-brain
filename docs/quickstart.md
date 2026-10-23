@@ -2,6 +2,8 @@
 
 [Install the released CLI](install.md), then start with fictional data and one space. You do not need a source checkout for the steps below. The [company walkthrough](use-for-your-company.md) adds a reviewed workflow, scoped agent identity and department organization.
 
+For several companies or employee sign-in, start with [employee accounts and the company chooser](employee-accounts.md). Before opening existing data with the new engine, follow the [schema-3 upgrade](versioning.md#schema-3-upgrade).
+
 ## Initialize
 
 You can run `atmet-brain setup` for guided company/department setup. If it already created your Sales space, list it with `atmet-brain space` and skip initialization below. If Local finds an existing Brain, choose reuse to open it, or new to create an independent Brain in a different fresh data folder. Add departments with `atmet-brain space NAME`. Otherwise follow this manual path in a fresh data home:

@@ -1,7 +1,6 @@
 # Identity and permissions
 
-For guided team access, run `atmet-brain host` on the company device. It accepts workspace names, creates one member's scoped access and writes a private connection file for `atmet-brain join`. The [Host/Join guide](team-server.md#guided-host-and-join) covers delivery, verification and revocation. The commands below provide the manual alternative.
-
+For employees, use the [company login/invitation and permission walkthrough](employee-accounts.md). Run team to select an employee by name, choose allowed workspaces and a role for each, and review the change. Applying it revokes their existing credentials; they sign in again for the new scope. Interactive Host defaults to a single-use password invitation. Legacy service/key commands below remain available for integrations.
 
 The core authorizes each operation before it returns content. A client supplies a credential; it cannot supply its own privileged identity.
 
@@ -11,7 +10,7 @@ A workspace is an explicit scope, not necessarily one department. Grant someone 
 
 Alternatively keep one Finance workspace and restrict payroll source audiences to Finance and explicitly authorized admin groups. A document's group membership still requires space/operation permission. There is no automatic row/column salary redaction, folder ACL inheritance or classification from a filename. Keep mixed-access information in separate sources. Groups create no space grants by themselves.
 
-Current authentication proves possession of a credential bound to a principal. A display name or company ID does not verify a human, and a shared service credential does not identify each employee using it. Company SSO, login/MFA and delegated user authentication are not implemented. [Worked team example and current limits](team-access-explained.md).
+Current authentication proves possession of a credential bound to a principal. A display name or company ID does not verify a human, and a shared service credential does not identify each employee using it. Company-local password login is implemented, with private single-use enrollment and expiring sessions. SSO/MFA, email verification and identity-provider delegation are not implemented. [Worked team example and current limits](team-access-explained.md).
 
 ## Give a reader access and verify it
 
@@ -40,7 +39,7 @@ Replace CREDENTIAL_ID with the issued ID. The next request using that file is de
 
 Humans and services have separate principals. A credential resolves to a principal and can narrow operations, spaces and expiry. Tokens are random and only their hashes are stored. Current database state is checked on each call, including parent credentials. A child cannot widen or outlive its issuer; revoking an issuer invalidates its descendants.
 
-An app using one shared key is acting as that service. Passing `user=CEO`, a role header or a person's name in a prompt does not authenticate that person. Per-user login, company SSO and delegated user tokens are planned identity adapters; this release uses scoped bearer credentials.
+An app using one shared key is acting as that service. Passing `user=CEO`, a role header or a person's name in a prompt does not authenticate that person. Password login binds a company-local account to its principal and issues a bounded session. SSO and trusted delegated user tokens remain planned adapters. An email-shaped username is not proof of mailbox ownership.
 
 ## Grant levels
 
@@ -90,7 +89,7 @@ An [automation artifact](automations.md) is distinct from an arbitrary skill scr
 
 Database provisioning, server filesystem selection and backup/recovery are local owner operations outside public RPC. Someone who controls the machine and database files can alter the installation. API grants protect serving paths, not the host administrator.
 
-Additional company organizations can be provisioned with `organization-add`. Each gets an independent owner token; a company credential cannot access another company by changing an ID.
+Use brains create/add and --brain for independent company data homes. The low-level organization-add command also remains available within a single installation. Each gets an independent owner token; a company credential cannot access another company by changing an ID.
 
 ## Task reporting and learning
 

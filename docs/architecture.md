@@ -58,6 +58,8 @@ flowchart TB
 | Connections | `connector_service.py`, `connectors/` | Selected-resource bindings, source reconciliation and bounded provider adapters |
 | Persistence | `db.py`, `schema.sql` | Transactions, durable canonical state, source/permission references and audit metadata |
 | Recovery | `backups.py` | Coherent encrypted snapshots, quarantined restoration and deletion/revocation reconciliation |
+| Employee identity | accounts.py, invitations.py, account_cli.py | Password accounts, single-use enrollment, expiring sessions, reviewed memberships and private client state |
+| Company chooser | companies.py | Explicit device-local labels for independent data homes; no silent company switch or global resolver |
 | Team setup | `setup.py`, `sharing.py`, `connections.py`, `ssh.py` | Guided Host/Join, private scoped connection files, verified profiles and bounded per-request SSH forwarding |
 | Interfaces | `cli.py`, `rpc.py`, `server.py`, `mcp.py`, `client.py` | Thin request/transport adapters, including the local stdio-to-REST bridge, over the same service methods |
 | Operator/client setup | `terminal.py`, `setup.py`, `connections.py`, `services.py` | Human rendering, explicit onboarding, private identity-bound remote profiles and per-user service definitions |
@@ -171,3 +173,23 @@ The feedback module wraps an explicitly instrumented host task; remote Client an
 ## Guided agent provisioning
 
 agent_setup.py composes identity.me, access.check, team.add or narrowed credentials.create, verified connection profiles and private bundle files. It does not add a second permission model or modify client application settings. Only core-reported permitted operations are offered, and generated credentials omit publication authority. Local setup uses the token-bound core client; remote setup derives a new profile with the existing verified route and never opens a client-side database. Partial failures attempt revocation and preserve diagnostics without logging raw tokens. [Agent setup contract](agent-setup.md).
+
+## 11. Employee authentication and company selection
+
+Company-local accounts bind an approved username to a human principal. Owner enrollment requires an unrestricted human administrator credential. A private single-use invitation binds employee username, issuer, expiry and approved workspace roles; acceptance creates/enrolls the principal and grants atomically. Reset invitations bind the expected membership revision. Login is password authentication, followed by opaque hashed-token serving authorization. A supplied name/role is never a verified identity.
+
+```mermaid
+flowchart LR
+    Password["Private password entry"] --> Auth["Bounded verifier and persisted attempt limit"]
+    Auth --> Session["12-hour opaque session"]
+    Session --> Principal["Company principal"]
+    Principal --> Grants["Current workspace operation grants"]
+    Grants --> Audience["Current source audiences and evidence"]
+    Audience --> Context["Permitted context"]
+```
+
+Public password endpoints are limited to /v1/auth/login and /v1/auth/accept; they cannot run arbitrary RPC. Admin enrollment, invitation creation/revocation and member editing use authenticated core methods. Request framing/origin/rate/transport guards apply before credential or password processing. Passwords use salted scrypt; parameters and operational bounds are in the [account guide](employee-accounts.md). They are not stored in client profiles, audit payloads or command arguments. SSO/MFA and email verification remain separate adapters, not implied by password login.
+
+Schema 3 adds user_accounts, company_invites, member_versions and auth_attempts. Membership reviews check current revision and delegation rights, replace grants and revoke credentials atomically. Login sessions remain bounded by current grants/audiences; a changed password revokes old keys and children. Restore clears password verifiers, disables accounts/principals, revokes invitations and retains the existing journal/quarantine procedure. [Upgrade](versioning.md#schema-3-upgrade).
+
+A device-local company catalog maps labels to independent data homes and never grants remote access. Company selection is explicit and is embedded as a resolved data home in generated agent commands. It is not an implicit shared active company. Each Brain has separate backup/journal handling and server-port configuration. The filesystem owner remains trusted; local owner-account recovery is intentionally absent from RPC/MCP. [Account and company operations](employee-accounts.md).

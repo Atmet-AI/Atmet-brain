@@ -79,3 +79,11 @@ Gmail bindings name an operator-managed `ATMET_...` environment variable. Tokens
 Remote client profiles are separate private JSON records under `connections/`, with copied credentials in `client-tokens/`. They do not modify server settings or confer grants. A named connection is always explicit; it uses its saved credential instead of an ambient `ATMET_TOKEN`. User-session services do not automatically inherit interactive shell provider configuration. See [terminal](terminal.md) and [team services](team-server.md).
 
 An explicit CLI --token-file takes precedence over ATMET_TOKEN. Without that explicit flag, ATMET_TOKEN retains its configured override behavior before ATMET_TOKEN_FILE/default files. Generated agent bundles always select a dedicated token file or saved connection.
+
+## Password sessions and local company catalog
+
+A signed-in local account keeps private login.json metadata and session.token under its selected data home. Without explicit credential overrides, that session is used instead of owner.token. Logout removes the session credential and retains the signed-out marker; commands then require login rather than silently falling back to owner access. Explicit --token-file, ATMET_TOKEN and ATMET_TOKEN_FILE remain operator overrides and must be chosen deliberately.
+
+Remote password sessions use private named connection profiles containing verified organization/principal, username and route metadata. No password is stored. Expiry or membership revocation needs explicit login; there is no automatic refresh using cached passwords. Each company/employee connection remains explicit.
+
+brains.json is a device-local label/path catalog protected by atomic writes and a POSIX lock. --brain NAME resolves against the selected --home catalog before loading a company's own configuration. It cannot be combined with a remote --connection/--endpoint. Catalogs, client profiles and other companies' nested homes are not included in one Brain's encrypted database snapshot. [Company/account operations](employee-accounts.md).

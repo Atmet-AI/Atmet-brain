@@ -1,0 +1,8 @@
+flowchart TD
+    Company["Choose a company Brain"] --> Admin["Owner enrolls a login and configures the private server"]
+    Admin --> Access["Select employee and allowed workspace roles"]
+    Access --> Invite["Private expiring single-use invitation"]
+    Invite --> Join["Employee verifies company and chooses a password"]
+    Join --> Session["Private 12-hour session"]
+    Session --> Core["Core checks identity, workspace action and source audience"]
+    Core --> Context["Only permitted information reaches the agent"]

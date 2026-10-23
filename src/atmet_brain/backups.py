@@ -98,7 +98,7 @@ class BackupsMixin:
                         "invalid_backup", "Invalid backup inventory.")
                 manifest = loads(archive.read("manifest.json"))
                 data = archive.read("brain.sqlite3")
-            require(manifest["format"] == "atmet-brain-backup-v1" and manifest["schema_version"] in {1, SCHEMA_VERSION}
+            require(manifest["format"] == "atmet-brain-backup-v1" and manifest["schema_version"] in {1, 2, SCHEMA_VERSION}
                     and sha(data) == manifest["database_sha256"] and len(data) == manifest["database_bytes"],
                     "invalid_backup", "Backup manifest or database checksum mismatch.")
         except (KeyError, ValueError, zipfile.BadZipFile):
@@ -122,6 +122,8 @@ class BackupsMixin:
             conn.execute("UPDATE credentials SET revoked=1")
             conn.execute("UPDATE principals SET active=0")
             conn.execute("UPDATE grants SET revoked=1")
+            conn.execute("UPDATE user_accounts SET enabled=0,password_hash='' ")
+            conn.execute("UPDATE company_invites SET state='revoked' WHERE state='pending'")
             conn.execute("DELETE FROM group_members")
             conn.execute("UPDATE sources SET status='quarantined' WHERE status!='deleted'")
             conn.execute("UPDATE connectors SET enabled=0")
@@ -171,7 +173,12 @@ class BackupsMixin:
                     conn.execute("UPDATE grants SET revoked=1 WHERE id=?", (target,))
                 elif operation == "group.remove":
                     conn.execute("DELETE FROM group_members WHERE group_id=? AND principal_id=?", (target, payload["principal_id"]))
-                require(operation in {"source.erase", "source.access", "credential.revoke", "grant.revoke", "group.remove"},
+                elif operation == "account.disable":
+                    conn.execute("UPDATE user_accounts SET enabled=0,password_hash='' WHERE principal_id=?", (target,))
+                    conn.execute("UPDATE principals SET active=0 WHERE id=?", (target,))
+                elif operation == "invite.revoke":
+                    conn.execute("UPDATE company_invites SET state='revoked' WHERE id=?", (target,))
+                require(operation in {"source.erase", "source.access", "credential.revoke", "grant.revoke", "group.remove", "account.disable", "invite.revoke"},
                         "invalid_journal", "Unsupported recovery operation.")
                 conn.execute("INSERT OR IGNORE INTO recovery_events VALUES(?,?,?,?,?,?)",
                              (event["sequence"], instance, operation, target, event["payload"], event["recorded_at"]))

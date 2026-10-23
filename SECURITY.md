@@ -18,7 +18,7 @@ Use GitHub private vulnerability reporting if enabled by the repository owner. I
 - The local HTTP server is not a hardened public internet gateway.
 - Remote clients require verified HTTPS or loopback HTTP inside a controlled local/SSH connection, refuse redirects and never infer a user's identity from their network address.
 - Saved connection profiles bind a verified organization/principal; copied raw credential files are private, device-specific and outside the canonical backup.
-- Host connection files contain reusable scoped bearer credentials, not single-use invitations. Deliver them privately; revocation and expiry remain server-enforced. Join checks the pinned organization/principal/credential identity before saving a profile.
+- Interactive Host defaults to private single-use expiring password invitations. Explicit legacy bearer connection files remain reusable until expiry/revocation. Join validates the returned or legacy pinned identity before saving private session/connection state.
 - Automatic SSH forwarding requires administrator-approved SSH keys and known hosts, uses strict non-interactive authentication and closes each request's process. It does not provision SSH accounts, accept unknown keys or grant Brain roles.
 - Network access, SSH accounts and individual Brain grants are separate. An employee must not receive host filesystem access as a side effect of sharing a Brain.
 - Per-user background service installation does not configure TLS, SSO, VPN/firewall rules, machine-wide boot services or independent monitoring.
@@ -31,3 +31,13 @@ Bearer tokens are stored as hashes; credentials supplied through files need priv
 Future identity adapters must validate a trusted issuer and user binding rather than accept arbitrary role/name fields. Future runtime tools must separately authorize external side effects.
 
 Guided agent bundles derive a new scoped credential rather than copying the broad issuer. New service identities or current-identity child credentials are bounded by core grants and parent lineage; generated scopes exclude publish/manage/erase/process. Explicit CLI token-file selection overrides ambient tokens. Partial setup failures attempt revocation and disclose only the credential ID/paths needed for recovery, never the raw credential.
+
+## Company-local employee authentication
+
+Password accounts use independent random salts and scrypt N=32768, r=8, p=3. Inputs are normalized, bounded and checked against a small common/trivial-password list; no external breach-check service or compliance certification is claimed. Password work is bounded to two concurrent KDF calls. Sign-in attempts are persisted and limited per canonical company/username, in addition to HTTP rate/origin/body guards. Passwords are not logged, stored in client profiles or accepted as command arguments.
+
+Private invitation secrets are stored hashed on the server, expire and are consumed once in an atomic transaction. Enrollment is bound to the approved username, issuer's current authority and workspace roles. An email-shaped username does not verify mailbox ownership; private recipient verification/delivery remains the administrator's responsibility. No automatic email, SSO, MFA, browser session or global discovery service is enabled.
+
+Password login issues hashed opaque 12-hour credentials; requests still enforce current grants and source audiences. Membership edits use an expected revision and revoke existing credentials. Password changes revoke all that principal's credentials; logout revokes the selected session and children. Retained client routes do not cache the password or refresh without explicit sign-in. A signed-out local marker prevents silent fallback to an owner key unless the operator explicitly selects another credential.
+
+The trusted filesystem owner can perform explicitly confirmed local owner-account recovery; it is not exposed by RPC or MCP and cannot bypass quarantined installation recovery. Employees must not receive database/shell access with their login. Encrypted restore clears password verifiers, disables old accounts/principals and revokes invitations/credentials before journal reconciliation. Each company home needs independent recovery handling. See [account operation and limits](docs/employee-accounts.md).

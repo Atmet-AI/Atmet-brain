@@ -5,7 +5,7 @@ import shlex
 from pathlib import Path
 
 from .client import Client
-from .errors import require
+from .errors import BrainError, require
 from .util import private_write, slug
 
 
@@ -18,8 +18,10 @@ def load_connection(home, name):
     require(path.is_file() and not path.is_symlink(), "connection_missing", "Connection not found. Run connect first.")
     record = json.loads(path.read_text())
     fields = {"endpoint", "token_file", "ca_file", "principal_id", "organization_id"}
-    require(isinstance(record, dict) and set(record) in (fields, fields | {"ssh"}),
+    require(isinstance(record, dict) and fields <= set(record) <= fields | {"ssh", "username", "company", "credential_id", "expires_at"},
             "invalid_connection", "Connection file is invalid. Reconnect with a current credential.")
+    require(Path(record["token_file"]).is_file(), "sign_in_required" if record.get("username") else "invalid_credential",
+            "Sign in again with login --connection " + name + "." if record.get("username") else "The connection credential is missing.", 401)
     token = Path(record["token_file"]).read_text().strip()
     if "ssh" in record:
         from .ssh import SSHClient
@@ -28,7 +30,12 @@ def load_connection(home, name):
                 "invalid_connection", "Invalid SSH connection record. Reconnect explicitly.")
     else:
         client = Client(record["endpoint"], token, ca_file=record["ca_file"])
-    actor = client.call("identity.me")
+    try:
+        actor = client.call("identity.me")
+    except BrainError as error:
+        if record.get("username") and error.status == 401:
+            raise BrainError(error.code, "Session expired or was revoked. Run login --connection " + name + ".", 401) from None
+        raise
     require(all(actor.get(key) == record[key] for key in ("principal_id", "organization_id")),
             "identity_changed", "Connection identity changed. Reconnect explicitly.")
     return client, actor

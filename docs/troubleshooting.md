@@ -40,7 +40,7 @@ Share only redacted error codes, engine version and reproduction steps when aski
 - **Report key conflict:** retry the exact same request or submit a new immutable follow-up key. The old body is not overwritten.
 - **No method to learn:** choose the same task key in one space and include a succeeded/corrected report with explicit steps. Failed-only outcomes do not establish a method.
 - **Stale evidence or review:** inspect current source/artifact revisions and submit a new report or reviewed draft. Reported historical results do not authorize an obsolete procedure.
-- **Schema mismatch after upgrade:** stop old processes, use the schema-2 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-2-upgrade).
+- **Schema mismatch after upgrade:** stop old processes, use the compatible schema-3 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-3-upgrade).
 
 ## A task finished but feedback is missing
 
@@ -55,3 +55,13 @@ Run agent interactively, or provide name/method/spaces/access/identity flags wit
 The selected data home already contains a Brain. In 0.6.1+, run `npx atmet-brain@latest setup`, choose local, then reuse to open it. The wizard checks before asking company details. Choose new only when you want an independent company Brain in a fresh data directory; the existing Brain stays intact. Cancellation changes nothing.
 
 To add Marketing to the existing company, run `npx atmet-brain@latest space marketing`. To inspect its company identity and spaces, run status and space. For a custom data location, pass the same --home before each command. Do not delete the database or owner token to get past setup. Explicit organization/owner/spaces creation flags against an existing home are rejected with these recovery choices.
+
+## Sign-in, invitation and permission changes
+
+A revoked/expired password connection needs login --connection NAME. The profile retains its verified route and username; the client never refreshes using a stored password. After an employee access change, sign in again to get the new scope, then recreate agent children as needed. A reader cannot enable reporting/publication by changing a client flag. Eight failed attempts in 15 minutes require waiting; restarting the server does not clear the limit.
+
+A consumed/expired invitation cannot be reused. On another device use login with the company route, username and password, or ask the administrator for a reviewed reset if the password was lost. If acceptance may have succeeded before a network interruption, try login rather than repeating enrollment. Existing connection names are not silently replaced with a different person; use a new connection label for that identity.
+
+Recoverable wizard values retry the same field; /cancel cancels the current operation. The team menu can return to its menu after cancellation. Explicit flags stay strict for automation, and partial writes/uncertain remote actions are reported rather than resubmitted. The application returning to the shell does not close the Terminal app. Check --version if an older globally installed command still shows the old behavior; use npx atmet-brain@latest or deliberately update the global package.
+
+Several company Brains are supported. Use brains create/add/list and explicit --brain selection, with independent data homes, backups and server ports. A company number cannot bypass network reachability or authentication. [Full employee and company guide](employee-accounts.md).

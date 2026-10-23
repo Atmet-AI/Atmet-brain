@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.6.1"
+    "version": "0.7.0"
   },
   "components": {
     "securitySchemes": {
@@ -159,6 +159,285 @@
                         "required": [
                           "name",
                           "space_ids"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "accounts.setup"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "username_value": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "writeOnly": true,
+                            "maxLength": 128
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "username_value",
+                          "password"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "accounts.password"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "old_password": {
+                            "type": "string",
+                            "writeOnly": true,
+                            "maxLength": 128
+                          },
+                          "new_password": {
+                            "type": "string",
+                            "writeOnly": true,
+                            "maxLength": 128
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "old_password",
+                          "new_password"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "invites.create"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "username_value": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "access": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "space_id",
+                                "role"
+                              ],
+                              "properties": {
+                                "space_id": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "contributor",
+                                    "publisher",
+                                    "reader",
+                                    "reporter",
+                                    "reviewer",
+                                    "worker"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "expires_at": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "reset_principal": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "username_value",
+                          "name",
+                          "access"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "invites.list"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "invites.revoke"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "invite_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "invite_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "members.list"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "members.access"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "principal_id": {
+                            "type": "string"
+                          },
+                          "access": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "space_id",
+                                "role"
+                              ],
+                              "properties": {
+                                "space_id": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "contributor",
+                                    "publisher",
+                                    "reader",
+                                    "reporter",
+                                    "reviewer",
+                                    "worker"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "expected_revision": {
+                            "type": "integer"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "principal_id",
+                          "access",
+                          "expected_revision"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "members.disable"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "principal_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "principal_id"
                         ]
                       }
                     }
@@ -1961,6 +2240,101 @@
           },
           "409": {
             "description": "Revision or lifecycle conflict"
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "account_login",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization": {
+                    "type": "string"
+                  },
+                  "username_value": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "organization",
+                  "username_value",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Private bounded session; never log the returned token"
+          },
+          "401": {
+            "description": "Invalid login or invitation"
+          },
+          "429": {
+            "description": "Attempt limit reached"
+          }
+        }
+      }
+    },
+    "/v1/auth/accept": {
+      "post": {
+        "operationId": "account_accept",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization": {
+                    "type": "string"
+                  },
+                  "invite_id": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "organization",
+                  "invite_id",
+                  "secret",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Private bounded session; never log the returned token"
+          },
+          "401": {
+            "description": "Invalid login or invitation"
+          },
+          "429": {
+            "description": "Attempt limit reached"
           }
         }
       }

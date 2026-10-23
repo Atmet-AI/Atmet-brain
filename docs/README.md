@@ -11,7 +11,7 @@ For a continuous overview with commands and charts, read the [from-scratch READM
 3. [Build a company workflow](use-for-your-company.md): add departments, publish instructions and give an agent its own credential.
 4. [Use the guided agent wizard](agent-setup.md), or configure [MCP](mcp.md) / [Python/REST](api.md) manually.
 5. [Enable automatic task feedback](automatic-task-feedback.md) or [report selected tasks and learn skills](task-history-and-learning.md), then [keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
-6. [Host a Brain and help teammates Join](team-server.md#guided-host-and-join) when several people need the same Brain.
+6. [Choose company Brains, enroll logins and invite employees](employee-accounts.md), then use [Host/Join](team-server.md#guided-host-and-join) for the private server route.
 
 The examples use the installed `atmet-brain` command. Install it globally as shown in installation, or substitute `npx atmet-brain@latest` before the same arguments. JSON blocks labeled as files must be saved before a command refers to them. Replace uppercase IDs and example paths with values returned by your own installation; no source checkout is needed unless a page explicitly uses repository examples.
 
@@ -19,6 +19,7 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 
 | What you want to do | Guide |
 | --- | --- |
+| Choose a company, sign in and manage employee workspace permissions | [Employee accounts](employee-accounts.md) |
 | Configure an agent with workspace names and scoped access | [Guided agent setup](agent-setup.md) |
 | Use terminal commands or a saved remote connection | [Terminal](terminal.md) |
 | Add information and understand learning/review | [Memory and learning](memory-and-learning.md) |

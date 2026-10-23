@@ -78,3 +78,9 @@ Source erasure is logical removal from serving and retained bodies. Physical sto
 ## Task history and schema upgrades
 
 Schema-2 snapshots include explicit task reports, their attribution and learned skill evidence. Restore accepts supported schema-1 snapshots, checks the original manifest/database schema, upgrades before quarantine and then follows the same recovery journal procedure. Later erasures of report sources or their original evidence clear report payloads and retract dependent methods during replay. Raw reports stay outside portable space exports. Back up before an upgrade; there is no in-place schema downgrade. See [task history](task-history-and-learning.md).
+
+## Password accounts and several company Brains
+
+Schema-3 snapshots contain password verifiers and account/invitation metadata inside the encrypted database, never raw passwords or bearer session tokens. Restore accepts supported schema-1/2/3 snapshots, upgrades before quarantine, clears password verifiers, disables accounts/principals and revokes pending invitations and credentials. Completing journal recovery does not restore old employee logins. Enroll the new recovery owner with a fresh login name and deliberately re-enroll employees/revalidate their sources. Local owner password recovery cannot bypass installation recovery.
+
+Back up each company Brain and its independent recovery journal separately. A snapshot does not include other company data homes nested beneath its catalog directory, the catalog mapping, device-local profiles or operator/session token files. Register restored company homes deliberately with brains add. [Current upgrade procedure](versioning.md#schema-3-upgrade).

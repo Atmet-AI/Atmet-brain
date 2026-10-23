@@ -126,3 +126,22 @@ CREATE TABLE IF NOT EXISTS task_reports (
  created_at REAL NOT NULL, UNIQUE(space_id,recorded_by,report_key_hash)
 );
 CREATE INDEX IF NOT EXISTS idx_report_history ON task_reports(space_id,task_key,created_at);
+CREATE TABLE IF NOT EXISTS user_accounts (
+ principal_id TEXT PRIMARY KEY REFERENCES principals(id), username TEXT NOT NULL,
+ org_id TEXT NOT NULL REFERENCES organizations(id), password_hash TEXT NOT NULL,
+ enabled INTEGER NOT NULL DEFAULT 1, created_at REAL NOT NULL,
+ UNIQUE(org_id,username)
+);
+CREATE TABLE IF NOT EXISTS company_invites (
+ id TEXT PRIMARY KEY, org_id TEXT NOT NULL REFERENCES organizations(id), username TEXT NOT NULL,
+ display_name TEXT NOT NULL, secret_hash TEXT NOT NULL UNIQUE, access TEXT NOT NULL,
+ issuer_id TEXT NOT NULL REFERENCES principals(id), issuer_credential TEXT NOT NULL REFERENCES credentials(id),
+ expires_at REAL NOT NULL, state TEXT NOT NULL DEFAULT 'pending',
+ reset_principal TEXT REFERENCES principals(id), reset_revision INTEGER, created_at REAL NOT NULL
+);
+CREATE TABLE IF NOT EXISTS member_versions (
+ principal_id TEXT PRIMARY KEY REFERENCES principals(id), revision INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS auth_attempts (
+ attempt_key TEXT PRIMARY KEY, count INTEGER NOT NULL, window_start REAL NOT NULL
+);

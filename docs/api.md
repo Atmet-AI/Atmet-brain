@@ -152,3 +152,9 @@ reports.record saves an explicit, immutable client-reported result with original
 ## Access preflight
 
 `access.check` accepts only space_id and returns the authenticated caller's current permitted operation names plus can_add_members. It requires read access to that space; it does not inspect another principal or source payload. The wizard uses it before and after narrowing credentials. `identity.me` also returns credential expires_at. All later operations still recheck grants and source audiences.
+
+## Employee account endpoints
+
+POST /v1/auth/login accepts organization (ID or slug), username_value and password. POST /v1/auth/accept accepts organization ID, invite_id, secret and the chosen password. These two bounded endpoints do not use bearer authentication; they verify a password or single-use invitation and return a private expiring session. They reject unknown/identity/role fields. The generated OpenAPI marks password/secret inputs write-only. They are not browser cookie endpoints and retain origin/body/rate/transport guards. Never log request secrets or returned session tokens.
+
+Authenticated account/member methods are accounts.setup, accounts.password, invites.create/list/revoke and members.list/access/disable. Membership access is an array of space_id/role objects plus expected_revision. The employee must sign in again after access changes because old credentials are revoked. Issued session/invitation secrets must be stored privately by integrations; CLI helpers do this without printing them. Local owner recovery is not in the public registry. [Exact terminal flow and limits](employee-accounts.md).

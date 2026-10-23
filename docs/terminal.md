@@ -6,6 +6,12 @@ For unstyled output, use `atmet-brain --plain status`. For machine-readable outp
 
 Global options go before the command. No model key is needed for setup or the local line extractor. Setting up a remote connection does not enable model-based extraction or send company data to a model.
 
+## Company chooser, login and employees
+
+Run brains for a guided company chooser; brains create NAME creates an independent data home, and brains add NAME --path HOME registers existing data. Use --brain NAME explicitly before other commands. Each company has separate accounts, data and backups; concurrent servers need different ports. Run account setup once for the owner, login to sign in, and team for employee invitations and per-workspace access. Employee enrollment happens through join with a private single-use invitation. [Full account walkthrough](employee-accounts.md).
+
+Recoverable input errors re-prompt the relevant field. Type /cancel to cancel the current operation. The interactive team menu can continue after a cancelled/failed action without automatically resubmitting it. Invalid login passwords can be retried without re-entering company details. EOF/Ctrl+C and deliberate completion return to the shell; the Terminal app stays open. Security failures, uncertain remote writes and partial saves are reported rather than replayed automatically.
+
 ## Connect an agent
 
 Run `atmet-brain agent` after setup, or choose Join within it for a company Brain. The guided flow offers method, permitted workspace names, read/learning access and a separate or narrowed identity. It shows a review, verifies the new credential and presents copyable MCP configuration or method-specific commands. The bundle stays private; existing files are not overwritten. Use `--json agent` with explicit flags for automation. [Full wizard guide](agent-setup.md).
@@ -16,7 +22,7 @@ Run `atmet-brain agent` after setup, or choose Join within it for a company Brai
 atmet-brain setup
 ```
 
-The wizard offers local, Host and Join. Local creates a fresh private Brain. Host creates or reuses a company Brain, selects a secure route and prepares scoped teammate access. Join imports a private connection file and verifies it against the server. If Local finds an existing Brain, it offers reuse, a separate new data folder, or cancellation before company questions. Reuse keeps its company, owner, workspaces and data. Host reuses it without replacing its owner credential. Non-interactive Local without creation flags reuses the current Brain; creation flags against an existing Brain stop early with instructions.
+The wizard offers local, Host and Join. Local creates a fresh private Brain. Host creates or reuses a company Brain, selects a secure route and prepares scoped teammate access. Join consumes a password invitation and verifies the account, or imports an explicitly legacy credential file. If Local finds an existing Brain, it offers reuse, a separate new data folder, or cancellation before company questions. Reuse keeps its company, owner, workspaces and data. Host reuses it without replacing its owner credential. Non-interactive Local without creation flags reuses the current Brain; creation flags against an existing Brain stop early with instructions.
 
 To add a department to an existing Brain, use `atmet-brain space marketing`; company setup is not repeated. A separate company can use `atmet-brain --home /private/another-company setup`. Choose a fresh private home outside source control. Generated next commands include the selected home and installed Python runtime.
 
@@ -34,9 +40,9 @@ atmet-brain host
 atmet-brain join
 ```
 
-Run Host on the company device and Join on each teammate's device. Host lets you select workspace names, role and a private output file, then offers explicit background service installation. Join displays the file's destination, checks actual server identity and lists permitted spaces. Automatic SSH connections manage forwarding per request; HTTPS uses existing trusted ingress. The company administrator must prepare SSH accounts/keys/known hosts or HTTPS ingress first. Choose the Host route `later` to stop before networking/member setup.
+Run Host on the company device and Join on each teammate's device. Host lets you select workspace names, a role and a private invitation output file, then offers explicit background service installation. Join displays the file's destination, checks actual server identity and lists permitted spaces. Automatic SSH connections manage forwarding per request; HTTPS uses existing trusted ingress. The company administrator must prepare SSH accounts/keys/known hosts or HTTPS ingress first. Choose the Host route `later` to stop before networking/member setup.
 
-For scripts use `host --transport https --endpoint https://brain.example.com --member "Sales employee" --member-spaces sales --output /private/sales.atmet-join.json`, then `join --file /private/sales.atmet-join.json` on the teammate's device. Add organization/spaces flags only for a new Brain. Connection files contain scoped credentials and must be transferred privately. See the [full Host/Join guide](team-server.md#guided-host-and-join).
+For scripts use `host --transport https --endpoint https://brain.example.com --member "Sales employee" --member-spaces sales --output /private/sales.atmet-join.json`, then `join --file /private/sales.atmet-join.json` on the teammate's device. Add organization/spaces flags only for a new Brain. Private invitation files contain single-use enrollment secrets; legacy credential files remain reusable. Transfer either privately. See the [full Host/Join guide](team-server.md#guided-host-and-join).
 
 `setup --mode host|join` supports the same flows; `--mode team` aliases Host. Setup does not install a VPN, open firewall ports or infer/approve business procedures. Add sources and reviewed workflows through the [company walkthrough](use-for-your-company.md).
 
