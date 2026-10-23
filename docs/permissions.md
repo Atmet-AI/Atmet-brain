@@ -50,7 +50,7 @@ An app using one shared key is acting as that service. Passing `user=CEO`, a rol
 
 Organization administration controls membership and space provisioning. It does not bypass a space's content grants. The creator of a new space receives an explicit owner grant. A manager can delegate only operations they themselves possess in that space.
 
-The CLI includes reader, contributor, reviewer, publisher, worker and owner role presets. Roles are convenient collections of explicit operations, not special bypass paths.
+The CLI includes reader, contributor, reporter, reviewer, publisher, worker and owner role presets. Roles are convenient collections of explicit operations, not special bypass paths.
 
 ## Source audiences
 
@@ -87,3 +87,5 @@ Additional company organizations can be provisioned with `organization-add`. Eac
 ## Task reporting and learning
 
 Task reporting requires read/observe/contribute. Reading/searching reports requires read/history and current access to the report plus original evidence. Learning a draft additionally requires contribute. Publication keeps the existing publish operation and exact-revision review; reporting/learning does not grant it. Reports default to their submitting principal's audience; explicitly choose a department audience when sharing is intended. [Full workflow and grant requirements](task-history-and-learning.md#permissions-and-agent-integration).
+
+The reporter preset combines read/observe/contribute/history for completion feedback. It does not include publish, erase, manage or process. Use it for an individually attributable service agent, and deliberately share reports with the authorized publisher when review is wanted. The [automatic feedback guide](automatic-task-feedback.md) explains setup, inherited audiences and partial failures.

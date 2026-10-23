@@ -221,24 +221,23 @@ The API defaults to loopback port 7310. A remote CLI or local MCP bridge can con
 
 ## Learn from completed work
 
-Connected agents can explicitly report task outcomes, search permitted task history and propose reusable skills from the recorded steps and corrections.
+Connected agents can report outcomes automatically through a configured task-completion hook. The Brain saves permissioned history and attempts a skill draft from reported steps and corrections. A publisher still approves every new method.
 
 ```mermaid
 flowchart TD
-    Agent[Agent reports a selected task] --> History[Private task history with source evidence]
+    Agent[Configured agent completion hook] --> History[Private task history with source evidence]
     History --> Search[Permissioned history search]
-    History --> Draft[Skill draft from reported steps and corrections]
+    History --> Draft[Eligible result becomes a pending skill draft]
     Draft --> Review[Authorized exact-revision review]
     Review --> Method[Approved method for future agents]
 ```
 
 ```bash
-atmet-brain task-report task-report.json --space SPACE_ID
+atmet-brain --token-file /absolute/private/reporter.token mcp-config --task-feedback
 atmet-brain task-history "quotation" --space SPACE_ID
-atmet-brain task-learn --space SPACE_ID --report REPORT_ID --name prepare-quotation --idempotency-key learn-quotation-1
 ```
 
-Create the report JSON using the [complete task-reporting walkthrough](docs/task-history-and-learning.md). Reports default to the reporter's private audience and stay outside ordinary company search/context. History requires explicit read/history grants. Skill learning creates a pending draft, never automatic publication or execution. Current source permissions and versions continue to govern the approved method. Reported success is not independent proof of business success.
+Set up [automatic task feedback](docs/automatic-task-feedback.md) once with a reporter credential and MCP `mcp-config --task-feedback` or a Python/host completion hook. MCP instructions require agent cooperation; a host hook provides lifecycle delivery. For manual reporting, create the report JSON using the [complete task-reporting walkthrough](docs/task-history-and-learning.md). Reports default to the reporter's private audience and stay outside ordinary company search/context. History requires explicit read/history grants. Skill learning creates a pending draft, never automatic publication or execution. Current source permissions and versions continue to govern the approved method. Reported success is not independent proof of business success.
 
 ## Share one Brain with your team
 

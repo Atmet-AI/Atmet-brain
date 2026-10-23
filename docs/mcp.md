@@ -79,3 +79,7 @@ Or configure your MCP client to launch `atmet-brain --connection company mcp` wi
 ## Task reporting and learning tools
 
 brain_search_task_history and brain_get_task_report require history/read access. Add --allow-task-reports to expose brain_report_task, which requires observe/contribute/read. --allow-proposals also exposes brain_learn_skill; it requires history/contribute/read and creates a pending skill, never publication. mcp-config accepts the same switches when generating local or remote-bridge configuration. Review the [reporting walkthrough](task-history-and-learning.md) for explicit evidence, audiences and separate approval.
+
+## Completion feedback
+
+Generate `mcp-config --task-feedback` to expose brain_complete_task and server instructions to submit a safe result at task completion. The operation records a report and automatically attempts an eligible pending skill. Use a dedicated reporter role credential; the flag grants no access and adds no publish/review tool. A publisher approves the exact candidate separately. MCP instructions depend on the client following them; reliable lifecycle delivery requires a host completion hook. See [automatic feedback setup and failure handling](automatic-task-feedback.md).

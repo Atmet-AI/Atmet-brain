@@ -1,0 +1,9 @@
+flowchart TD
+    Host[Instrumented agent finishes a task] --> Complete[Completion hook submits safe result and source evidence]
+    Complete --> Report[Authenticated permissioned task history]
+    Report --> Eligible{Successful or corrected with steps?}
+    Eligible -->|No| History[Retain result for history]
+    Eligible -->|Yes| Draft[Attempt one pending skill candidate]
+    Draft --> Review[Publisher inspects exact revision]
+    Review -->|Approve| Approved[Approved skill available to permitted agents]
+    Review -->|Reject| Rejected[Keep decision in history]

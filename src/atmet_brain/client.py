@@ -8,10 +8,11 @@ from urllib.request import Request, build_opener, HTTPSHandler, ProxyHandler
 
 from .errors import BrainError, require
 from .extraction import NoRedirect
+from .feedback import TaskClientMixin
 from .util import dumps
 
 
-class Client:
+class Client(TaskClientMixin):
     def __init__(self, endpoint, token, ca_file=None):
         require(isinstance(endpoint, str) and not any(ord(c) < 33 for c in endpoint),
                 "invalid_endpoint", "Use a valid HTTPS endpoint or loopback HTTP URL.")

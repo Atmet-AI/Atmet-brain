@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.4.0 is a local/private-pilot alpha using database schema 2. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.5.0 is a local/private-pilot alpha using database schema 2. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
@@ -14,7 +14,7 @@ Atmet Brain 0.4.0 is a local/private-pilot alpha using database schema 2. Use th
 | Model extraction | Opt-in compatible HTTP adapter with evidence/response validation; fixture validation, no live provider benchmark |
 | Policy/workflow/skill lifecycle | Working proposal/publication, optimistic revisions, schedules, retirement and rollback |
 | Skills | Text package/resource import, dependency-aware retrieval and explicit task-outcome skill drafts; exact-revision publication remains separate; no script execution |
-| Task reports/history | Explicit authenticated reports, default-private audiences, permission-first lexical history, reported steps/corrections and separate skill drafts; no automatic external transcript capture or independent outcome verification |
+| Task reports/history | Authenticated reports, default-private audiences, permission-first lexical history and explicit steps/corrections. Opt-in Python/host completion hooks automatically submit and attempt pending skill candidates; MCP completion instructions depend on the agent. No automatic external transcript capture or independent outcome verification |
 | Schema upgrades | Transactional schema-1 to schema-2 migration and old-backup upgrade before quarantine; older engines cannot open schema 2 |
 | Search | Working permission-first lexical ranking; no semantic/vector index in this release |
 | Context | Working bounded approved/reference separation and source/artifact manifest |

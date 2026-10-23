@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "components": {
     "securitySchemes": {
@@ -1494,6 +1494,85 @@
                             "items": {
                               "type": "string"
                             }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id",
+                          "report_key",
+                          "task_key",
+                          "summary",
+                          "outcome",
+                          "result",
+                          "evidence"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "reports.complete"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "report_key": {
+                            "type": "string"
+                          },
+                          "task_key": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "outcome": {
+                            "type": "string"
+                          },
+                          "result": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "steps": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "corrections": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "checks": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "audience": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "learn": {
+                            "type": "boolean"
                           }
                         },
                         "additionalProperties": false,

@@ -90,3 +90,5 @@ The design path is run evidence -> observation -> reusable lesson -> skill draft
 ## Execution authority
 
 `required_tools` describes prerequisites. It does not grant them. Even a resource under `scripts/` is returned with `executable=false`; Atmet Brain never runs it. Keep private company data and secrets out of public generic packages. Company-specific evidence remains protected by source access.
+
+With [automatic task feedback](automatic-task-feedback.md), a configured completion hook attempts a pending candidate after an eligible result. A publisher still inspects the exact revision. Each new run gets a separate candidate rather than rewriting an approved method; use task-learn explicitly to combine reports or revise an existing artifact. Failed-only reports remain history and cannot establish a successful method.

@@ -57,3 +57,7 @@ Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have
 Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/task-history-and-learning.md).
 
 Engine 0.4.0 upgrades schema-1 company data transactionally to schema 2. Back up first, stop old local processes and restart services with the compatible runtime. Older engines cannot open schema 2. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-2-upgrade).
+
+## Automatic agent feedback
+
+Configure `mcp-config --task-feedback` with a scoped reporter credential, or send selected completion JSON through `task-complete - --space SPACE_ID` from your agent application's lifecycle hook. Eligible results create pending skill candidates; a publisher approves the exact revision. MCP completion instructions require client cooperation and do not monitor unrelated agents. [One-time setup and Python/REST hooks](https://github.com/anashamad9/Atmet-brain/blob/main/docs/automatic-task-feedback.md).

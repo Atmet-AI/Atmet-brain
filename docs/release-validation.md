@@ -100,3 +100,8 @@ Atmet Brain 0.3.1 uses schema 1. The local release checks cover 155 Python regre
 A disposable macOS arm64 integration exercised real OpenSSH forwarding with temporary host/member keys and a loopback-only SSH daemon, joining Sales, denying Finance, rejecting an unknown host key and enforcing revocation. No system SSH configuration was changed. This is an isolated integration check, not a customer-network deployment assessment.
 
 Read the [support matrix](implementation-status.md) before relying on a capability. Older release evidence is preserved in [historical validation](release-validation.md).
+
+
+## 0.4.0 task-history verification
+
+Atmet Brain 0.4.0 uses schema 2. The local suite passed 181 Python tests and 8 launcher tests; the seven-block reporting walkthrough ran with the installed engine, and all 18 Mermaid diagrams rendered. Task-report checks cover actual caller attribution, read/observe/contribute/history/publish separation, private/source audience intersections, immutable replay, stale evidence and reviews, report/source erasure, encrypted recovery replay, old-schema/backup migration and rollback on a failed migration. CLI and real local REST/MCP fixtures exercise reporting, search and skill drafts through the same core. The [tag-push release workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39867328965) passed build/archive checks, OIDC upload, public npm integrity/latest and a fresh Ubuntu install. Independent anonymous macOS arm64 pinned/unversioned installs verified task commands, schema 2, MCP and persistent runtime reuse.

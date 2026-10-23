@@ -11,6 +11,7 @@ OPERATIONS = {"read", "contribute", "review", "publish", "manage", "history", "e
 ROLES = {
     "reader": ["read"],
     "contributor": ["read", "contribute", "observe"],
+    "reporter": ["read", "observe", "contribute", "history"],
     "reviewer": ["read", "review", "history"],
     "publisher": ["read", "contribute", "review", "publish", "history"],
     "worker": ["read", "contribute", "process", "observe"],

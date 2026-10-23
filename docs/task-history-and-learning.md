@@ -1,6 +1,6 @@
 # Report tasks and learn reusable skills
 
-Atmet Brain can retain selected task outcomes, search them and assemble a skill draft from their steps and corrections. Your agent or application explicitly submits reports through CLI, REST or MCP. The Brain does not automatically observe external conversations, verify business success or run the reported steps.
+Atmet Brain can retain selected task outcomes, search them and assemble a skill draft from their steps and corrections. Configure [automatic task feedback](automatic-task-feedback.md) once for agent completion hooks or MCP completion instructions. The manual CLI, REST and MCP operations below remain useful for inspection and selected reporting. The Brain does not automatically observe external conversations, verify business success or run the reported steps.
 
 Reports are operational history, separate from ordinary document search and approved instructions. A report defaults to the submitting principal's private audience. Choose a department audience deliberately when its members should be able to learn from that work. Every read also checks access to all cited original source evidence.
 
@@ -111,9 +111,9 @@ Inspect revision 2 and review it separately. If another draft changed the head, 
 | Publish a skill | publish plus current evidence/dependency access |
 | Erase through task-erase | read, history, erase plus source audience access |
 
-Credentials, grants, source audiences, expiry and revocation all apply. A department membership or tool switch alone grants no additional access. The existing worker role can report but lacks history; a reporting/learning agent needs a deliberately scoped custom operation set. For example, an authorized administrator can use grants.create with read/observe/contribute/history, then mint an individually scoped credential. Keep publish/erase separate where appropriate. The core does not require a different person to approve their own draft; publication is a separate explicit permission/operation.
+Credentials, grants, source audiences, expiry and revocation all apply. A department membership or tool switch alone grants no additional access. The existing worker role can report but lacks history; the reporter role provides read/observe/contribute/history for a reporting/learning agent. For example, an authorized administrator can use grants.create with read/observe/contribute/history, then mint an individually scoped credential. Keep publish/erase separate where appropriate. The core does not require a different person to approve their own draft; publication is a separate explicit permission/operation.
 
-REST operations are reports.record, reports.get, reports.search, reports.erase and skills.learn on /v1/rpc. CLI remote commands use the same core:
+REST operations are reports.complete, reports.record, reports.get, reports.search, reports.erase and skills.learn on /v1/rpc. CLI remote commands use the same core:
 
 ```bash
 atmet-brain --connection company task-history "quotation" --space SPACE_ID
@@ -128,7 +128,7 @@ atmet-brain --connection company mcp-config --allow-task-reports --allow-proposa
 
 A default MCP server exposes brain_search_task_history and brain_get_task_report, with underlying history grants still required. --allow-task-reports adds brain_report_task; --allow-proposals adds brain_learn_skill. No publication or erasure tool is added. These switches expose tools, not permissions. For local MCP configuration, provide a dedicated scoped --token-file instead of --connection. No named external agent integration is certified by these generic interfaces.
 
-Configure your agent to report only selected completed tasks or useful failures/corrections, supply the original sources it actually used, and request a skill draft when a reusable method is plausible. Ask a publisher to review it. This is explicit reporting, not a background recorder of every conversation.
+Configure your agent to report only selected completed tasks or useful failures/corrections, supply the original sources it actually used, and request a skill draft when a reusable method is plausible. Ask a publisher to review it. A completion hook can submit this selected result automatically; MCP completion instructions depend on the client following them. Neither path records every conversation.
 
 ## Changes, erasure and recovery
 

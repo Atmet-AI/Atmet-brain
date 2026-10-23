@@ -142,3 +142,7 @@ The CLI can save verified HTTPS, automatic SSH or manual SSH-loopback connection
 ## Task outcomes and learned skills
 
 reports.record saves an explicit, immutable client-reported result with original source evidence. reports.search and reports.get read permitted history; reports.erase clears a report through the existing source-erasure journal. skills.learn assembles a pending skill from selected reports and delegates publication to artifacts.review. All operations use the existing RPC envelope and authorization. [Task-report examples](task-history-and-learning.md) define required fields, privacy, bounds and revision behavior. No caller identity or role field is accepted from the model.
+
+## Completion feedback
+
+`reports.complete` accepts the reports.record parameters plus a boolean learn (default true). It saves an authenticated report, then attempts one deterministic pending candidate from eligible succeeded/corrected steps. It returns separate report/skill statuses; drafting can be blocked after the report commits. Exact retries reuse both identities, recheck access and never republish or overwrite an approved method. No caller-supplied identity or approval is accepted. `Client.task_feedback()` and `LocalClient.task_feedback()` provide Python lifecycle wrappers. [Integration and response contract](automatic-task-feedback.md).

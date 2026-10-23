@@ -163,3 +163,7 @@ Local operator commands keep their existing trust boundary. Remote CLI/MCP opera
 ## npm entry point
 
 `npm/atmet-brain` is a thin launcher. It verifies the pinned uv bootstrap archive, verifies and installs the exact core wheel bundled in the npm archive into version-specific private runtime storage and forwards core arguments without a shell. There is no second database, permission model or agent runtime in the npm package. Installation/configuration happens on first execution, not in npm lifecycle hooks. [Installation](install.md) explains runtime/data locations and supported entry points. [Publishing](package-publishing.md) covers the separate maintainer release procedure.
+
+## Agent completion boundary
+
+The feedback module wraps an explicitly instrumented host task; remote Client and token-bound LocalClient share its task_feedback interface. A host callback or the MCP completion tool invokes reports.complete. That operation records through the existing report transaction and then attempts deterministic skills.learn through the existing artifact transaction. The receipt exposes partial failure. Per-report candidate identity/idempotency prevents duplicate drafts on retries and avoids changing an already approved method. Candidate audiences inherit their report; original source/evidence checks still gate all reads and publication. The reporter preset omits publish authority. No background transcript watcher, model call, persisted delivery queue or external-action permission is introduced. [Automatic task feedback](automatic-task-feedback.md).

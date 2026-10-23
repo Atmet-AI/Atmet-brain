@@ -26,6 +26,7 @@ All examples and tests use fictional data in temporary directories. No mailbox, 
 - Context budget failures, current-access history and manifest restrictions.
 - Connector changes, disappearance, symlinks, disabled bindings and permanent tombstones.
 - Encrypted backup tampering, fresh restore, later erasure reconciliation and old-key rejection.
+- Completion-hook delivery, generic Python local/real remote execution, MCP opt-in instructions, stdin CLI, source/credential revocation, partial failures and exact retry without task reruns or duplicate drafts; publication remains separate.
 - Explicit task reports, private and original-source audience intersections, immutable replay, history access, draft-only skill learning, stale source/review rejection, report erasure/recovery and schema migration rollback.
 - REST/MCP/Python parity, forged identity fields, private operator method denial and actual stdio subprocess messages.
 

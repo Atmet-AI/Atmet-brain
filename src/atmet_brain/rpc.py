@@ -23,7 +23,7 @@ METHODS = {
     "jobs.list": "list_jobs", "jobs.run": "run_jobs", "jobs.retry": "retry_job",
     "events.record": "record_event", "workflows.discover": "discover_workflow",
     "tasks.record": "record_task_run", "tasks.runs": "list_task_runs",
-    "reports.record": "record_task_report", "reports.get": "get_task_report",
+    "reports.record": "record_task_report", "reports.complete": "complete_task_report", "reports.get": "get_task_report",
     "reports.search": "search_task_reports", "reports.erase": "erase_task_report",
     "skills.learn": "learn_skill_from_reports",
     "automations.discover": "discover_automation", "tasks.route": "route_task", "tasks.run": "run_task",
@@ -56,7 +56,7 @@ def input_schema(brain, method):
     params = parameters(brain, method)
     properties = {}
     integers = {"limit", "max_jobs", "expected_revision", "revision", "target_revision", "from_revision", "to_revision", "max_chars", "min_runs", "ai_tokens"}
-    booleans = {"approve", "active", "org_admin", "include_pending", "include_payload", "succeeded"}
+    booleans = {"approve", "active", "org_admin", "include_pending", "include_payload", "succeeded", "learn"}
     arrays = {"operations", "space_ids", "audience", "evidence", "dependencies", "artifact_ids", "principal_ids", "report_ids", "steps", "corrections", "checks"}
     for name in params:
         kind = "integer" if name in integers else "boolean" if name in booleans else "array" if name in arrays else "object" if name in {"body", "inputs", "output"} else "string"

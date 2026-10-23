@@ -13,6 +13,40 @@ def lines(values, name, maximum=30):
 
 
 class TaskReportsMixin:
+    def complete_task_report(self, actor, space_id, report_key, task_key, summary, outcome, result, evidence,
+                             steps=None, corrections=None, checks=None, audience=None, learn=True):
+        """Completion-hook entry point: retain the result, then attempt a separate draft.
+
+        A saved report survives a failed draft attempt. Exact retries can resume that
+        attempt without executing the host task again. No publication is performed.
+        """
+        require(type(learn) is bool, "invalid_report", "learn must be a boolean.")
+        report = self.record_task_report(actor, space_id, report_key, task_key, summary, outcome, result,
+                                         evidence, steps, corrections, checks, audience)
+        report.pop("next", None)  # The completion receipt supplies the automatic draft outcome.
+        feedback = {"report": report, "publication_authorized": False, "outcomes_verified": False}
+        if not learn:
+            return {**feedback, "skill": {"status": "not_requested"}}
+        if outcome == "failed" or not steps:
+            return {**feedback, "skill": {"status": "not_eligible", "reason": "A succeeded/corrected report needs explicit steps."}}
+        try:
+            # Use one deterministic candidate per report. Never revise a published
+            # method, merge another reporter's private history or change its audience.
+            with self.store.transaction() as conn:
+                saved = self._read_report(conn, actor, report["id"])
+            candidate = self.learn_skill_from_reports(
+                actor, space_id, [report["id"]], "task-" + sha(report["id"])[:32],
+                "task-feedback:" + sha(report["id"]), audience=saved["audience"])
+            current = self.get_artifact(actor, candidate["id"], revision=candidate["revision"])
+            skill = {"id": candidate["id"], "revision": candidate["revision"], "state": current["state"],
+                     "status": "pending_review" if current["state"] == "pending" else "existing",
+                     "review_required": current["state"] == "pending", "model_calls": 0}
+        except BrainError as error:
+            # Return a visible partial receipt. Do not pretend drafting succeeded,
+            # fall back to a broader identity or lose the already saved outcome.
+            skill = {"status": "blocked", "error": error.as_dict()}
+        return {**feedback, "skill": skill}
+
     def _read_report(self, conn, actor, report_id):
         row = conn.execute("SELECT r.* FROM task_reports r JOIN spaces s ON s.id=r.space_id "
                            "WHERE r.id=? AND s.org_id=?", (report_id, actor.org_id)).fetchone()

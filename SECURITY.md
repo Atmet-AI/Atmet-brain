@@ -12,6 +12,7 @@ Use GitHub private vulnerability reporting if enabled by the repository owner. I
 - Public interfaces authenticate scoped credentials and recheck current grants.
 - Company administration does not automatically bypass content permissions.
 - Retrieved source text cannot change policy or permissions.
+- Opt-in completion hooks submit selected safe summaries, not raw transcripts. Reporter credentials omit publication authority. Callback delivery and complete source provenance remain host responsibilities; deliberately supplied fields have no automatic secret scrubber.
 - Task reports are explicit client observations with authenticated attribution. Raw report reads require history access, source audiences intersect, and reports stay out of ordinary retrieval. Skill learning creates pending drafts through existing evidence/review checks.
 - Skills are read as instructions/resources; the core never executes their scripts.
 - The local HTTP server is not a hardened public internet gateway.

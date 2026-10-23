@@ -41,3 +41,7 @@ Share only redacted error codes, engine version and reproduction steps when aski
 - **No method to learn:** choose the same task key in one space and include a succeeded/corrected report with explicit steps. Failed-only outcomes do not establish a method.
 - **Stale evidence or review:** inspect current source/artifact revisions and submit a new report or reviewed draft. Reported historical results do not authorize an obsolete procedure.
 - **Schema mismatch after upgrade:** stop old processes, use the schema-2 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-2-upgrade).
+
+## A task finished but feedback is missing
+
+Enable the agent's host completion hook or MCP --task-feedback configuration. A running Brain alone cannot observe unrelated agents. MCP clients must follow the supplied completion instructions. Inspect delivery errors and both report/skill statuses; blocked drafting may still mean the report was saved. Retry the same key/payload instead of repeating the business task. Check original evidence, read/observe/contribute/history grants, audience access and credential expiry. A default-private report must be deliberately shared with its publisher for review. [Integration and retry guide](automatic-task-feedback.md).

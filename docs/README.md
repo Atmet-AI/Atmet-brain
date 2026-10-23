@@ -8,7 +8,7 @@ Atmet Brain stores company sources, learned memory and reviewed procedures that 
 2. [Create your first Brain](quickstart.md): initialize a company, ingest a source, run learning and request context.
 3. [Build a company workflow](use-for-your-company.md): add departments, publish instructions and give an agent its own credential.
 4. [Connect an agent with MCP](mcp.md) or [use Python/REST](api.md).
-5. [Report selected tasks and learn skills](task-history-and-learning.md), then [keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
+5. [Enable automatic task feedback](automatic-task-feedback.md) or [report selected tasks and learn skills](task-history-and-learning.md), then [keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
 6. [Host a Brain and help teammates Join](team-server.md#guided-host-and-join) when several people need the same Brain.
 
 The examples use the installed `atmet-brain` command. Install it globally as shown in installation, or substitute `npx atmet-brain@latest` before the same arguments. JSON blocks labeled as files must be saved before a command refers to them. Replace uppercase IDs and example paths with values returned by your own installation; no source checkout is needed unless a page explicitly uses repository examples.
@@ -22,6 +22,7 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 | Create and update a business procedure | [Workflows](workflows.md) |
 | Create a portable reusable task method | [Skills](skills.md) |
 | Turn supported repeated work into reviewed Python | [Automations](automations.md) |
+| Automatically report agent results and request reviewed skills | [Automatic task feedback](automatic-task-feedback.md) |
 | Report task outcomes and search/learn from past work | [Task history and learning](task-history-and-learning.md) |
 | Give a person or service limited access | [Permissions](permissions.md) |
 | Configure budgets and remote processing | [Configuration](configuration.md) |

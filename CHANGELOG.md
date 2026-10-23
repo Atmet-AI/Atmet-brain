@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.5.0 - automatic task completion feedback, 2026-10-23
+
+### Added
+
+- reports.complete saves a safe task result and attempts an eligible skill draft with separate statuses. Exact retries reuse the report/candidate without repeating business actions or revising approved methods.
+- Token-bound Python LocalClient/Client task_feedback lifecycle wrappers, automatic failure reporting without raw exception text and in-memory frozen-payload retries.
+- task-complete FILE or stdin completion hook, local/remote MCP --task-feedback tool/instructions, and a scoped reporter role without publish authority.
+- One-time integration guide covering source provenance, default-private/shared audiences, host callbacks, partial delivery, exact-revision human approval and operational limits.
+
+### Compatibility
+
+- Schema remains 2. Existing 0.4.0 data is reused without a migration; schema-1 installations still require the documented backup/upgrade procedure.
+- Automatic delivery requires a configured host hook. MCP instructions alone cannot guarantee that an unrelated agent reports a result. No background transcript watcher, durable retry queue, new model learner or auto-publication is added.
+
+### Documentation
+
 - Clarify that pre-upgrade backups use the existing schema-1 engine before opening the Brain with 0.4.0.
 - Clarify that task-report integrations must provide complete provenance; reference validation does not attest undisclosed data sources or business success.
 
