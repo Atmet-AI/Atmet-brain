@@ -4,7 +4,7 @@ Use this page to judge what has been checked. For installation and daily operati
 
 ## Maintenance release 0.8.1
 
-Version 0.8.1 updates project branding, active repository URLs and release metadata for Atmet-AI/Atmet-brain. Brain behavior and schema 4 are unchanged from 0.8.0. Local checks passed all 333 Python tests, 8 launcher tests, metadata/archive inspection and a fresh packed macOS company-setup/MCP walkthrough. Exact wheel comparison found no engine change other than its version identifier. Confirm the organization publishing workflow and registry result for public availability; the 0.8.0 evidence below retains its original release identity.
+Version 0.8.1 updates project branding, active repository URLs and release metadata for Atmet-AI/Atmet-brain. Brain behavior and schema 4 are unchanged from 0.8.0. Local checks passed all 333 Python tests, 8 launcher tests, metadata/archive inspection and a fresh packed macOS company-setup/MCP walkthrough. Exact wheel comparison found no engine change other than its version identifier. The [organization tag-push workflow](https://github.com/Atmet-AI/Atmet-brain/actions/runs/40011129395) passed OIDC publication, public archive integrity/latest and a fresh Ubuntu install. [Compatibility CI](https://github.com/Atmet-AI/Atmet-brain/actions/runs/40011129463) passed Python 3.11, 3.12 and 3.13. Independent anonymous macOS installation, company setup, protocol-only MCP, installed service-interpreter import and Host reuse passed. The organization publisher is validated and the obsolete personal-repository connection is removed. Actual OS-service deployment and production security evaluation remain separate. The 0.8.0 evidence below retains its original release identity.
 
 ## Core verification at 0.8.0
 
