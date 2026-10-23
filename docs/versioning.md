@@ -65,6 +65,16 @@ Rollback checks current evidence and dependencies. It cannot restore erased evid
 
 Task envelopes include a manifest ID. `context.manifest` returns referenced artifact/source versions, hashes, effective settings and the permission-check time for the original principal. Current access still applies. The manifest stores a query hash rather than the complete prompt. It supports inspection, not guaranteed byte-identical model replay.
 
+## Schema 4 upgrade
+
+Engine 0.8.0 adds human-reviewed administration, rule versions and restricted document intake. Supported schemas 1/2/3 upgrade transactionally on first open. Existing active documents keep their existing access until changed or a policy change makes classification stale. Every newly captured/changed document uses restricted intake by default; update your ingestion flow before expecting worker/search results.
+
+Before the first 0.8.0 command that opens an existing Brain, stop old services, workers and MCP processes. Create an encrypted backup and independent current journal with the old compatible engine. For a 0.7.0/schema-3 installation, pin npx atmet-brain@0.7.0 for backup/journal; @latest would already migrate it. Do this separately for each company. Follow [backup commands](backup-and-recovery.md).
+
+Open with 0.8.0, inspect doctor/status and restart every service/client with the new installed runtime. Replace old runtime-specific service definitions deliberately. Do not mix engines; older engines reject schema 4 and there is no in-place downgrade. Restore an old snapshot to a separate home to use its old engine.
+
+Enroll/sign in to a human administrator account, connect the administration agent and classify imports as shown in the [new flow](conversational-administration.md). Restored controls/approvals/rules are not reactivated; fresh recovery identities must deliberately review documents and rebuild approved rules.
+
 ## Schema 3 upgrade
 
 Engine 0.7.0 introduces company-local password accounts, invitation state, membership-review revisions and persisted sign-in attempts. Existing identity/source/workflow data is preserved; no employee password is invented and no new workspace access is granted by migrating. Supported schema-1/2 installations upgrade in one transaction on first open. Unknown schemas are rejected.

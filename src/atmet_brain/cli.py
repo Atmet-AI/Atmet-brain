@@ -73,6 +73,15 @@ def parser():
         command.add_argument("--reset-principal")
         command.add_argument("--principal")
         command.add_argument("--invite-id")
+    admin = sub.add_parser("admin", help="Agent-prepared company changes and private human approvals")
+    admin.add_argument("action", nargs="?", choices=["overview", "list", "rules", "intake", "inspect", "classify", "propose", "review", "agent"])
+    admin.add_argument("change_id", nargs="?")
+    admin.add_argument("--operation")
+    admin.add_argument("--params-file", type=Path)
+    admin.add_argument("--reason")
+    admin.add_argument("--request-key")
+    admin.add_argument("--name")
+    admin.add_argument("--output", type=Path)
     agent = sub.add_parser("agent", help="Guided agent connection: workspace names, scoped access and ready setup files")
     agent.add_argument("--name", help="Agent slug, for example sales-assistant")
     agent.add_argument("--method", choices=["mcp", "terminal", "rest", "python"])
@@ -81,7 +90,7 @@ def parser():
     agent.add_argument("--identity", choices=["new", "current"], help="New service identity, or narrower child credential for the current identity")
     agent.add_argument("--output", type=Path, help="New private setup directory; defaults to home/agents/NAME")
     mcp_config = sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
-    for flag in ("allow-proposals", "allow-automations", "allow-task-reports", "task-feedback"):
+    for flag in ("allow-proposals", "allow-automations", "allow-task-reports", "task-feedback", "allow-admin"):
         mcp_config.add_argument("--" + flag, action="store_true")
     setup = sub.add_parser("setup", help="Guided company initialization or connection")
     setup.add_argument("--mode", choices=["local", "host", "join", "team", "connect"])
@@ -223,6 +232,7 @@ def parser():
     mcp.add_argument("--allow-proposals", action="store_true")
     mcp.add_argument("--allow-automations", action="store_true", help="Expose observed-run recording and bounded pure recipe execution tools")
     mcp.add_argument("--allow-task-reports", action="store_true", help="Expose explicit task reporting; grants still apply")
+    mcp.add_argument("--allow-admin", action="store_true", help="Expose permission-checked administration proposals; private human approval remains separate")
     mcp.add_argument("--task-feedback", action="store_true", help="Opt in to completion instructions and report-plus-draft tool; never publish")
     rpc = sub.add_parser("rpc", help="Call any registered operation")
     rpc.add_argument("method")
@@ -276,7 +286,7 @@ def remote_execute(args, client):
     command = args.command
     if command == "mcp":
         MCPServer(None, None, args.allow_proposals, args.allow_automations, client=client, allow_task_reports=args.allow_task_reports,
-                  task_feedback=args.task_feedback).serve()
+                  task_feedback=args.task_feedback, allow_admin=args.allow_admin).serve()
         return None
     if command == "status":
         return {"mode": "remote", "endpoint": client.endpoint, "identity": client.call("identity.me"),
@@ -354,6 +364,9 @@ def execute(args):
             from .companies import select
             args.home = select(args.catalog_home, args.brain)
     require(not (args.connection and args.endpoint), "invalid_connection", "Choose --connection or --endpoint.")
+    if args.command == "admin":
+        from .admin_cli import admin_command
+        return admin_command(args, read_token)
     if args.command == "brains":
         require(not args.connection and not args.endpoint, "local_only", "Company catalog management is local.")
         from .companies import guided_companies
@@ -377,7 +390,7 @@ def execute(args):
                 "home": str(args.home), "start": shlex.join(base + ["setup"]), "inspect": shlex.join(base + ["status"]),
                 "host": shlex.join(base + ["host"]), "join": shlex.join(base + ["join"]),
                 "agent": shlex.join(base + ["agent"]),
-                "companies": shlex.join(base + ["brains"]), "team": shlex.join(base + ["team"]),
+                "companies": shlex.join(base + ["brains"]), "team": shlex.join(base + ["team"]), "admin": shlex.join(base + ["admin"]),
                 "help": "atmet-brain --help", "connections": list_connections(args.home)}
     if args.command == "connect":
         require(not args.connection and not args.endpoint, "invalid_connection", "Use connect's own endpoint and token-file arguments.")
@@ -448,7 +461,7 @@ def execute(args):
         else:
             require(args.token_file and args.token_file.is_file(), "credential_missing", "Use --token-file with a dedicated scoped agent credential.")
             command += ["--token-file", str(args.token_file.expanduser().resolve())]
-        switches = ["--" + flag.replace("_", "-") for flag in ("allow_proposals", "allow_automations", "allow_task_reports", "task_feedback") if getattr(args, flag)]
+        switches = ["--" + flag.replace("_", "-") for flag in ("allow_proposals", "allow_automations", "allow_task_reports", "task_feedback", "allow_admin") if getattr(args, flag)]
         return {"mcpServers": {"atmet-brain": {"command": str(Path(sys.executable).absolute()), "args": command + ["mcp", *switches]}}}
     if args.connection or args.endpoint:
         require(not args.connection or not args.token_file, "invalid_connection", "A saved connection uses its own credential. Reconnect to change it.")
@@ -524,7 +537,7 @@ def execute(args):
         return dispatch(brain, actor, method, params)
     if args.command == "mcp":
         MCPServer(brain, token, args.allow_proposals, args.allow_automations, allow_task_reports=args.allow_task_reports,
-                  task_feedback=args.task_feedback).serve()
+                  task_feedback=args.task_feedback, allow_admin=args.allow_admin).serve()
         return None
     if args.command == "space":
         return brain.create_space(actor, args.name) if args.name else brain.list_spaces(actor)

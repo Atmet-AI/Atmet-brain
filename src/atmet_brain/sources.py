@@ -5,6 +5,7 @@ import base64
 from .auth import authorize, audience_allows, can, validate_audience
 from .db import audit, recovery_event
 from .errors import BrainError, require
+from .security import enforce_classification, evaluate, policy_revision, record_classification
 from .util import dumps, loads, now, sha, text, timestamp, uid
 
 TEXT_MIMES = {"text/plain", "text/markdown", "text/csv", "application/json"}
@@ -17,6 +18,7 @@ class SourcesMixin:
         require(row is not None, "not_found", "Source not found.", 404)
         authorize(conn, actor, row["space_id"], operation)
         require(audience_allows(conn, actor, row["audience"]), "not_found", "Source not found.", 404)
+        enforce_classification(conn, actor, row, require_released=operation == "read")
         if row["category"] == "task_report" and operation == "read":
             report = conn.execute("SELECT evidence FROM task_reports WHERE source_id=?", (source_id,)).fetchone()
             require(report and self._evidence_readable(conn, actor, row["space_id"], report[0], current=False),
@@ -90,8 +92,11 @@ class SourcesMixin:
                 authorize(conn, actor, space_id, "manage")
             if existing:
                 require(existing["connector_id"] == _connector_id, "source_binding", "This source belongs to a different binding.", 409)
-                self._source(conn, actor, existing["id"])
-                require(existing["status"] == "active", "source_inactive", "Revalidate this source before writing.", 409)
+                self._source(conn, actor, existing["id"], "contribute")
+                if existing["status"] == "intake" and not can(conn, actor, space_id, "manage"):
+                    creator = conn.execute("SELECT requested_by FROM jobs WHERE source_id=? ORDER BY source_revision LIMIT 1", (existing["id"],)).fetchone()
+                    require(creator and creator[0] == actor.principal_id, "forbidden", "Only the submitting employee or intake administrator may replace this pending document.", 403)
+                require(existing["status"] in {"active", "intake"}, "source_inactive", "Revalidate this source before writing.", 409)
                 if dumps(allowed_audience) != existing["audience"] or authority != existing["authority"]:
                     authorize(conn, actor, space_id, "manage")
                 old = conn.execute("SELECT * FROM source_revisions WHERE source_id=? AND revision=?",
@@ -114,11 +119,21 @@ class SourcesMixin:
                              (ident, space_id, external_id, title, revision, dumps(allowed_audience), authority, now(), now(), _connector_id))
             conn.execute("INSERT INTO source_revisions VALUES(?,?,?,?,?,?,?)",
                          (ident, revision, content.encode(), mime, sha(content), now(), timestamp(effective_at)))
+            gate = self.settings.require_document_classification or policy_revision(conn, actor.org_id) > 0
+            classification = None
+            if gate:
+                current = conn.execute("SELECT * FROM sources WHERE id=?", (ident,)).fetchone()
+                classification = evaluate(conn, actor.org_id, current, content)
+                record_classification(conn, current, classification, "Approved rule match" if classification["decision"] == "released" else "Awaiting classification and approved release")
             job = uid("job")
             conn.execute("INSERT INTO jobs(id,space_id,source_id,source_revision,requested_by,requested_credential,created_at,updated_at) "
                          "VALUES(?,?,?,?,?,?,?,?)", (job, space_id, ident, revision, actor.principal_id, actor.credential_id, now(), now()))
+            if classification and classification["decision"] != "released":
+                conn.execute("UPDATE jobs SET status='blocked',error_code='classification_required' WHERE id=?", (job,))
             audit(conn, actor, "source.put", ident, space_id, {"revision": revision, "job_id": job})
-            return {"id": ident, "revision": revision, "job_id": job, "status": "accepted"}
+            return {"id": ident, "revision": revision, "job_id": job,
+                    "status": "pending_classification" if classification and classification["decision"] != "released" else "accepted",
+                    **({"classification": {"decision": classification["decision"], "policy_revision": classification["policy_revision"]}} if classification else {})}
 
     def _invalidate_source(self, conn, source_id, erase=False):
         affected = {source_id}
@@ -130,6 +145,11 @@ class SourcesMixin:
                     conn.execute("UPDATE source_revisions SET body=X'' WHERE source_id=?", (report["source_id"],))
                     conn.execute("UPDATE sources SET status='deleted',title='Erased task report' WHERE id=?", (report["source_id"],))
         if erase:
+            conn.execute("UPDATE source_security SET reason='',review_id=NULL WHERE source_id=?", (source_id,))
+            for change in conn.execute("SELECT id,params FROM admin_changes WHERE operation IN ('intake.release','intake.hold','sources.access','sources.erase','sources.authority')").fetchall():
+                if loads(change["params"]).get("source_id") == source_id:
+                    conn.execute("UPDATE admin_changes SET params=?,reason='Source erased',snapshot=?,state='retracted',result=NULL WHERE id=?",
+                                 (dumps({"source_id": source_id}), dumps({"redacted": True, "source_id": source_id}), change["id"]))
             for ident in affected:
                 conn.execute("UPDATE task_reports SET task_key='' WHERE source_id=?", (ident,))
         for row in conn.execute("SELECT id,evidence FROM memories").fetchall():
@@ -183,6 +203,10 @@ class SourcesMixin:
         with self.store.transaction(write=True) as conn:
             source = self._source(conn, actor, source_id, "manage")
             require(source["status"] != "deleted", "source_deleted", "Erased sources cannot be restored.", 409)
+            if active:
+                classified = conn.execute("SELECT * FROM source_security WHERE source_id=?", (source_id,)).fetchone()
+                require(not classified or (classified["decision"] == "released" and classified["policy_revision"] == policy_revision(conn, actor.org_id)),
+                        "classification_required", "This document needs a reviewed intake.release before activation.", 409)
             values = validate_audience(conn, actor.org_id, audience)
             live_state = "reported" if source["category"] == "task_report" else "active"
             conn.execute("UPDATE sources SET audience=?,status=?,updated_at=? WHERE id=?",

@@ -1,0 +1,11 @@
+flowchart TD
+    Upload["New or changed document"] --> Intake["Restricted intake"]
+    Intake --> Rules["Evaluate approved explicit rules"]
+    Rules --> Matched["Approved release rules match"]
+    Rules --> Unknown["Unmatched, ambiguous or a hold rule"]
+    Matched --> All["Intersect every matching audience and retained restrictions"]
+    All --> Available["Available only to permitted readers"]
+    Unknown --> Review["Authorized agent/human inspects intake"]
+    Review --> Proposal["Propose exact classification"]
+    Proposal --> Approval["Separate human approval"]
+    Approval --> All

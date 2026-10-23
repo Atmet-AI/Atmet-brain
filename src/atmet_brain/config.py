@@ -7,7 +7,7 @@ import tomllib
 
 from .errors import require
 
-CONFIG_KEYS = {"max_context_chars", "max_results", "allow_remote_processing"}
+CONFIG_KEYS = {"max_context_chars", "max_results", "allow_remote_processing", "require_document_classification"}
 
 
 def validate_settings(settings):
@@ -17,9 +17,9 @@ def validate_settings(settings):
         if name in settings:
             value = settings[name]
             require(type(value) is int and low <= value <= high, "invalid_config", f"Invalid {name}.")
-    if "allow_remote_processing" in settings:
-        require(type(settings["allow_remote_processing"]) is bool,
-                "invalid_config", "allow_remote_processing must be true or false.")
+    for key in ["allow_remote_processing", "require_document_classification"]:
+        if key in settings:
+            require(type(settings[key]) is bool, "invalid_config", key + " must be true or false.")
     return settings
 
 
@@ -28,6 +28,7 @@ class Settings:
     max_context_chars: int = 16_000
     max_results: int = 12
     allow_remote_processing: bool = False
+    require_document_classification: bool = True
 
     @classmethod
     def load(cls, home):
@@ -43,6 +44,7 @@ class Settings:
         for layer in layers:
             validate_settings(layer)
             for key, value in layer.items():
+                require(key != "require_document_classification", "invalid_config", "Document intake is an installation-owner setting, not a lower-scope instruction.")
                 result[key] = result[key] and value if key == "allow_remote_processing" else min(result[key], value)
         return result
 

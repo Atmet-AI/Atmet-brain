@@ -1,5 +1,7 @@
 # Memory and learning
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 Learning is a maintained evidence pipeline. It does not require training new model weights.
 
 ## Add information and check the result

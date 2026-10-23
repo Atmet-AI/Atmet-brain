@@ -83,6 +83,11 @@ def make_server(brain, host="127.0.0.1", port=7310, allow_network=False):
                     self.respond(200, {"result": dispatch_auth(brain, action, self.payload(16384))})
                     return
                 actor = self.actor()
+                if self.command == "POST" and path == "/v1/admin/review":
+                    payload = self.payload(16384)
+                    require(isinstance(payload, dict) and set(payload) == {"change_id", "expected_digest", "approve", "password"}, "invalid_review", "Provide only the exact human review fields.")
+                    self.respond(200, {"result": brain.review_admin_change(actor, **payload)})
+                    return
                 if self.command == "GET" and path == "/v1/me":
                     self.respond(200, {"result": brain.whoami(actor)})
                     return
@@ -93,7 +98,7 @@ def make_server(brain, host="127.0.0.1", port=7310, allow_network=False):
                 self.respond(200, {"result": result})
             except BrainError as error:
                 self.respond(error.status, {"error": error.as_dict()})
-            except (ValueError, UnicodeError, RecursionError):
+            except (ValueError, UnicodeError, RecursionError, TypeError, OverflowError):
                 self.respond(400, {"error": {"code": "invalid_body", "message": "Invalid JSON or request framing."}})
             except Exception:
                 self.respond(500, {"error": {"code": "internal_error", "message": "The operation could not be completed."}})

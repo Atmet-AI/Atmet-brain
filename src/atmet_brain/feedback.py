@@ -21,6 +21,9 @@ class LocalClient(TaskClientMixin):
     def call(self, method, **params):
         return dispatch(self.brain, self.brain.authenticate(self.token), method, params)
 
+    def review_admin_change(self, **params):
+        return self.brain.review_admin_change(self.brain.authenticate(self.token), **params)
+
 
 class TaskFeedback:
     """Automatically submit a bounded report when an instrumented host task ends.

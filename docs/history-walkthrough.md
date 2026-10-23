@@ -1,5 +1,7 @@
 # Use history: inspect, compare and restore
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 This walkthrough changes one fictional workflow, inspects its history and restores its earlier instructions. Use the installed CLI from the [installation guide](install.md). You do not need a checkout, model key or running HTTP server. Run the commands in order in a private working directory. JSON files below are files you create there, outside the source repository.
 
 History is already stored when you change supported sources or artifacts; there is no switch to enable it. Access to old content still depends on your current credentials, grants and source audience.
@@ -12,6 +14,8 @@ Use a fresh terminal without `ATMET_TOKEN` / `ATMET_TOKEN_FILE` overrides. Choos
 export BRAIN_HOME="$HOME/.atmet-brain-history-demo"
 atmet-brain --home "$BRAIN_HOME" init --organization history-example
 atmet-brain --home "$BRAIN_HOME" space sales
+atmet-brain --home "$BRAIN_HOME" account setup --username owner
+atmet-brain --home "$BRAIN_HOME" login --username owner
 ```
 
 If that home is already initialized, choose a new directory. Do not delete or overwrite an existing Brain to repeat the example. Copy the returned Sales `id`:
@@ -151,6 +155,7 @@ Copy the returned source `id`, then update its content using the same `external_
 export SOURCE_ID="PASTE_SOURCE_ID"
 printf '%s\n' 'Changed document text.' > history-notes.md
 atmet-brain --home "$BRAIN_HOME" ingest history-notes.md --space "$SALES_SPACE" --external-id history-notes --expected-revision 1
+atmet-brain --home "$BRAIN_HOME" admin classify "$SOURCE_ID"
 ```
 
 Now list the sources, read the current document, read its original content and inspect the audit trail:

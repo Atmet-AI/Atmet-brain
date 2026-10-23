@@ -56,7 +56,7 @@ Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have
 
 Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/task-history-and-learning.md).
 
-Current engine 0.7.0 upgrades supported schema-1/2 data transactionally to schema 3. Back up with the existing pinned engine first, stop old local processes and restart services with the new runtime. Older engines cannot open schema 3. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-3-upgrade).
+Current engine 0.8.0 upgrades supported schema-1/2/3 data transactionally to schema 4. Back up with the existing pinned engine first, stop old local processes and restart services with the new runtime. Older engines cannot open schema 4. [Upgrade and recovery](https://github.com/anashamad9/Atmet-brain/blob/main/docs/versioning.md#schema-4-upgrade).
 
 ## Automatic agent feedback
 
@@ -71,3 +71,7 @@ Run `npx atmet-brain@latest agent`. Choose the Brain, connection method, workspa
 Use brains create COMPANY for independent company data homes, then --brain COMPANY account setup, login, host and team. The terminal team editor selects each employee's workspaces and a role in each; omitted payroll access stays denied. Employees consume a private invitation with join, choose a password privately and use their named connection with login, logout or agent. Passwords are never saved by the client. Sessions expire and permission changes require a new sign-in. Invalid wizard fields retry in place; /cancel cancels the current operation.
 
 This adds local password accounts and single-use invitations, not SSO/MFA, email verification or a global company-number resolver. Each company needs its own backup and server port. [Complete walkthrough](https://github.com/anashamad9/Atmet-brain/blob/main/docs/employee-accounts.md).
+
+## Manage company changes through your agent
+
+Run npx atmet-brain@latest --brain COMPANY admin agent --name company-assistant to prepare an administration MCP entry. Your external agent translates requests into pending changes; you use admin review CHANGE_ID in your human session and enter the password privately. New/changed documents stay in restricted intake until an approved explicit rule or human classification releases them. admin classify SOURCE_ID guides manual onboarding. Reader/User/Editor are everyday presets; company administration stays separate. [Full guide](https://github.com/anashamad9/Atmet-brain/blob/main/docs/conversational-administration.md).

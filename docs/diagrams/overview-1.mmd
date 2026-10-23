@@ -1,6 +1,7 @@
 flowchart TD
-    Setup["Install and create a company space"] --> Sources["Import selected business sources"]
-    Sources --> Knowledge["Process sourced memory"]
+    Setup["Install and create a company space"] --> Sources["Import selected business sources into restricted intake"]
+    Sources --> Classify["Approved rule or human classification"]
+    Classify --> Knowledge["Process sourced memory"]
     Knowledge --> Procedures["Review the first workflow and skills"]
     Procedures --> Connect["Connect an agent with scoped access"]
     Connect --> Task["Agent requests current context and performs work"]

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.7.0"
+    "version": "0.8.0"
   },
   "components": {
     "securitySchemes": {
@@ -27,6 +27,188 @@
             "application/json": {
               "schema": {
                 "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "admin.overview"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "admin.propose"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "operation": {
+                            "type": "string"
+                          },
+                          "params": {
+                            "type": "object"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "idempotency_key": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "operation",
+                          "params",
+                          "reason",
+                          "idempotency_key"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "admin.get"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "change_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "change_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "admin.list"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "control.create"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "rules.list"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "intake.list"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                        "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "intake.inspect"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "source_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "source_id"
+                        ]
+                      }
+                    }
+                  },
                   {
                     "type": "object",
                     "required": [
@@ -264,10 +446,12 @@
                                   "type": "string",
                                   "enum": [
                                     "contributor",
+                                    "editor",
                                     "publisher",
                                     "reader",
                                     "reporter",
                                     "reviewer",
+                                    "user",
                                     "worker"
                                   ]
                                 }
@@ -394,10 +578,12 @@
                                   "type": "string",
                                   "enum": [
                                     "contributor",
+                                    "editor",
                                     "publisher",
                                     "reader",
                                     "reporter",
                                     "reviewer",
+                                    "user",
                                     "worker"
                                   ]
                                 }
@@ -2240,6 +2426,67 @@
           },
           "409": {
             "description": "Revision or lifecycle conflict"
+          }
+        }
+      }
+    },
+    "/v1/admin/review": {
+      "post": {
+        "operationId": "human_admin_review",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Separate human approval channel, absent from MCP and ordinary RPC. Requires this human administrator's private password and exact proposal digest.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "change_id",
+                  "expected_digest",
+                  "approve",
+                  "password"
+                ],
+                "properties": {
+                  "change_id": {
+                    "type": "string"
+                  },
+                  "expected_digest": {
+                    "type": "string"
+                  },
+                  "approve": {
+                    "type": "boolean"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true,
+                    "maxLength": 128
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Applied or rejected exact reviewed proposal"
+          },
+          "401": {
+            "description": "Invalid session/password"
+          },
+          "403": {
+            "description": "Human authority required"
+          },
+          "409": {
+            "description": "Changed, expired or already reviewed proposal"
+          },
+          "429": {
+            "description": "Private review attempt limit"
           }
         }
       }

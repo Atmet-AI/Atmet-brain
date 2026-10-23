@@ -96,11 +96,16 @@ def choose_access(args, client, current=None, *, allow_empty=False):
             space = allowed[name]
             choices = permissions[space["id"]]
             require(choices, "forbidden", "You cannot delegate a role in " + name + ".", 403)
-            default = existing.get(space["id"], "reader")
+            default = {"reporter": "user", "publisher": "editor"}.get(existing.get(space["id"], "reader"), existing.get(space["id"], "reader"))
             if default not in choices:
                 default = choices[0]
-            console.line("  reader: read only; reporter: read and draft; publisher: approve procedures.")
-            role = prompt("Access in " + name, default, choices, console=console)
+            console.line("  reader: read; user: work/report/draft; editor: edit/review/publish procedures.")
+            console.line("  Company administration is separate. Legacy and specialist roles remain available.")
+            simple = [role for role in ["reader", "user", "editor"] if role in choices]
+            advanced = [role for role in choices if role not in {"reader", "user", "editor"}]
+            menu = simple + (["advanced"] if advanced else [])
+            selected_role = prompt("Access in " + name, default if default in simple else "advanced", menu, console=console)
+            role = prompt("Advanced role in " + name, default if default in advanced else advanced[0], advanced, console=console) if selected_role == "advanced" else selected_role
             selected.append({"space_id": space["id"], "role": role})
         return selected
     require(args.access_file, "access_required", "Use --access-file containing explicit space_id/role entries, or run interactively.")

@@ -37,6 +37,9 @@ class Client(TaskClientMixin):
         require(action in {"login", "accept"}, "invalid_auth", "Choose login or accept.")
         return self._request("/v1/auth/" + action, params, False)
 
+    def review_admin_change(self, **params):
+        return self._request("/v1/admin/review", params, True)
+
     def _request(self, path, body, authenticated):
         headers = {"Content-Type": "application/json"}
         if authenticated:

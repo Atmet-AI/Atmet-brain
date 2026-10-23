@@ -17,7 +17,7 @@ npm install --global atmet-brain
 atmet-brain setup
 ```
 
-Pin an explicit release with `npx atmet-brain@0.7.0 setup`. The npm launcher verifies and installs the exact matching Python wheel included in the npm archive, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
+Pin an explicit release with `npx atmet-brain@0.8.0 setup`. The npm launcher verifies and installs the exact matching Python wheel included in the npm archive, using a checksum-verified pinned official uv runtime and Python 3.12. Python is obtained automatically when needed. No manual Python/uv installation is required for this route. Standard `tar` is needed on supported macOS/Linux systems for automatic bootstrap. Downloads occur on first use, not in an npm postinstall hook.
 
 Runtime storage is separate from company data; [launcher details](../npm/atmet-brain/README.md) documents its paths, environment overrides, platform scope and network requirements. A service or MCP configuration may reference its persistent Python environment: do not remove that runtime directory while it is in use. The npm tarball includes the launcher and engine software, never company data. There is one core and one authorization model. Python and dependencies may still require public downloads on first use.
 
@@ -36,12 +36,12 @@ Versioned GitHub release wheels are an alternative for Python/uv users. The foll
 With [uv installed](https://docs.astral.sh/uv/getting-started/installation/) and curl available, download the versioned installer, inspect it if desired, then run it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.7.0/install.sh -o install-atmet.sh
-sh install-atmet.sh 0.7.0
+curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.8.0/install.sh -o install-atmet.sh
+sh install-atmet.sh 0.8.0
 atmet-brain setup
 ```
 
-The script downloads the selected GitHub wheel and release checksum manifest, checks the SHA-256 digest, then installs it into the current user's isolated uv tool environment. No sudo or repository clone is needed. The checksum protects release download consistency; authenticity still depends on trusting the repository/release and HTTPS. The script does not install uv, initialize company data, open network ports or start a service. If uv is missing, it exits with its official installation link. Always pass the chosen version, as in `sh install-atmet.sh 0.7.0`; an explicit version keeps the install reproducible. Review schema compatibility and back up before changing versions.
+The script downloads the selected GitHub wheel and release checksum manifest, checks the SHA-256 digest, then installs it into the current user's isolated uv tool environment. No sudo or repository clone is needed. The checksum protects release download consistency; authenticity still depends on trusting the repository/release and HTTPS. The script does not install uv, initialize company data, open network ports or start a service. If uv is missing, it exits with its official installation link. Always pass the chosen version, as in `sh install-atmet.sh 0.8.0`; an explicit version keeps the install reproducible. Review schema compatibility and back up before changing versions.
 
 ## Regular CLI use
 
@@ -49,7 +49,7 @@ First [install uv](https://docs.astral.sh/uv/getting-started/installation/). The
 
 ```bash
 uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.7.0/atmet_brain-0.7.0-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
 atmet-brain --help
 ```
 
@@ -59,7 +59,7 @@ uv installs the tool into an isolated environment and exposes its executable. If
 
 ```bash
 uvx --python 3.12 \
-  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.7.0/atmet_brain-0.7.0-py3-none-any.whl" \
+  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl" \
   atmet-brain --help
 ```
 
@@ -69,7 +69,7 @@ To use a Git source instead, this also works with Git installed:
 
 ```bash
 uvx --python 3.12 \
-  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.7.0" \
+  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.8.0" \
   atmet-brain --help
 ```
 
@@ -81,7 +81,7 @@ Inside your own Python 3.11+ project:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.7.0/atmet_brain-0.7.0-py3-none-any.whl"
+  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
 ```
 
 The package provides `from atmet_brain import Brain` and the `atmet-brain` executable. Keep this environment activated when using its CLI. On Windows, the activation command is `.venv\Scripts\activate`; Windows support still needs validation.
@@ -98,7 +98,7 @@ python examples/demo.py
 python examples/automation_demo.py
 ```
 
-This uses the default branch for current development. For a reproducible release, add `--branch v0.7.0` to git clone and create a branch before editing its detached checkout. Editable installation uses your checkout. The demo scripts and fixture files belong to the repository and are not installed as wheel data.
+This uses the default branch for current development. For a reproducible release, add `--branch v0.8.0` to git clone and create a branch before editing its detached checkout. Editable installation uses your checkout. The demo scripts and fixture files belong to the repository and are not installed as wheel data.
 
 ## Data and upgrades
 

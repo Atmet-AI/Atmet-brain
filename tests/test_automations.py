@@ -8,6 +8,7 @@ import tempfile
 from threading import Thread
 import unittest
 
+from tests.legacy_imports import legacy_imports
 from atmet_brain import Brain, BrainError
 from atmet_brain.auth import ROLES
 from atmet_brain.automations import python_script
@@ -34,7 +35,7 @@ class AutomationCase(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        self.brain = Brain(self.root / "brain")
+        self.brain = Brain(legacy_imports(self.root / "brain"))
         self.owner = self.brain.bootstrap("example-company")
         self.actor = self.brain.authenticate(self.owner["token"])
         self.space = self.brain.create_space(self.actor, "operations")["id"]

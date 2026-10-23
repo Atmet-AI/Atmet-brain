@@ -16,8 +16,9 @@ A Brain starts empty. You select business sources, establish approved procedures
 
 ```mermaid
 flowchart TD
-    Setup["Install and create a company space"] --> Sources["Import selected business sources"]
-    Sources --> Knowledge["Process sourced memory"]
+    Setup["Install and create a company space"] --> Sources["Import selected business sources into restricted intake"]
+    Sources --> Classify["Approved rule or human classification"]
+    Classify --> Knowledge["Process sourced memory"]
     Knowledge --> Procedures["Review the first workflow and skills"]
     Procedures --> Connect["Connect an agent with scoped access"]
     Connect --> Task["Agent requests current context and performs work"]
@@ -39,9 +40,24 @@ The Sales walkthrough and existing-project walkthrough are alternative starting 
 
 Already have code, project notes or memory files? Start with [add the Brain to an existing project](#add-the-brain-to-an-existing-project). A coding agent with terminal access can perform the setup when instructed. An ordinary chat without tools cannot install the Brain or attach it to your application. MCP settings may need to be added in the client and the client restarted.
 
-Already set up a Brain? Run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
+Already set up a Brain? Follow the [schema-4 upgrade](docs/versioning.md#schema-4-upgrade) before using the new engine, then run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
 
 For teammates on other networks and the Finance/payroll example, read [team access explained](docs/team-access-explained.md). Workspace grants control access, source audiences restrict selected information, and authentication uses individual credentials. Company-local password login and single-use invitations are available; SSO/MFA and numeric company discovery remain planned. [Employee accounts and company chooser](docs/employee-accounts.md).
+
+## Manage the Brain through your agent
+
+Ask your configured agent to create departments, prepare employee access or propose a salary rule. It resolves actual IDs and shows a pending change. You apply that exact change in your signed-in terminal with a private password; the agent cannot approve itself.
+
+```bash
+npx atmet-brain@latest --brain acme admin agent --name company-assistant
+npx atmet-brain@latest --brain acme admin review CHANGE_ID
+```
+
+Add the generated atmet-admin MCP entry to your chosen agent app. The first command prepares the connection; the second is run by you after the agent returns a pending ID. This does not add a chat model to the CLI. Read the [complete administration and classification guide](docs/conversational-administration.md).
+
+New and changed documents start restricted until an approved rule or a human-reviewed classification releases them. Unmatched means restricted. After an import, use admin intake and admin classify SOURCE_ID before running extraction, or configure an approved trusted ingestion rule for repeat imports. Existing active pre-upgrade documents retain their current access until changed or a policy update makes their classification stale.
+
+Everyday presets are Reader (read), User (work/report/draft) and Editor (edit/review/publish business artifacts). Company administration is a separate privilege. Neither a department name nor a model instruction grants salary access. Schema 4 requires the [old-engine backup and stop/restart procedure](docs/versioning.md#schema-4-upgrade) before opening an existing Brain.
 
 ## Company logins and several company Brains
 
@@ -59,7 +75,7 @@ Use a fresh example company, or register your existing data home with brains add
 
 Employees run join with their private invitation, choose a password, then use their saved company connection with login or agent. Passwords are entered privately and are not saved by the client. Sessions expire after 12 hours; permission changes revoke existing credentials and require sign-in again. Invitations are not public company IDs. SSO, MFA, verified email and a global company-number directory are not implemented. Each company needs its own backup/journal and a different port if several servers run on the device. [Complete employee/company walkthrough](docs/employee-accounts.md).
 
-For an existing installation, [back up and stop old processes before the schema-3 upgrade](docs/versioning.md#schema-3-upgrade). A CLI error does not close the Terminal app: recoverable wizard fields re-prompt, /cancel cancels an operation, and successful completion returns to your shell.
+For an existing installation, [back up and stop old processes before the schema-4 upgrade](docs/versioning.md#schema-4-upgrade). A CLI error does not close the Terminal app: recoverable wizard fields re-prompt, /cancel cancels an operation, and successful completion returns to your shell.
 
 ## What your company builds
 
@@ -172,6 +188,8 @@ If `setup` already created your company and Sales space, run `atmet-brain space`
 ```bash
 atmet-brain init --organization example-company --owner "Company owner"
 atmet-brain space sales
+atmet-brain account setup --username owner
+atmet-brain login --username owner
 ```
 
 Save the returned space ID. Create a new private scratch directory for the fictional files below, so the walkthrough does not overwrite project documents:
@@ -182,6 +200,8 @@ export GUIDE_DIR="$(mktemp -d)"
 cd "$GUIDE_DIR"
 printf '%s\n' 'Fact[delivery.window]: Standard delivery is five business days.' > company.md
 atmet-brain ingest company.md --space "$SALES_SPACE" --external-id company-reference --authority authoritative
+export COMPANY_SOURCE="paste-the-source-id-returned-by-ingest"
+atmet-brain admin classify "$COMPANY_SOURCE"
 atmet-brain worker --space "$SALES_SPACE"
 atmet-brain context "What delivery window should a sales quotation use?" --space "$SALES_SPACE"
 ```
@@ -279,13 +299,15 @@ export ATMET_HOME="$HOME/.atmet-brain"
 atmet-brain status
 ```
 
-If status says not_initialized, run `atmet-brain setup` and create/select the company first. Once initialized, list spaces:
+If status says not_initialized, run `atmet-brain setup` and create/select the company first. Once initialized, enroll/sign in to your human administrator account if not already enrolled, then list spaces:
 
 ```bash
+atmet-brain account setup --username owner
+atmet-brain login --username owner
 atmet-brain space
 ```
 
-Reuse an existing project space if appropriate. Otherwise create one:
+Skip account setup when it is already enrolled. Reuse an existing project space if appropriate. Otherwise create one:
 
 ```bash
 atmet-brain space website-project
@@ -300,6 +322,8 @@ This example assumes PROJECT_DIR/MEMORY.md exists. Substitute a supported file t
 ```bash
 export PROJECT_SPACE="paste-the-project-space-id"
 atmet-brain ingest "$PROJECT_DIR/MEMORY.md" --space "$PROJECT_SPACE" --external-id project-memory --authority reference
+export PROJECT_SOURCE="paste-the-source-id-returned-by-ingest"
+atmet-brain admin classify "$PROJECT_SOURCE"
 atmet-brain worker --space "$PROJECT_SPACE"
 atmet-brain search "project" --space "$PROJECT_SPACE"
 atmet-brain context "Understand this project before making changes" --space "$PROJECT_SPACE"
@@ -342,7 +366,7 @@ Ask the connected agent:
 
 > List my permitted Brain spaces. Use the project space to retrieve current context, show the source IDs/revisions you used, and tell me whether any approved workflow or skill applies. Report completed work through the configured feedback tool. Keep proposed skills pending for publisher approval.
 
-Then ask for your actual project task. Verify a matching query actually returns the imported source ID/revision before relying on the connection. Absence of an approved workflow is a reason to propose one, not to invent a published procedure. New file ingestion requires CLI/API or a host terminal tool; the MCP tool set does not automatically read or import your repository.
+Then ask for your actual project task. Verify a matching query actually returns the imported source ID/revision before relying on the connection. Absence of an approved workflow is a reason to propose one, not to invent a published procedure. A host file tool must read the selected file; your agent can then submit its content with brain_submit_document or use CLI/API. No MCP tool automatically scans or reads your repository.
 
 MCP completion instructions depend on the agent following them. A host lifecycle hook provides completion delivery without per-task user commands. Both paths require complete original source evidence and deliberate safe result fields. See [automatic feedback](docs/automatic-task-feedback.md) for Python/callback setup and partial-failure retries.
 
@@ -363,6 +387,8 @@ atmet-brain connector-add --space "$PROJECT_SPACE" --kind files --config "$ATMET
 ```bash
 export PROJECT_CONNECTOR="paste-the-connector-id"
 atmet-brain sync "$PROJECT_CONNECTOR"
+atmet-brain admin intake
+# Run admin classify SOURCE_ID for each new/changed source, or approve a trusted connector rule first.
 atmet-brain worker --space "$PROJECT_SPACE"
 ```
 

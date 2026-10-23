@@ -15,6 +15,7 @@ def validate_body(kind, body):
     require(isinstance(body, dict), "invalid_artifact", "Artifact body must be an object.")
     require(len(dumps(body)) <= 200_000, "invalid_artifact", "Artifact is too large.")
     if kind == "config":
+        require("require_document_classification" not in body, "invalid_config", "Document intake is an installation-owner setting and cannot be changed by task instructions.")
         return validate_settings(body)
     if kind == "automation":
         from .automations import validate_automation_body

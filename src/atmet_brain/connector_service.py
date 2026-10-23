@@ -75,14 +75,14 @@ class ConnectorsMixin:
                 if old and old["status"] == "deleted":
                     # A permanent tombstone wins over future replays.
                     continue
-                if old and old["status"] != "active":
+                if old and old["status"] not in {"active", "intake"}:
                     self.set_source_access(actor, old["id"], loads(binding["audience"]), True)
                 result = self.put_source(actor, binding["space_id"], external, item["title"], item["content"], item["mime"],
                                          loads(binding["audience"]), binding["authority"], old["revision"] if old else None,
                                          _connector_id=connector_id)
                 results.append(result)
             with self.store.transaction() as conn:
-                prior = conn.execute("SELECT * FROM sources WHERE connector_id=? AND status='active'", (connector_id,)).fetchall()
+                prior = conn.execute("SELECT * FROM sources WHERE connector_id=? AND status IN ('active','intake')", (connector_id,)).fetchall()
             for source in prior:
                 if source["external_id"] not in seen:
                     self.set_source_access(actor, source["id"], loads(source["audience"]), False)

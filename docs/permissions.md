@@ -6,9 +6,9 @@ The core authorizes each operation before it returns content. A client supplies 
 
 ## Choose a practical access structure
 
-A workspace is an explicit scope, not necessarily one department. Grant someone every space they need; no other department or shared space is automatically included. A simple payroll arrangement uses finance-general for Operations/Finance and payroll for Finance/authorized administrators. Sources imported into each space use that space's audience by default, so ordinary setup does not need per-person rules for each file. Selected-directory connectors can apply an explicit target space/audience to a batch. Avoid importing confidential originals into broader spaces.
+A workspace is an explicit scope, not necessarily one department. Grant someone every space they need; no other department or shared space is automatically included. A simple payroll arrangement uses finance-general for Operations/Finance and payroll for Finance/authorized administrators. New imports remain restricted until classification; after release the chosen space audience is the default base, so ordinary setup does not need per-person rules for each file. Selected-directory connectors can apply an explicit target space/audience to a batch. Avoid importing confidential originals into broader spaces.
 
-Alternatively keep one Finance workspace and restrict payroll source audiences to Finance and explicitly authorized admin groups. A document's group membership still requires space/operation permission. There is no automatic row/column salary redaction, folder ACL inheritance or classification from a filename. Keep mixed-access information in separate sources. Groups create no space grants by themselves.
+Alternatively keep one Finance workspace and restrict payroll source audiences to Finance and explicitly authorized admin groups. A document's group membership still requires space/operation permission. There is no automatic row/column salary redaction, folder ACL inheritance or implicit classification from a filename. Keep mixed-access information in separate sources. Groups create no space grants by themselves.
 
 Current authentication proves possession of a credential bound to a principal. A display name or company ID does not verify a human, and a shared service credential does not identify each employee using it. Company-local password login is implemented, with private single-use enrollment and expiring sessions. SSO/MFA, email verification and identity-provider delegation are not implemented. [Worked team example and current limits](team-access-explained.md).
 
@@ -100,3 +100,5 @@ The reporter preset combines read/observe/contribute/history for completion feed
 ## Guided agent credentials
 
 `atmet-brain agent` restricts generated credentials to reader or reporter operations and selected spaces. An administrator may create a separate service; another caller may derive a narrower child for their current identity. It verifies current access before issuance and never includes publish/manage/erase/process. An explicit --token-file takes precedence over an ambient ATMET_TOKEN; saved connections use their own credential. See [agent setup](agent-setup.md).
+
+For rule-based future imports and exact human approvals, see [conversational administration](conversational-administration.md). Reader/User/Editor are everyday presets; company administration is separate. Keyword/model suggestions do not provide perfect salary detection.

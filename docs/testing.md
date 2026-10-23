@@ -40,3 +40,7 @@ Use [validation](validation.md) for the executed release record. Keep future acc
 Use an isolated temporary data home and fictional sources with the released installed engine. Exercise the changed commands in order, filling in IDs returned by the core. Check outcomes such as pending versus published revisions, changed source versions, current permission denial and recovery quarantine. Do not test an example by overwriting a real company installation.
 
 Network/provider/SSH/VPN/service-manager steps need their own authorized environment. Mark them unvalidated when only local fixtures were exercised. Regenerate/render diagrams only if their source changes. A prose-only change does not require tests that simply repeat its wording.
+
+## Restricted-intake regression fixtures
+
+New administration tests use the default restricted mode and cover private human approval, replay/concurrency, stale state, reader escalation, intake/extractor isolation, salary/history intersections, role UI, actual generated MCP, group/current authority, erasure and schema-3 recovery. Older feature fixtures explicitly configure local require_document_classification=false to retain their pre-gate setup and isolate their original assertions; this never overrides an existing classification or approved rule. Public disposable demos use scripted fictional human-review fixtures, while installed terminal acceptance exercises real hidden password prompts. No real password is included.

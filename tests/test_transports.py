@@ -10,6 +10,7 @@ import unittest
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
+from tests.legacy_imports import legacy_imports
 from atmet_brain import Brain, BrainError
 from atmet_brain.auth import ROLES
 from atmet_brain.client import Client
@@ -22,7 +23,7 @@ class TransportCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.brain = Brain(Path(self.tmp.name) / "home")
+        self.brain = Brain(legacy_imports(Path(self.tmp.name) / "home"))
         self.owner = self.brain.bootstrap("example")
         self.actor = self.brain.authenticate(self.owner["token"])
         self.space = self.brain.create_space(self.actor, "sales")["id"]

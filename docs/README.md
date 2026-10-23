@@ -52,3 +52,5 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 | Explore future work and design choices | [Roadmap](roadmap.md), [architecture decision](adr/0001-local-core.md), [references](references.md) |
 
 Mermaid diagrams live in the README and relevant guides. Their [standalone sources](diagrams) are generated from Markdown; see documentation maintenance before changing them.
+
+For conversational company changes, exact human approvals, restricted intake and the everyday roles, use [agent administration](conversational-administration.md).

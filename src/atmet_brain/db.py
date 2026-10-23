@@ -8,7 +8,7 @@ import sqlite3
 from .errors import require
 from .util import dumps, now, uid
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 class Store:
@@ -20,7 +20,7 @@ class Store:
         try:
             has_meta = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='meta'").fetchone()
             version = conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone() if has_meta else None
-            require(version is None or version[0] in {"1", "2", "3"}, "schema_version",
+            require(version is None or version[0] in {"1", "2", "3", "4"}, "schema_version",
                     "Unsupported database schema. Use a compatible release.")
             conn.executescript("BEGIN IMMEDIATE;\n" + Path(__file__).with_name("schema.sql").read_text())
             columns = {row["name"] for row in conn.execute("PRAGMA table_info(sources)")}
@@ -33,7 +33,7 @@ class Store:
                              "WHEN NEW.category='task_report' AND NEW.status='active' "
                              "BEGIN SELECT RAISE(ABORT,'Task reports require operational state'); END")
             conn.execute("INSERT OR IGNORE INTO meta VALUES('schema_version',?)", (str(SCHEMA_VERSION),))
-            conn.execute("UPDATE meta SET value=? WHERE key='schema_version' AND value IN ('1','2')", (str(SCHEMA_VERSION),))
+            conn.execute("UPDATE meta SET value=? WHERE key='schema_version' AND value IN ('1','2','3')", (str(SCHEMA_VERSION),))
             conn.execute("INSERT OR IGNORE INTO meta VALUES('instance_id',?)", (uid("instance"),))
             conn.execute("INSERT OR IGNORE INTO meta VALUES('recovery_mode','0')")
             version = conn.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0]

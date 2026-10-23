@@ -18,6 +18,10 @@ ROLES = {
     "owner": sorted(OPERATIONS),
 }
 
+# Simple everyday labels retain the existing explicit operation sets.
+ROLES["user"] = list(ROLES["reporter"])
+ROLES["editor"] = list(ROLES["publisher"])
+
 
 @dataclass(frozen=True)
 class Actor:

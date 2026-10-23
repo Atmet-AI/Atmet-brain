@@ -2,6 +2,7 @@
 
 from .artifacts import ArtifactsMixin
 from .accounts import AccountsMixin
+from .administration import AdministrationMixin
 from .automations import AutomationsMixin
 from .auth import IdentityMixin
 from .backups import BackupsMixin
@@ -15,7 +16,7 @@ from .sources import SourcesMixin
 from .task_reports import TaskReportsMixin
 
 
-class Brain(AccountsMixin, IdentityMixin, SourcesMixin, ArtifactsMixin, AutomationsMixin, TaskReportsMixin, LearningMixin, RetrievalMixin, DiscoveryMixin, BackupsMixin, ConnectorsMixin):
+class Brain(AdministrationMixin, AccountsMixin, IdentityMixin, SourcesMixin, ArtifactsMixin, AutomationsMixin, TaskReportsMixin, LearningMixin, RetrievalMixin, DiscoveryMixin, BackupsMixin, ConnectorsMixin):
     def __init__(self, home=None, settings=None):
         self.store = Store(home or default_home())
         self.settings = settings or Settings.load(self.store.home)

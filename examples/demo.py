@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 
+from review_fixture import release_demo_source
 from atmet_brain import Brain
 from atmet_brain.auth import ROLES
 from atmet_brain.backups import generate_backup_key
@@ -20,7 +21,9 @@ def main():
         space = brain.create_space(owner, "sales")["id"]
         catalogue = brain.put_source(owner, space, "catalogue", "Example catalogue",
                                       (examples / "company/catalogue.md").read_text(), authority="authoritative")
-        brain.put_source(owner, space, "request", "Customer request", (examples / "company/request.txt").read_text())
+        request = brain.put_source(owner, space, "request", "Customer request", (examples / "company/request.txt").read_text())
+        release_demo_source(brain, owner, catalogue)
+        release_demo_source(brain, owner, request)
         brain.run_jobs(owner, space)
         policy = brain.propose_artifact(owner, space, "policy", "quotation-rules", json.loads((examples / "policy.json").read_text()),
                                           idempotency_key="demo-policy")

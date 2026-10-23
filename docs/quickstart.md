@@ -2,7 +2,7 @@
 
 [Install the released CLI](install.md), then start with fictional data and one space. You do not need a source checkout for the steps below. The [company walkthrough](use-for-your-company.md) adds a reviewed workflow, scoped agent identity and department organization.
 
-For several companies or employee sign-in, start with [employee accounts and the company chooser](employee-accounts.md). Before opening existing data with the new engine, follow the [schema-3 upgrade](versioning.md#schema-3-upgrade).
+For several companies or employee sign-in, start with [employee accounts and the company chooser](employee-accounts.md). Before opening existing data with the new engine, follow the [schema-4 upgrade](versioning.md#schema-4-upgrade).
 
 ## Initialize
 
@@ -12,6 +12,8 @@ You can run `atmet-brain setup` for guided company/department setup. If it alrea
 atmet-brain --help
 atmet-brain init --organization example-company --owner "Company owner"
 atmet-brain space sales
+atmet-brain account setup --username owner
+atmet-brain login --username owner
 ```
 
 Initialization runs once per data home. It prints organization/principal IDs and the location of the owner credential; it does not print the token. The default home is `~/.atmet-brain`. Use `--home /private/path/to/data` before a subcommand for a separate installation.
@@ -26,12 +28,16 @@ printf '%s\n' \
   'Fact[product.price]: Example product price is 100 USD.' \
   'Fact[delivery.window]: Standard delivery is five business days.' > company.md
 atmet-brain ingest company.md --space "$SALES_SPACE" --authority authoritative
+export COMPANY_SOURCE="paste-the-source-id-returned-by-ingest"
+atmet-brain admin classify "$COMPANY_SOURCE"
 atmet-brain worker --space "$SALES_SPACE"
 atmet-brain search "product price" --space "$SALES_SPACE"
 atmet-brain context "Prepare a product quotation" --space "$SALES_SPACE"
 ```
 
-Authoritative source classification requires the corresponding management authority. Use it only for genuinely approved company material. Eligible ordinary `Fact[key]: statement` lines can activate through the bounded local extractor. Inferences and rule-like text still require their review path.
+In the classification wizard, review the fictional document, retain its workspace audience only if intended, confirm and enter your password privately. Pending intake is not searchable or processed. For repeated imports configure an approved explicit rule through [agent administration](conversational-administration.md).
+
+Authoritative source authority requires the corresponding management authority. Use it only for genuinely approved company material. Eligible ordinary `Fact[key]: statement` lines can activate through the bounded local extractor. Inferences and rule-like text still require their review path.
 
 A successful context result includes `approved_context`, `reference_evidence`, `manifest_id` and `external_actions_authorized: false`. `context` returns structured facts, evidence and approved instructions to a caller. It does not generate a customer-facing reply. An external agent/runtime uses that context and its separately authorized tools.
 

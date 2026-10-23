@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.7.0 is a local/private-pilot alpha using database schema 3. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.8.0 is a local/private-pilot alpha using database schema 4. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
@@ -18,7 +18,7 @@ Atmet Brain 0.7.0 is a local/private-pilot alpha using database schema 3. Use th
 | Policy/workflow/skill lifecycle | Working proposal/publication, optimistic revisions, schedules, retirement and rollback |
 | Skills | Text package/resource import, dependency-aware retrieval and explicit task-outcome skill drafts; exact-revision publication remains separate; no script execution |
 | Task reports/history | Authenticated reports, default-private audiences, permission-first lexical history and explicit steps/corrections. Opt-in Python/host completion hooks automatically submit and attempt pending skill candidates; MCP completion instructions depend on the agent. No automatic external transcript capture or independent outcome verification |
-| Schema upgrades | Transactional schema-1/2 to schema-3 migration and old-backup upgrade before quarantine; old accounts/invites/sessions disabled on restore; stop old engines and back up before upgrading |
+| Schema upgrades | Transactional schema-1/2/3 to schema-4 migration and old-backup upgrade before quarantine; old accounts/invites/sessions disabled on restore; stop old engines and back up before upgrading |
 | Search | Working permission-first lexical ranking; no semantic/vector index in this release |
 | Context | Working bounded approved/reference separation and source/artifact manifest |
 | History | Working artifact effective/known time lookup and retained source versions; no universal historical state replay |
@@ -39,3 +39,7 @@ Atmet Brain 0.7.0 is a local/private-pilot alpha using database schema 3. Use th
 See [validation](validation.md) for commands and the exact locally validated scope. CI configuration is included, but a local pass does not mean a remote GitHub Actions run has occurred. Provider adapters use fixtures in tests and do not contact paid APIs or real mailboxes.
 
 The project contains runnable implementation and a larger documented target. Read the table before depending on a feature. Tagged source releases are published in the repository; package-index distribution and hosted service availability are separate.
+
+## Agent administration and restricted intake
+
+[Conversational administration](conversational-administration.md) is implemented as explicit structured proposals from your external agent, with a separate exact human password review. Supported controls cover workspaces, non-admin memberships, groups, rules, source classification/authority/access/erasure and connector disable. New/changed documents default to restricted intake; approved explicit rules or human classification release them. Retained restrictions and current audiences apply to history/derived data. Model suggestions alone do not release documents. OS/SSH provisioning, universal semantic/DLP classification, arbitrary file parsing, large-queue pagination and independent production security evaluation remain outside this subset.

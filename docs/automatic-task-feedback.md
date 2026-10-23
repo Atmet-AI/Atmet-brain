@@ -1,5 +1,7 @@
 # Automatic task feedback
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 Connect reporting once in your agent application. After each instrumented task ends, its completion hook sends a bounded result to the Brain and attempts a skill draft. Users do not need to create report files or run task-learn for each task. A publisher still reviews the exact draft revision before other agents can use it as an approved skill.
 
 Completion feedback needs engine 0.5.0+; current engine 0.7.0 uses schema 3 for employee accounts. Follow the [schema-3 upgrade procedure](versioning.md#schema-3-upgrade) before opening older data. Password sessions/agent children expire and require explicit sign-in; continuing background services should use deliberately scoped service credentials. Separate publication approval remains required.

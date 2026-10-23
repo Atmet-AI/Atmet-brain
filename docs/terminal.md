@@ -101,3 +101,7 @@ Use task-report FILE --space SPACE_ID to submit a selected outcome, task-history
 MCP configuration accepts --allow-task-reports, --allow-proposals and --allow-automations to expose selected tool groups. Underlying grants remain required; reporting and learning expose no publication tool.
 
 For agent completion hooks, use `task-complete FILE --space SPACE_ID` or `task-complete - --space SPACE_ID` with JSON on stdin. It saves the report and attempts an eligible skill draft, returning both statuses. `mcp-config --task-feedback` configures completion instructions/tool access. Both support named remote connections; neither publishes a skill. [Automatic setup and host integration](automatic-task-feedback.md).
+
+## Company administration and document review
+
+Run admin for the guided overview, requests, rules, intake, inspect, classify, review and agent setup menu. admin agent --name company-assistant saves an administration MCP entry. The agent returns pending changes; run admin review CHANGE_ID yourself and enter the password privately after inspecting the exact preview. admin classify SOURCE_ID provides the same protected review after a document import. Reader/User/Editor are the primary employee role choices; advanced retains specialist/legacy roles. Company administration remains separate. [Complete flow](conversational-administration.md).

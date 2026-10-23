@@ -1,5 +1,7 @@
 # Use the Brain for your company
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 Start with one useful task and one accountable owner. This walkthrough builds a Sales Brain for preparing quotation drafts. It uses fictional information; replace it with your own reviewed sources before real use.
 
 The current core has terminal, Python, REST and MCP access. A dashboard, chat interview and general autonomous business setup are not part of this alpha. An agent interface can call the core, but it must be configured to do so.
@@ -32,6 +34,8 @@ printf '%s\n' \
   'Fact[product.price]: Example product price is 100 USD.' \
   'Fact[delivery.window]: Standard delivery is five business days.' > company.md
 atmet-brain ingest company.md --space "$SALES_SPACE" --authority authoritative
+export COMPANY_SOURCE="paste-the-source-id-returned-by-ingest"
+atmet-brain admin classify "$COMPANY_SOURCE"
 atmet-brain worker --space "$SALES_SPACE"
 atmet-brain context "Prepare a product quotation with its delivery window" --space "$SALES_SPACE"
 ```

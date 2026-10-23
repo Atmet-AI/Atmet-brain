@@ -1,0 +1,8 @@
+flowchart TD
+    Human["You describe the change"] --> Agent["Agent resolves IDs and prepares a proposal"]
+    Agent --> Pending["Pending preview, digest and expiry"]
+    Pending --> Review["You review in your signed-in terminal"]
+    Review --> Password["Private administrator password"]
+    Password --> Checks["Core rechecks exact state and current authority"]
+    Checks --> Applied["Apply once and record history"]
+    Checks --> Conflict["Changed, expired or revoked: no application"]

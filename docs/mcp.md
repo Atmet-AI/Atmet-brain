@@ -85,3 +85,7 @@ brain_search_task_history and brain_get_task_report require history/read access.
 ## Completion feedback
 
 Generate `mcp-config --task-feedback` to expose brain_complete_task and server instructions to submit a safe result at task completion. The operation records a report and automatically attempts an eligible pending skill. Use a dedicated reporter role credential; the flag grants no access and adds no publish/review tool. A publisher approves the exact candidate separately. MCP instructions depend on the client following them; reliable lifecycle delivery requires a host completion hook. See [automatic feedback setup and failure handling](automatic-task-feedback.md).
+
+## Administration and document capture
+
+The --allow-admin opt-in exposes administration overview, proposals/status, approved rules and restricted intake inspection. It grants no authority by itself. Use admin agent to generate the bounded human-linked credential and ready MCP entry. There is no password field or review/apply tool. The human approves the exact digest in their signed-in terminal. --allow-proposals also exposes brain_submit_document for permitted UTF-8 capture/expected-revision updates; new/changed sources remain restricted until classification. [Full conversational flow](conversational-administration.md).

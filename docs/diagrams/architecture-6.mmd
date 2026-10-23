@@ -1,0 +1,10 @@
+flowchart LR
+    Agent["External agent"] --> Control["Restricted human-linked control credential"]
+    Control --> Proposal["Typed pending change and state digest"]
+    Human["Signed-in human and private password"] --> Review["Separate review endpoint"]
+    Proposal --> Review
+    Review --> Current["Revalidate current scope, state and expiry"]
+    Current --> Transaction["Atomic mutation and attributable approval"]
+    Upload["Document upload or update"] --> Gate["Restricted intake and approved rules"]
+    Transaction --> Gate
+    Gate --> Evidence["Current audience checks on sources and all derived evidence"]

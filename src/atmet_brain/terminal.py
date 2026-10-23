@@ -73,6 +73,7 @@ class Console:
         for title, command in [("Set up a Brain", value["start"]), ("Inspect this Brain", value["inspect"]),
                                ("Choose a company Brain", value.get("companies", "atmet-brain brains")),
                                ("Manage employee access", value.get("team", "atmet-brain team")),
+                               ("Review agent changes and document intake", value.get("admin", "atmet-brain admin")),
                                ("Connect an agent", value["agent"]),
                                ("Host a team Brain", value["host"]), ("Join your team", value["join"]),
                                ("Browse commands", value["help"])]:

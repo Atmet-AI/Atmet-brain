@@ -58,6 +58,7 @@ flowchart TB
 | Connections | `connector_service.py`, `connectors/` | Selected-resource bindings, source reconciliation and bounded provider adapters |
 | Persistence | `db.py`, `schema.sql` | Transactions, durable canonical state, source/permission references and audit metadata |
 | Recovery | `backups.py` | Coherent encrypted snapshots, quarantined restoration and deletion/revocation reconciliation |
+| Administration and intake | administration.py, security.py, admin_cli.py | Human-bound proposals, private approval, rule history and fail-closed source classification |
 | Employee identity | accounts.py, invitations.py, account_cli.py | Password accounts, single-use enrollment, expiring sessions, reviewed memberships and private client state |
 | Company chooser | companies.py | Explicit device-local labels for independent data homes; no silent company switch or global resolver |
 | Team setup | `setup.py`, `sharing.py`, `connections.py`, `ssh.py` | Guided Host/Join, private scoped connection files, verified profiles and bounded per-request SSH forwarding |
@@ -193,3 +194,22 @@ Public password endpoints are limited to /v1/auth/login and /v1/auth/accept; the
 Schema 3 adds user_accounts, company_invites, member_versions and auth_attempts. Membership reviews check current revision and delegation rights, replace grants and revoke credentials atomically. Login sessions remain bounded by current grants/audiences; a changed password revokes old keys and children. Restore clears password verifiers, disables accounts/principals, revokes invitations and retains the existing journal/quarantine procedure. [Upgrade](versioning.md#schema-3-upgrade).
 
 A device-local company catalog maps labels to independent data homes and never grants remote access. Company selection is explicit and is embedded as a resolved data home in generated agent commands. It is not an implicit shared active company. Each Brain has separate backup/journal handling and server-port configuration. The filesystem owner remains trusted; local owner-account recovery is intentionally absent from RPC/MCP. [Account and company operations](employee-accounts.md).
+
+## Approved administration and fail-closed intake
+
+administration.py owns immutable proposals, protected human-linked control credentials, exact previews/digests, current-state checks and transactional application. security.py evaluates approved explicit term/connector rules and enforces current classification/retained audience clauses. Source capture stages before extraction; common source/evidence guards protect retrieval, history and derived data. The external agent interprets natural language; it does not supply identity or approval.
+
+```mermaid
+flowchart LR
+    Agent["External agent"] --> Control["Restricted human-linked control credential"]
+    Control --> Proposal["Typed pending change and state digest"]
+    Human["Signed-in human and private password"] --> Review["Separate review endpoint"]
+    Proposal --> Review
+    Review --> Current["Revalidate current scope, state and expiry"]
+    Current --> Transaction["Atomic mutation and attributable approval"]
+    Upload["Document upload or update"] --> Gate["Restricted intake and approved rules"]
+    Transaction --> Gate
+    Gate --> Evidence["Current audience checks on sources and all derived evidence"]
+```
+
+Schema 4 adds security_heads, security_rules/history, source_security, control_credentials and admin_changes. Earlier active source rows remain governed by existing permissions until changed or a policy epoch requires reclassification. Rule changes invalidate earlier classification epochs; source revisions preserve prior restrictive clauses. The read-only admin catalog includes known hosting route metadata, not OS command execution or secrets. [Usage](conversational-administration.md) and [upgrade](versioning.md#schema-4-upgrade).

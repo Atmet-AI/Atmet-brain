@@ -1,5 +1,7 @@
 # Report tasks and learn reusable skills
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 Atmet Brain can retain selected task outcomes, search them and assemble a skill draft from their steps and corrections. Configure [automatic task feedback](automatic-task-feedback.md) once for agent completion hooks or MCP completion instructions. The manual CLI, REST and MCP operations below remain useful for inspection and selected reporting. The Brain does not automatically observe external conversations, verify business success or run the reported steps.
 
 Reports are operational history, separate from ordinary document search and approved instructions. A report defaults to the submitting principal's private audience. Choose a department audience deliberately when its members should be able to learn from that work. Every read also checks access to all cited original source evidence.

@@ -6,6 +6,8 @@ from ._version import __version__
 from .errors import BrainError, require
 
 METHODS = {
+    "admin.overview": "admin_overview", "admin.propose": "propose_admin_change", "admin.get": "get_admin_change", "admin.list": "list_admin_changes",
+    "control.create": "create_control_credential", "rules.list": "list_access_rules", "intake.list": "list_intake", "intake.inspect": "inspect_intake",
     "identity.me": "whoami", "access.check": "check_access", "spaces.list": "list_spaces", "spaces.create": "create_space",
     "team.add": "add_team_member",
     "accounts.setup": "setup_account", "accounts.password": "change_password",
@@ -75,7 +77,7 @@ def input_schema(brain, method):
     booleans = {"approve", "active", "org_admin", "include_pending", "include_payload", "succeeded", "learn"}
     arrays = {"operations", "space_ids", "audience", "evidence", "dependencies", "artifact_ids", "principal_ids", "report_ids", "steps", "corrections", "checks", "access"}
     for name in params:
-        kind = "integer" if name in integers else "boolean" if name in booleans else "array" if name in arrays else "object" if name in {"body", "inputs", "output"} else "string"
+        kind = "integer" if name in integers else "boolean" if name in booleans else "array" if name in arrays else "object" if name in {"body", "inputs", "output", "params"} else "string"
         properties[name] = {"type": kind}
         if "password" in name:
             properties[name].update(writeOnly=True, maxLength=128)
@@ -101,6 +103,12 @@ def openapi(brain):
                 "responses": {"200": {"description": "Operation result"}, "400": {"description": "Invalid request"},
                               "401": {"description": "Invalid or revoked credential"}, "403": {"description": "Permission denied"},
                               "409": {"description": "Revision or lifecycle conflict"}}}}}}
+    result["paths"]["/v1/admin/review"] = {"post": {"operationId": "human_admin_review", "security": [{"BearerAuth": []}],
+        "description": "Separate human approval channel, absent from MCP and ordinary RPC. Requires this human administrator's private password and exact proposal digest.",
+        "requestBody": {"required": True, "content": {"application/json": {"schema": {"type": "object", "additionalProperties": False,
+            "required": ["change_id", "expected_digest", "approve", "password"], "properties": {
+                "change_id": {"type": "string"}, "expected_digest": {"type": "string"}, "approve": {"type": "boolean"}, "password": {"type": "string", "writeOnly": True, "maxLength": 128}}}}}},
+        "responses": {"200": {"description": "Applied or rejected exact reviewed proposal"}, "401": {"description": "Invalid session/password"}, "403": {"description": "Human authority required"}, "409": {"description": "Changed, expired or already reviewed proposal"}, "429": {"description": "Private review attempt limit"}}}}
     for action, method in AUTH_METHODS.items():
         fields = {name: {"type": "string", **({"writeOnly": True} if name in {"password", "secret"} else {})}
                   for name in inspect.signature(getattr(brain, method)).parameters}

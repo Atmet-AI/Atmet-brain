@@ -31,6 +31,7 @@ Endpoints:
 | `GET /openapi.json` | Generated public operation schemas |
 | `GET /v1/me` | Current authenticated principal |
 | `POST /v1/rpc` | Explicit public operation |
+| `POST /v1/admin/review` | Separate password-verified human approval of an exact pending change; not an MCP/RPC tool |
 
 Use `Authorization: Bearer <scoped-token>` and `Content-Type: application/json`. The body has `method` and `params`:
 
@@ -158,3 +159,7 @@ reports.record saves an explicit, immutable client-reported result with original
 POST /v1/auth/login accepts organization (ID or slug), username_value and password. POST /v1/auth/accept accepts organization ID, invite_id, secret and the chosen password. These two bounded endpoints do not use bearer authentication; they verify a password or single-use invitation and return a private expiring session. They reject unknown/identity/role fields. The generated OpenAPI marks password/secret inputs write-only. They are not browser cookie endpoints and retain origin/body/rate/transport guards. Never log request secrets or returned session tokens.
 
 Authenticated account/member methods are accounts.setup, accounts.password, invites.create/list/revoke and members.list/access/disable. Membership access is an array of space_id/role objects plus expected_revision. The employee must sign in again after access changes because old credentials are revoked. Issued session/invitation secrets must be stored privately by integrations; CLI helpers do this without printing them. Local owner recovery is not in the public registry. [Exact terminal flow and limits](employee-accounts.md).
+
+## Agent control and intake
+
+admin.overview, admin.propose, admin.get/list, rules.list and intake.list/inspect prepare and inspect permitted administration work. control.create issues a privately stored restricted child for a human administrator. New sources.put captures default to pending_classification with no extraction or ordinary retrieval until approved release. read/history/derived evidence all recheck the current gate. [Structured operation catalog and human review](conversational-administration.md) documents exact fields and lifecycle. Never pass a human password to an agent; trusted human clients use the separate generated OpenAPI approval endpoint over the verified company route.

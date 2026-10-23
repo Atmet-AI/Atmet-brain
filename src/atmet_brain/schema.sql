@@ -145,3 +145,31 @@ CREATE TABLE IF NOT EXISTS member_versions (
 CREATE TABLE IF NOT EXISTS auth_attempts (
  attempt_key TEXT PRIMARY KEY, count INTEGER NOT NULL, window_start REAL NOT NULL
 );
+CREATE TABLE IF NOT EXISTS security_heads (
+ org_id TEXT PRIMARY KEY REFERENCES organizations(id), revision INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS security_rules (
+ org_id TEXT NOT NULL REFERENCES organizations(id), rule_key TEXT NOT NULL, revision INTEGER NOT NULL,
+ state TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY(org_id,rule_key)
+);
+CREATE TABLE IF NOT EXISTS security_rule_history (
+ org_id TEXT NOT NULL, rule_key TEXT NOT NULL, revision INTEGER NOT NULL, state TEXT NOT NULL,
+ body TEXT NOT NULL, review_id TEXT NOT NULL, approved_by TEXT NOT NULL, recorded_at REAL NOT NULL,
+ PRIMARY KEY(org_id,rule_key,revision)
+);
+CREATE TABLE IF NOT EXISTS source_security (
+ source_id TEXT PRIMARY KEY REFERENCES sources(id), source_revision INTEGER NOT NULL, policy_revision INTEGER NOT NULL,
+ decision TEXT NOT NULL, clauses TEXT NOT NULL, matches TEXT NOT NULL, reason TEXT NOT NULL, review_id TEXT, updated_at REAL NOT NULL
+);
+CREATE TABLE IF NOT EXISTS control_credentials (
+ credential_id TEXT PRIMARY KEY REFERENCES credentials(id), authority_credential TEXT NOT NULL REFERENCES credentials(id)
+);
+CREATE TABLE IF NOT EXISTS admin_changes (
+ id TEXT PRIMARY KEY, org_id TEXT NOT NULL REFERENCES organizations(id), principal_id TEXT NOT NULL REFERENCES principals(id),
+ credential_id TEXT NOT NULL REFERENCES credentials(id), request_key TEXT NOT NULL, fingerprint TEXT NOT NULL,
+ operation TEXT NOT NULL, params TEXT NOT NULL, reason TEXT NOT NULL, snapshot TEXT NOT NULL,
+ digest TEXT NOT NULL, state TEXT NOT NULL, expires_at REAL NOT NULL, created_at REAL NOT NULL,
+ reviewed_at REAL, reviewed_by TEXT, result TEXT,
+ UNIQUE(principal_id,org_id,request_key)
+);
+CREATE INDEX IF NOT EXISTS idx_admin_queue ON admin_changes(org_id,state,created_at);

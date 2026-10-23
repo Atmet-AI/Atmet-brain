@@ -40,7 +40,7 @@ Share only redacted error codes, engine version and reproduction steps when aski
 - **Report key conflict:** retry the exact same request or submit a new immutable follow-up key. The old body is not overwritten.
 - **No method to learn:** choose the same task key in one space and include a succeeded/corrected report with explicit steps. Failed-only outcomes do not establish a method.
 - **Stale evidence or review:** inspect current source/artifact revisions and submit a new report or reviewed draft. Reported historical results do not authorize an obsolete procedure.
-- **Schema mismatch after upgrade:** stop old processes, use the compatible schema-3 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-3-upgrade).
+- **Schema mismatch after upgrade:** stop old processes, use the compatible schema-4 engine and restart services using its runtime. Backups restore to fresh homes; there is no in-place downgrade. See [schema upgrades](versioning.md#schema-4-upgrade).
 
 ## A task finished but feedback is missing
 
@@ -65,3 +65,7 @@ A consumed/expired invitation cannot be reused. On another device use login with
 Recoverable wizard values retry the same field; /cancel cancels the current operation. The team menu can return to its menu after cancellation. Explicit flags stay strict for automation, and partial writes/uncertain remote actions are reported rather than resubmitted. The application returning to the shell does not close the Terminal app. Check --version if an older globally installed command still shows the old behavior; use npx atmet-brain@latest or deliberately update the global package.
 
 Several company Brains are supported. Use brains create/add/list and explicit --brain selection, with independent data homes, backups and server ports. A company number cannot bypass network reachability or authentication. [Full employee and company guide](employee-accounts.md).
+
+## An imported document is missing from search
+
+New/changed imports default to restricted intake, with processing blocked until classified. Use a human administrator session to run admin intake and admin classify SOURCE_ID, or configure an approved explicit access rule. If a rule changed, earlier classifications may be stale. An approved hold rule must be revised through human policy review before release. Existing restrictive source-history audiences still apply after wording changes. A connector with staged/revoked sources may need this explicit revalidation before another sync can succeed. Do not use sources.access to bypass pending intake. [Classification guide](conversational-administration.md).

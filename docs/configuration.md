@@ -7,6 +7,7 @@ The deployment configuration lives in the private data home as `config.toml`:
 max_context_chars = 16000
 max_results = 12
 allow_remote_processing = false
+require_document_classification = true
 ```
 
 Unknown keys and invalid types are rejected. Context characters range from 500 to 100000. Result counts range from 1 to 100. Configuration does not accept permission or role definitions; those are separate grant operations.
@@ -87,3 +88,7 @@ A signed-in local account keeps private login.json metadata and session.token un
 Remote password sessions use private named connection profiles containing verified organization/principal, username and route metadata. No password is stored. Expiry or membership revocation needs explicit login; there is no automatic refresh using cached passwords. Each company/employee connection remains explicit.
 
 brains.json is a device-local label/path catalog protected by atomic writes and a POSIX lock. --brain NAME resolves against the selected --home catalog before loading a company's own configuration. It cannot be combined with a remote --connection/--endpoint. Catalogs, client profiles and other companies' nested homes are not included in one Brain's encrypted database snapshot. [Company/account operations](employee-accounts.md).
+
+## Restricted intake setting
+
+require_document_classification defaults true. It is an installation-owner setting; lower-scope config artifacts/instructions cannot set it. Changing it requires trusted local file access and service restart. The explicit false compatibility mode is for legacy development fixtures; it cannot remove an existing source classification gate or override approved company access rules. Production users should retain restricted intake and use the [review/classification flow](conversational-administration.md).

@@ -1,5 +1,7 @@
 # Connectors
 
+New and changed document imports start restricted. Enroll/sign in to your human administrator account, inspect admin intake, and run admin classify SOURCE_ID for each source returned by ingest/sync before processing or using it as evidence. The wizard requires explicit private approval. Approved term/connector rules can classify subsequent imports; unmatched stays restricted. See [classification and conversational administration](conversational-administration.md).
+
 A connector has a selected resource boundary, space, audience and authority. It captures source revisions through the same core APIs as manual ingestion. Registration that selects server filesystem paths is a local operator operation, not public RPC.
 
 ## Local directory

@@ -22,6 +22,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
+from tests.legacy_imports import legacy_imports
 from atmet_brain import Brain, BrainError, __version__
 from atmet_brain.cli import execute, parser
 from atmet_brain.client import Client
@@ -38,7 +39,7 @@ class TerminalTeamCase(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         self.home = self.root / "server"
-        self.brain = Brain(self.home)
+        self.brain = Brain(legacy_imports(self.home))
         self.owner = self.brain.bootstrap("company")
         (self.home / "owner.token").write_text(self.owner["token"])
         self.actor = self.brain.authenticate(self.owner["token"])

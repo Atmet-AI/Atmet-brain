@@ -2,7 +2,7 @@
 
 Use one independent Brain data home for each company. Each company has its own employee accounts, workspaces and permissions. Administrators invite employees; employees choose their own passwords. Their agent uses a scoped session/child credential, rather than the administrator's key.
 
-Existing installations must follow the [schema-3 upgrade](versioning.md#schema-3-upgrade) before their first 0.7.0 command that opens the database. A company name/ID locates a selected organization; it never authenticates a person or grants access.
+Existing installations must follow the [schema-4 upgrade](versioning.md#schema-4-upgrade) before their first 0.8.0 command that opens the database. A company name/ID locates a selected organization; it never authenticates a person or grants access.
 
 ```mermaid
 flowchart TD
@@ -104,7 +104,7 @@ A workspace can represent an access area rather than exactly one department:
 
 In team, choose access and select the employee by name/number. Select only their allowed workspaces, set each role, review, and confirm. Omitted spaces are not granted. Enter none to remove all workspace access. Owner/organization-admin identities are deliberately excluded from this employee editor to avoid accidental administrative lockout.
 
-Import budget/invoice sources into finance-general and salary originals into payroll, using their actual returned IDs. Sources default to their selected space audience, so ordinary setup does not need employee-by-employee rules for each file. Directory connectors can apply a chosen destination/audience to a collection. Folder names do not automatically classify or protect content. Split documents mixing public budgets and private salaries; row/column salary redaction is not implemented.
+Import budget/invoice sources into finance-general and salary originals into payroll, using their actual returned IDs. After approved classification, sources retain their selected base audience and any matching rule restrictions, so ordinary setup does not need employee-by-employee rules for each file. Directory connectors can apply a chosen destination/audience to a collection. Folder names do not automatically classify or protect content. Split documents mixing public budgets and private salaries; row/column salary redaction is not implemented.
 
 For a restricted source within an otherwise shared space, existing principal/group audiences still apply. Being an administrator, publisher or group member does not bypass the other content checks. Search, graph, context, derived methods and retained history continue enforcing current source access.
 
@@ -154,3 +154,5 @@ Never automatically repeat an operation after an uncertain network response or p
 Passwords use independent random salts and scrypt N=32768, r=8, p=3, an [OWASP-listed password-storage configuration](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). Password work is bounded to two concurrent KDF calls. Login permits at most eight attempts per canonical company/username in a 15-minute window, persisted across server restart, in addition to the HTTP adapter's network rate limit. A small common/trivial-password blocklist is included; no external compromised-password service or NIST certification is claimed. The [NIST password guidance](https://pages.nist.gov/800-63-4/sp800-63b.html) informs minimum length and attempt limiting. Deployments still need independent load/security evaluation and an appropriate ingress.
 
 This release supplies local password authentication and private invitation handoff. It does not supply SSO, MFA, email verification/delivery, a browser login UI, identity-document verification or a global numeric company resolver. A company ID alone grants nothing. Anyone controlling the server filesystem can alter the installation; employees must not receive that filesystem access as part of joining.
+
+For rule-based future imports and exact human approvals, see [conversational administration](conversational-administration.md). Reader/User/Editor are everyday presets; company administration is separate. Keyword/model suggestions do not provide perfect salary detection.

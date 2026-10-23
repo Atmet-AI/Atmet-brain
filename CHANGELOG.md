@@ -2,7 +2,25 @@
 
 ## Unreleased
 
-- Release tooling: bounded fresh-cache retries for npm metadata propagation and a read-only verification workflow for already accepted versions. No engine, schema or launcher change; accepted tags/packages remain immutable.
+## 0.8.0 - approved agent administration and restricted document intake, 2026-10-23
+
+### Added
+
+- Administration MCP tools prepare exact workspace, employee, group, access-rule, classification and source/connector proposals. A separate private human password review applies each change once after rechecking current authority, revisions and digest. Agents cannot approve themselves.
+- Guided admin agent, overview, queue, classify and review commands, with private scoped control bundles and sanitized configured SSH/HTTPS metadata.
+- New/changed documents default to restricted intake. Approved explicit term/connector rules classify matching documents; unmatched/held sources require human-reviewed release. Every matching audience intersects. Workspace-wide automatic release requires a trusted connector binding.
+- Reader, User and Editor everyday labels alongside existing specialist roles; company administration remains separate.
+- Rule/approval history, stale classification checks, retained restrictive source-history audiences and erasure/recovery handling.
+
+### Changed
+
+- Schema 4 upgrades supported schemas 1/2/3 transactionally. Back up with the old compatible engine and stop old processes before the first new database open. Restart all services/MCP with the new engine; no mixed-engine use or in-place downgrade.
+- Existing active sources retain their current access until updated or policy changes require reclassification. Restores reject pending changes, revoke controls, disable rules and require fresh classification.
+- Release verification handles bounded npm metadata propagation and can verify accepted releases independently without uploading again.
+
+### Scope
+
+- Your configured external agent interprets natural language. The core enforces explicit approved structured actions. This is not perfect semantic classification, universal DLP, automatic salary redaction, OS/SSH provisioning, SSO or MFA.
 
 ## 0.7.0 - employee accounts, invitations and company selection, 2026-10-23
 

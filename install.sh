@@ -2,14 +2,14 @@
 # Install a versioned GitHub wheel into an isolated, per-user uv tool environment.
 set -eu
 
-version="${1:-0.7.0}"
+version="${1:-0.8.0}"
 case "$version" in
   --help|-h)
     printf '%s\n' 'Usage: sh install.sh [VERSION]' 'Requires uv and curl. Installs for the current user; never uses sudo.'
     exit 0 ;;
 esac
 if ! printf '%s\n' "$version" | LC_ALL=C grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-  printf '%s\n' 'Choose a release version such as 0.7.0.' >&2
+  printf '%s\n' 'Choose a release version such as 0.8.0.' >&2
   exit 1
 fi
 if ! command -v uv >/dev/null 2>&1; then

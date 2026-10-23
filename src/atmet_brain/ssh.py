@@ -103,6 +103,10 @@ class SSHClient:
         with tunnel(self.settings) as endpoint:
             return Client(endpoint, self.token).call(method, **params)
 
+    def review_admin_change(self, **params):
+        with tunnel(self.settings) as endpoint:
+            return Client(endpoint, self.token).review_admin_change(**params)
+
     def auth(self, action, **params):
         with tunnel(self.settings) as endpoint:
             return Client(endpoint, self.token).auth(action, **params)

@@ -5,6 +5,7 @@ import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 
+from tests.legacy_imports import legacy_imports
 from atmet_brain import Brain, BrainError
 from atmet_brain.auth import Actor, ROLES
 from atmet_brain.config import Settings, validate_settings
@@ -19,7 +20,7 @@ class CoreCase(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.home = Path(self.tmp.name) / "home"
-        self.brain = Brain(self.home)
+        self.brain = Brain(legacy_imports(self.home))
         self.owner = self.brain.bootstrap("example")
         self.actor = self.brain.authenticate(self.owner["token"])
         self.space = self.brain.create_space(self.actor, "sales")["id"]

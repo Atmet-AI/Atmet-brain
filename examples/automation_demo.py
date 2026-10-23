@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 
+from review_fixture import release_demo_source
 from atmet_brain import Brain
 
 
@@ -15,6 +16,7 @@ def main():
         space = brain.create_space(actor, "operations")["id"]
         source = brain.put_source(actor, space, "report-examples", "Fictional report examples",
                                   "Accepted examples supplied by a trusted task runtime.")
+        release_demo_source(brain, actor, source)
         evidence = [{"source_id": source["id"], "revision": 1}]
         workflow = brain.propose_artifact(actor, space, "workflow", "department-totals", {
             "instructions": "Group the supplied records by department and total decimal amounts.",
