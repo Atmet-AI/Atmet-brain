@@ -2,10 +2,17 @@
 
 ## Unreleased
 
+## 0.8.1 - organization publishing and project identity, 2026-10-23
+
 ### Documentation and maintenance
 
 - Add the Atmet Brain logo, product summary and live package-version badge to the README, with light and dark logo variants.
-- Move the existing repository to Atmet-AI/Atmet-brain and update active project links and release configuration. Published versions and historical tags remain unchanged.
+- Move the existing repository to Atmet-AI/Atmet-brain and update active project links, package metadata and release configuration. Earlier published versions and historical tags remain unchanged.
+- Configure the organization trusted publisher for automatic npm releases.
+
+### Compatibility
+
+- Brain behavior and schema 4 are unchanged. This patch requires no data migration from 0.8.0. Older schema upgrades still follow the existing backup and restart procedure.
 
 ## 0.8.0 - approved agent administration and restricted document intake, 2026-10-23
 

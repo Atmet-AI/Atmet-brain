@@ -2,7 +2,11 @@
 
 Use this page to judge what has been checked. For installation and daily operation, start with the [quickstart](quickstart.md). For the commands contributors run, use [testing](testing.md).
 
-## Current engine verification
+## Maintenance release 0.8.1
+
+Version 0.8.1 updates project branding, active repository URLs and release metadata for Atmet-AI/Atmet-brain. Brain behavior and schema 4 are unchanged from 0.8.0. Local checks passed all 333 Python tests, 8 launcher tests, metadata/archive inspection and a fresh packed macOS company-setup/MCP walkthrough. Exact wheel comparison found no engine change other than its version identifier. Confirm the organization publishing workflow and registry result for public availability; the 0.8.0 evidence below retains its original release identity.
+
+## Core verification at 0.8.0
 
 Atmet Brain 0.8.0 uses schema 4. The suite passed 333 Python tests and 8 launcher tests. Its 41 new administration/UI checks cover exact private human approval, forbidden self-approval, stale state/digest/expiry/replay/concurrency, default restricted intake, no extractor egress before release, matched audience/hold rules, trusted connector binding, retained salary history, source authority, current group/role management, readable previews, erasure, schema-3 snapshots and restore quarantine. Existing authentication, source/memory/workflow/report/automation/recovery checks remain in the full suite.
 
