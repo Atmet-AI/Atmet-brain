@@ -1,0 +1,10 @@
+flowchart TB
+    Task["Explicit task request"] --> Match{"Approved recipe applies?"}
+    Match -->|Yes| Script["Run bounded Python: no model call"]
+    Match -->|No| Agent["Client handles the task with its agent"]
+    Agent --> Observe["Report accepted inputs and outputs"]
+    Observe --> Pattern{"Supported pattern repeats?"}
+    Pattern -->|Yes| Draft["Compile Python and replay examples"]
+    Draft --> Review["Authorized review and publication"]
+    Review --> Match
+    Pattern -->|No| Keep["Continue learning or clarify the task"]

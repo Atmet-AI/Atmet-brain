@@ -1,8 +1,11 @@
-flowchart TB
-    Core["Atmet Brain engine"] --> Company["Your company"]
-    Company --> Shared["Shared space"]
-    Company --> Sales["Sales space"]
-    Company --> Finance["Finance space"]
-    Shared --> Foundation["Company facts and reference material"]
-    Sales --> SalesContext["Catalogue, quotation workflow and skills"]
-    Finance --> FinanceContext["Finance sources and approved procedures"]
+flowchart TD
+    Setup["Install and create a company space"] --> Sources["Import selected business sources"]
+    Sources --> Knowledge["Process sourced memory"]
+    Knowledge --> Procedures["Review the first workflow and skills"]
+    Procedures --> Connect["Connect an agent with scoped access"]
+    Connect --> Task["Agent requests current context and performs work"]
+    Task --> Feedback["Configured hook reports the outcome"]
+    Feedback --> Draft["Eligible result becomes a skill draft"]
+    Draft --> Review["Publisher inspects the exact revision"]
+    Review --> Next["Approved method available for future tasks"]
+    Next --> Task

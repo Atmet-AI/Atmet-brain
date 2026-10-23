@@ -1,6 +1,6 @@
 flowchart TD
-    Agent[Configured agent completion hook] --> History[Private task history with source evidence]
-    History --> Search[Permissioned history search]
-    History --> Draft[Eligible result becomes a pending skill draft]
-    Draft --> Review[Authorized exact-revision review]
-    Review --> Method[Approved method for future agents]
+    Request["Agent request"] --> Credential["Current credential and identity"]
+    Credential --> Grant["Allowed space and operation"]
+    Grant --> Audience["Audience of every contributing source"]
+    Audience --> Evidence["Current evidence and approved versions"]
+    Evidence --> Context["Permitted bounded context"]

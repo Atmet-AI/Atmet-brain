@@ -2,6 +2,8 @@
 
 Atmet Brain stores company sources, learned memory and reviewed procedures that your agents can retrieve. Start with a small company example, then connect your own agent or team. The [support matrix](implementation-status.md) marks implemented, fixture-tested and planned features.
 
+For a continuous overview with commands and charts, read the [from-scratch README](../README.md#from-an-empty-brain-to-daily-work). Existing repositories can follow [the project integration steps](../README.md#add-the-brain-to-an-existing-project).
+
 ## Start here
 
 1. [Install the CLI](install.md): use npx or install the command for regular use.

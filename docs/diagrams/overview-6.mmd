@@ -1,7 +1,9 @@
 flowchart TB
-    Change["Source or procedure changes"] --> Version["Record a new revision"]
-    Version --> Check["Recheck evidence and dependencies"]
-    Check --> Fact["Eligible ordinary fact refresh"]
-    Check --> Review["Rule or workflow proposal needs review"]
-    Review --> Publish["Publish the exact reviewed revision"]
-    Check --> Pause["Stale dependent recipes stop routing"]
+    Selected["Selected files or supported app records"] --> Sources["Versioned sources"]
+    Sources --> Jobs["Learning jobs"]
+    Jobs --> Memory["Sourced facts and observations"]
+    Jobs --> Drafts["Reviewable candidates"]
+    Drafts --> Review["Authorized review"]
+    Review --> Approved["Approved policies, workflows and skills"]
+    Memory --> Context["Permitted task context"]
+    Approved --> Context

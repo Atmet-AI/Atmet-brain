@@ -1,9 +1,9 @@
-flowchart TB
-    Selected["Selected files or supported app records"] --> Sources["Versioned sources"]
-    Sources --> Jobs["Learning jobs"]
-    Jobs --> Memory["Sourced facts and observations"]
-    Jobs --> Drafts["Reviewable candidates"]
-    Drafts --> Review["Authorized review"]
-    Review --> Approved["Approved policies, workflows and skills"]
-    Memory --> Context["Permitted task context"]
-    Approved --> Context
+flowchart TD
+    Source["Source: catalogue revision 1"] --> Fact["Fact or observation with evidence"]
+    Source --> Proposal["Proposed policy, workflow or skill"]
+    Proposal --> Review["Exact-revision publication"]
+    Review --> Method["Approved operating method"]
+    Fact --> Context["Permitted task context"]
+    Method --> Context
+    Context --> Outcome["Agent result becomes operational history"]
+    Outcome --> Candidate["Possible skill draft; review required"]

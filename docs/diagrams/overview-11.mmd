@@ -1,0 +1,6 @@
+flowchart TD
+    Snapshot["Encrypted installation backup"] --> Fresh["Restore into a fresh home"]
+    Fresh --> Quarantine["Revoke old credentials and quarantine sources"]
+    Quarantine --> Journal["Apply current deletion and revocation journal"]
+    Journal --> Revalidate["Revalidate retained data and issue new access"]
+    Revalidate --> Resume["Resume permitted use"]

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Expand the README into a from-scratch lifecycle, memory-type reference, reviewed first workflow and existing-project setup with scoped agents, selected imports, history/recovery and explanatory charts.
+
 - Record the verified 0.5.0 public npm release workflow in the validation reference.
 
 ## 0.5.0 - automatic task completion feedback, 2026-10-23

@@ -1,12 +1,18 @@
-sequenceDiagram
-    participant User
-    participant Agent as Agent runtime
-    participant Brain as Atmet Brain
-    participant Tools as Authorized tools
-    User->>Agent: Prepare a customer quotation
-    Agent->>Brain: Credential, space ID and task
-    Brain->>Brain: Check current access, approved versions and evidence
-    Brain-->>Agent: Instructions, facts, citations and constraints
-    Agent->>Agent: Use its chosen model to prepare a draft
-    Agent->>Tools: Perform only separately permitted actions
-    Agent->>Brain: Submit evidence-linked feedback if permitted
+flowchart TB
+    subgraph Clients["Clients"]
+        CLI["Terminal or Python app"]
+        Agent["External agent runtime"]
+        Future["Platform and Playground: planned"]
+    end
+    subgraph Interfaces["Core interfaces"]
+        REST["REST"]
+        MCP["MCP stdio"]
+    end
+    CLI --> Core["One Brain core: identity, memory and reviewed procedures"]
+    Agent --> REST
+    Agent --> MCP
+    Future -.-> REST
+    REST --> Core
+    MCP --> Core
+    Core --> Store[("Private SQLite installation")]
+    Agent --> Tools["Separately authorized business tools"]
