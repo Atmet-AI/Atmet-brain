@@ -45,3 +45,7 @@ Share only redacted error codes, engine version and reproduction steps when aski
 ## A task finished but feedback is missing
 
 Enable the agent's host completion hook or MCP --task-feedback configuration. A running Brain alone cannot observe unrelated agents. MCP clients must follow the supplied completion instructions. Inspect delivery errors and both report/skill statuses; blocked drafting may still mean the report was saved. Retry the same key/payload instead of repeating the business task. Check original evidence, read/observe/contribute/history grants, audience access and credential expiry. A default-private report must be deliberately shared with its publisher for review. [Integration and retry guide](automatic-task-feedback.md).
+
+## Agent setup cannot finish
+
+Run agent interactively, or provide name/method/spaces/access/identity flags with --json. A missing local Brain needs setup first; a team server can be selected through Join. Guided setup requires engine 0.6.0+ at both ends. Read credentials cannot choose learning mode, and non-administrators cannot create a separate service identity. Current-identity mode derives a narrower child only. Existing folders/profiles are protected. On partial failure, read the revocation result before choosing a new setup name. [Wizard steps and recovery](agent-setup.md).

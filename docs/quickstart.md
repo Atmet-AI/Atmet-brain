@@ -35,6 +35,8 @@ A successful context result includes `approved_context`, `reference_evidence`, `
 
 ## Add a workflow or agent
 
+For a guided agent connection, run `atmet-brain agent` and select your workspace, method and access. It prepares private configuration files and verifies the scoped credential. [Agent wizard](agent-setup.md).
+
 Continue with [use for your company](use-for-your-company.md) for a self-contained workflow JSON example and scoped agent credential. Use [MCP](mcp.md) or [REST](api.md) to connect the chosen runtime. Guided setup asks company/space questions; an AI interview about business workflows and a dashboard are not implemented. For later changes, follow the [history and rollback walkthrough](history-walkthrough.md).
 
 ## Run disposable repository demos

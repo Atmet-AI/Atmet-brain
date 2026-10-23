@@ -1,5 +1,6 @@
 """Human terminal presentation, with plain and JSON paths for automation."""
 
+import json
 import os
 import re
 import shutil
@@ -69,6 +70,7 @@ class Console:
         self.wrapped("Home  " + value["home"], "  ", muted=True)
         self.line()
         for title, command in [("Set up a Brain", value["start"]), ("Inspect this Brain", value["inspect"]),
+                               ("Connect an agent", value["agent"]),
                                ("Host a team Brain", value["host"]), ("Join your team", value["join"]),
                                ("Browse commands", value["help"])]:
             self.line("  " + title)
@@ -81,6 +83,24 @@ class Console:
         self.line("  " + name + "  /  " + title, accent=True)
         self.wrapped(description, "    ", muted=True)
         self.line()
+
+    def agent_ready(self, value):
+        self.banner("Your agent connection is ready to add.", compact=True)
+        self.line("  Core access verified", accent=True)
+        self.wrapped("Workspaces: " + ", ".join(value["workspaces"]), "  ")
+        self.wrapped("Access: " + value["access_description"], "  ")
+        self.wrapped("Identity: " + value["identity"]["name"], "  ")
+        self.line()
+        for index, step in enumerate(value["next"], 1):
+            self.wrapped(str(index) + ". " + step, "  ", accent=index == 1)
+        if value["method"] == "mcp":
+            self.line()
+            self.line("  Copy this MCP entry, or use the saved mcp.json file:", accent=True)
+            for line in json.dumps(value["mcp_entry"], indent=2, ensure_ascii=False).splitlines():
+                self.line(line)
+        self.line()
+        self.wrapped("Private setup folder: " + value["directory"], "  ", muted=True)
+        self.wrapped("External agent connection has not been tested. Skill publication remains a separate authorized decision.", "  ", muted=True)
 
     def result(self, value, indent=2):
         prefix = " " * indent
@@ -123,7 +143,7 @@ def prompt(label, default=None, choices=None, *, console=None):
                   end="", file=console.stream, flush=True)
             value = input().strip() or default
         except EOFError:
-            raise BrainError("setup_interrupted", "Setup needs answers. Use setup flags for non-interactive use.") from None
+            raise BrainError("setup_interrupted", "This guided flow needs answers. Use command flags for non-interactive use.") from None
         if value and (not choices or value in choices):
             return value
         console.line("  Choose " + ", ".join(choices) if choices else "  Enter a value.")

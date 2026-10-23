@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.5.0"
+    "version": "0.6.0"
   },
   "components": {
     "securitySchemes": {
@@ -43,6 +43,31 @@
                         "properties": {},
                         "additionalProperties": false,
                         "required": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "access.check"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id"
+                        ]
                       }
                     }
                   },

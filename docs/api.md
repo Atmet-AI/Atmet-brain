@@ -2,6 +2,8 @@
 
 All public operations pass an authenticated actor into the same core. Local provisioning, filesystem binding registration and backup/recovery remain installation-owner operations outside RPC.
 
+For a guided connection bundle, run `atmet-brain agent` and choose REST or Python. This prepares scoped access and examples; a local REST server still needs to be started separately. [Agent setup](agent-setup.md).
+
 ## Python
 
 ```python
@@ -146,3 +148,7 @@ reports.record saves an explicit, immutable client-reported result with original
 ## Completion feedback
 
 `reports.complete` accepts the reports.record parameters plus a boolean learn (default true). It saves an authenticated report, then attempts one deterministic pending candidate from eligible succeeded/corrected steps. It returns separate report/skill statuses; drafting can be blocked after the report commits. Exact retries reuse both identities, recheck access and never republish or overwrite an approved method. No caller-supplied identity or approval is accepted. `Client.task_feedback()` and `LocalClient.task_feedback()` provide Python lifecycle wrappers. [Integration and response contract](automatic-task-feedback.md).
+
+## Access preflight
+
+`access.check` accepts only space_id and returns the authenticated caller's current permitted operation names plus can_add_members. It requires read access to that space; it does not inspect another principal or source payload. The wizard uses it before and after narrowing credentials. `identity.me` also returns credential expires_at. All later operations still recheck grants and source audiences.

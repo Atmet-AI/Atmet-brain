@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 0.6.0 - guided agent connection, 2026-10-23
+
+### Added
+
+- Interactive agent command for local, saved remote or Join access; MCP/terminal/REST/Python choices, workspace names, reader/reporter scope, reviewed identity creation and private configuration bundles.
+- Core access.check preflight and credential expiry metadata, with new/current identity choices bounded by existing grants and lineage.
+- Copyable MCP entry, installed Python example, HTTP request, context/completion commands and app-specific next-step guidance without automatic client settings edits.
+
+### Fixed
+
+- Explicit --token-file now takes precedence over an ambient ATMET_TOKEN so a configured scoped agent cannot accidentally run with a shell's broader credential.
+- Failed bundle creation attempts credential revocation; existing outputs are never overwritten and cancellation stops before issuance.
+
+### Compatibility
+
+- Database schema remains 2. Existing 0.5.0 data needs no migration. Guided remote setup requires engine 0.6.0+ on the server for access preflight; existing manual interfaces remain available.
+- Configuration generation verifies core scope, not the external app, source relevance or an API listener. Host callbacks and skill publication remain separate.
+
+### Documentation
+
 - Expand the README into a from-scratch lifecycle, memory-type reference, reviewed first workflow and existing-project setup with scoped agents, selected imports, history/recovery and explanatory charts.
 
 - Record the verified 0.5.0 public npm release workflow in the validation reference.

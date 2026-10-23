@@ -37,6 +37,13 @@ def parser():
     root.add_argument("--token-file", type=Path, help="Scoped credential file; defaults to ATMET_TOKEN_FILE or home/owner.token")
     sub = root.add_subparsers(dest="command")
     sub.add_parser("status", help="Show current local or selected remote Brain status")
+    agent = sub.add_parser("agent", help="Guided agent connection: workspace names, scoped access and ready setup files")
+    agent.add_argument("--name", help="Agent slug, for example sales-assistant")
+    agent.add_argument("--method", choices=["mcp", "terminal", "rest", "python"])
+    agent.add_argument("--spaces", help="Comma-separated permitted workspace names or IDs")
+    agent.add_argument("--access", choices=["read", "learn"], help="Read-only, or reports and pending skill drafts")
+    agent.add_argument("--identity", choices=["new", "current"], help="New service identity, or narrower child credential for the current identity")
+    agent.add_argument("--output", type=Path, help="New private setup directory; defaults to home/agents/NAME")
     mcp_config = sub.add_parser("mcp-config", help="Print a credential-file-based MCP client configuration")
     for flag in ("allow-proposals", "allow-automations", "allow-task-reports", "task-feedback"):
         mcp_config.add_argument("--" + flag, action="store_true")
@@ -203,6 +210,8 @@ def parser():
 
 
 def read_token(args):
+    if args.token_file:
+        return args.token_file.expanduser().read_text().strip()
     if os.environ.get("ATMET_TOKEN"):
         return os.environ["ATMET_TOKEN"].strip()
     path = args.token_file or Path(os.environ.get("ATMET_TOKEN_FILE", args.home / "owner.token"))
@@ -305,6 +314,7 @@ def execute(args):
         return {"version": __version__, "initialized": (args.home / "brain.sqlite3").exists(),
                 "home": str(args.home), "start": shlex.join(base + ["setup"]), "inspect": shlex.join(base + ["status"]),
                 "host": shlex.join(base + ["host"]), "join": shlex.join(base + ["join"]),
+                "agent": shlex.join(base + ["agent"]),
                 "help": "atmet-brain --help", "connections": list_connections(args.home)}
     if args.command == "connect":
         require(not args.connection and not args.endpoint, "invalid_connection", "Use connect's own endpoint and token-file arguments.")
@@ -338,6 +348,13 @@ def execute(args):
         return guided_setup(args, initialize, lambda name, endpoint, token, ca: connect(args.home, name, endpoint, token, ca),
                             inspect_local=local_status, share=share_member,
                             join=lambda path, name, ca, record: join_share(args.home, path, name, ca, record), start_service=start_api)
+    if args.command == "agent":
+        from .agent_setup import guided_agent
+        def join_team():
+            values = (["--home", str(args.home)] + (["--plain"] if args.plain else [])
+                      + (["--ca-file", str(args.ca_file)] if args.ca_file else []) + ["join"])
+            return execute(parser().parse_args(values))
+        return guided_agent(args, read_token, join_team)
     if args.command == "mcp-config":
         require(not args.endpoint, "invalid_connection", "Save a named connection first, or use a dedicated local token file.")
         command = ["-m", "atmet_brain", "--home", str(args.home.expanduser().resolve())]
@@ -482,6 +499,8 @@ def main():
                 console = Console(sys.stdout, args.plain)
                 if args.command is None:
                     console.welcome(result)
+                elif args.command == "agent":
+                    console.agent_ready(result)
                 else:
                     if args.command in {"setup", "host", "join"} and sys.stdin.isatty():
                         console.line("\n  Setup complete", accent=True)

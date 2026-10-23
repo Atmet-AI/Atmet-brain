@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.5.0 is a local/private-pilot alpha using database schema 2. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.6.0 is a local/private-pilot alpha using database schema 2. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
@@ -8,6 +8,7 @@ Atmet Brain 0.5.0 is a local/private-pilot alpha using database schema 2. Use th
 | Users and services | Scoped bearer credentials, lineage, expiry, revocation, groups and operation grants; atomic team-add with selected spaces and default 30-day expiry |
 | Registry distribution | npm includes the matching checksum-verified Python core and isolated runtime bootstrap; public Ubuntu CLI and anonymous macOS arm64 setup/MCP checks passed. See [installation](install.md) and [validation](validation.md). |
 | Terminal setup | Guided Local/Host/Join, existing-Brain reuse, workspace-name member selection, private scoped connection files, server identity/scope verification and explicit service-start option; orange/plain/JSON presentation; no AI onboarding interview |
+| Agent connection wizard | Guided local/saved-team/Join selection, workspace names, MCP/terminal/REST/Python bundles, verified reader/reporter child or service credentials, private files and copyable configuration; external app hookup remains manual |
 | Background services | Explicit per-user launchd/systemd API and worker definitions plus controls; templates/dispatch tested, actual OS-manager lifecycle needs deployment validation |
 | Source ingestion | Working UTF-8 text/Markdown/CSV/JSON capture with revisions and current audience |
 | Memory learning | Working local line extractor, explicit authoritative-fact activation, observations, reviewable inference/conflict |

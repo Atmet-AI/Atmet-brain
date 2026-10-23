@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="870" viewBox="0 0 1024 870" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="945" viewBox="0 0 1024 945" role="img" aria-labelledby="title desc">
 <title id="title">Atmet Brain terminal welcome</title>
 <desc id="desc">Rendered output from the actual welcome command with a fictional company home. Orange terminal wordmark and setup commands.</desc>
-<rect width="1024" height="870" fill="#101010"/>
+<rect width="1024" height="945" fill="#101010"/>
 <rect width="1024" height="39" fill="#1d1d1d"/>
 <circle cx="27" cy="18" r="5" fill="#ff5f57"/>
 <circle cx="49" cy="18" r="5" fill="#febc2e"/>
@@ -16,7 +16,7 @@
 <text x="28" y="207"><tspan fill="#f55315">  ████  ████      ██      ██      ██  ██              ██</tspan></text>
 <text x="28" y="232"><tspan fill="#f55315">  ████  ████      ██      ██      ██  ██████████      ██</tspan></text>
 <text x="28" y="257"></text>
-<text x="28" y="282"><tspan fill="#dedede">  Atmet Brain  /  0.5.0</tspan></text>
+<text x="28" y="282"><tspan fill="#dedede">  Atmet Brain  /  0.6.0</tspan></text>
 <text x="28" y="307"><tspan fill="#929292">  Company memory. Workflows. Your agents.</tspan></text>
 <text x="28" y="332"><tspan fill="#929292">  ──────────────────────────────────────────────────────────</tspan></text>
 <text x="28" y="357"></text>
@@ -31,12 +31,15 @@
 <text x="28" y="582"><tspan fill="#dedede">  Inspect this Brain</tspan></text>
 <text x="28" y="607"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain status</tspan></text>
 <text x="28" y="632"></text>
-<text x="28" y="657"><tspan fill="#dedede">  Host a team Brain</tspan></text>
-<text x="28" y="682"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain host</tspan></text>
+<text x="28" y="657"><tspan fill="#dedede">  Connect an agent</tspan></text>
+<text x="28" y="682"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain agent</tspan></text>
 <text x="28" y="707"></text>
-<text x="28" y="732"><tspan fill="#dedede">  Join your team</tspan></text>
-<text x="28" y="757"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain join</tspan></text>
+<text x="28" y="732"><tspan fill="#dedede">  Host a team Brain</tspan></text>
+<text x="28" y="757"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain host</tspan></text>
 <text x="28" y="782"></text>
-<text x="28" y="807"><tspan fill="#dedede">  Browse commands</tspan></text>
-<text x="28" y="832"><tspan fill="#f55315">    atmet-brain --help</tspan></text>
+<text x="28" y="807"><tspan fill="#dedede">  Join your team</tspan></text>
+<text x="28" y="832"><tspan fill="#f55315">    atmet-brain --home /srv/example-company/brain join</tspan></text>
+<text x="28" y="857"></text>
+<text x="28" y="882"><tspan fill="#dedede">  Browse commands</tspan></text>
+<text x="28" y="907"><tspan fill="#f55315">    atmet-brain --help</tspan></text>
 </g></svg>

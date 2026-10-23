@@ -6,6 +6,10 @@ For unstyled output, use `atmet-brain --plain status`. For machine-readable outp
 
 Global options go before the command. No model key is needed for setup or the local line extractor. Setting up a remote connection does not enable model-based extraction or send company data to a model.
 
+## Connect an agent
+
+Run `atmet-brain agent` after setup, or choose Join within it for a company Brain. The guided flow offers method, permitted workspace names, read/learning access and a separate or narrowed identity. It shows a review, verifies the new credential and presents copyable MCP configuration or method-specific commands. The bundle stays private; existing files are not overwritten. Use `--json agent` with explicit flags for automation. [Full wizard guide](agent-setup.md).
+
 ## First visit
 
 ```bash

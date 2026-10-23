@@ -42,6 +42,7 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         result = join(path, name, args.ca_file, record)
         result["next"] = [shlex.join(base + ["--connection", name, "status"]),
                           shlex.join(base + ["--connection", name, "space"]),
+                          shlex.join(base + ["--connection", name, "agent"]),
                           shlex.join(base + ["--connection", name, "mcp-config"])]
         result["note"] = "Only server-confirmed workspaces are listed. Keep the original connection file private; revocation is controlled by your administrator."
         return result
@@ -140,4 +141,5 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
                                if member else "No teammate access created. Run host again to add a teammate when your secure route is ready.")
         result["host_requirement"] = "Keep this device awake and connected. Services depend on your OS user session."
     result["learning"] = "Add selected sources and reviewed workflows next. Setup does not infer or approve business rules."
+    result["next"].append(shlex.join(base + ["agent"]))
     return result

@@ -89,3 +89,7 @@ Additional company organizations can be provisioned with `organization-add`. Eac
 Task reporting requires read/observe/contribute. Reading/searching reports requires read/history and current access to the report plus original evidence. Learning a draft additionally requires contribute. Publication keeps the existing publish operation and exact-revision review; reporting/learning does not grant it. Reports default to their submitting principal's audience; explicitly choose a department audience when sharing is intended. [Full workflow and grant requirements](task-history-and-learning.md#permissions-and-agent-integration).
 
 The reporter preset combines read/observe/contribute/history for completion feedback. It does not include publish, erase, manage or process. Use it for an individually attributable service agent, and deliberately share reports with the authorized publisher when review is wanted. The [automatic feedback guide](automatic-task-feedback.md) explains setup, inherited audiences and partial failures.
+
+## Guided agent credentials
+
+`atmet-brain agent` restricts generated credentials to reader or reporter operations and selected spaces. An administrator may create a separate service; another caller may derive a narrower child for their current identity. It verifies current access before issuance and never includes publish/manage/erase/process. An explicit --token-file takes precedence over an ambient ATMET_TOKEN; saved connections use their own credential. See [agent setup](agent-setup.md).

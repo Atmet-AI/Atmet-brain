@@ -1,0 +1,10 @@
+flowchart TD
+    Start["Run atmet-brain agent"] --> Brain["Local Brain, saved connection or guided Join"]
+    Brain --> Method["Choose MCP, terminal, REST or trusted Python"]
+    Method --> Spaces["Select permitted workspace names"]
+    Spaces --> Access["Read-only or reports and skill drafts"]
+    Access --> Identity["Separate service or narrower current identity"]
+    Identity --> Review["Review scope and private destination"]
+    Review --> Verify["Create and verify scoped credential"]
+    Verify --> Bundle["Save configuration and next steps"]
+    Bundle --> App["Add the configuration and test the agent app"]

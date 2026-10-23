@@ -180,7 +180,21 @@ class IdentityMixin:
             row = live_principal(conn, actor)
             return {"principal_id": row["id"], "organization_id": row["org_id"], "name": row["name"],
                     "kind": row["kind"], "credential_id": actor.credential_id,
-                    "credential_operations": loads(row["operations"]), "credential_spaces": loads(row["space_ids"])}
+                    "credential_operations": loads(row["operations"]), "credential_spaces": loads(row["space_ids"]),
+                    "expires_at": row["expires_at"]}
+
+    def check_access(self, actor, space_id):
+        """Describe only this authenticated caller's current space permissions."""
+        with self.store.transaction() as conn:
+            authorize(conn, actor, space_id, "read")
+            operations = sorted(operation for operation in OPERATIONS if can(conn, actor, space_id, operation))
+            try:
+                organization_admin(conn, actor)
+                admin = True
+            except BrainError:
+                admin = False
+            return {"space_id": space_id, "operations": operations,
+                    "can_add_members": admin and "manage" in operations}
 
     def create_space(self, actor, name):
         with self.store.transaction(write=True) as conn:

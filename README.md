@@ -289,6 +289,8 @@ Keep the original source `id` and revision. To re-import an edited MEMORY.md, us
 
 ### 3. Give the project agent scoped access
 
+For the guided alternative, run `atmet-brain agent`, select the project workspace, choose reports/skill drafts if needed, and follow its next steps. If you use the wizard, skip the manual credential/configuration commands in steps 3 and 4, then verify access in step 5. [Agent wizard](docs/agent-setup.md).
+
 Run this as an administrator. Use a new token-file destination; team-add will not overwrite an existing credential file.
 
 ```bash
@@ -512,6 +514,16 @@ Gmail/model live accounts, named external MCP-client compatibility, semantic/vec
 
 ## Connect an agent
 
+For guided setup, run:
+
+```bash
+npx atmet-brain@latest agent
+```
+
+Choose this device, a saved team connection or Join. Select MCP/terminal/REST/Python, workspace names and read-only or learning access. The wizard prepares a private scoped credential, verifies core permissions, displays a copyable MCP entry and saves method-specific next steps. Add the configuration in your agent app and test it there. It does not grant publication or automatically edit the app. [Guided agent setup](docs/agent-setup.md).
+
+The commands below are the manual alternative.
+
 A connection is set up once; ordinary tasks can then be requested through your agent's conversation. Use a dedicated scoped credential rather than the owner token. If following the Sales example, create a reporter identity:
 
 ```bash
@@ -605,6 +617,7 @@ Automatic SSH mode opens and closes forwarding for each request; no separate tun
 
 | Goal | Start here |
 | --- | --- |
+| Connect an agent through a guided terminal flow | [Agent setup](docs/agent-setup.md) |
 | Install or try the CLI | [Installation](docs/install.md), [terminal guide](docs/terminal.md) |
 | Add knowledge from an existing project | [README project walkthrough](#add-the-brain-to-an-existing-project), [file sources](docs/connectors.md) |
 | Automate result reporting with approval | [Automatic task feedback](docs/automatic-task-feedback.md) |

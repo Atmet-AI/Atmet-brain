@@ -6,7 +6,7 @@ from ._version import __version__
 from .errors import BrainError, require
 
 METHODS = {
-    "identity.me": "whoami", "spaces.list": "list_spaces", "spaces.create": "create_space",
+    "identity.me": "whoami", "access.check": "check_access", "spaces.list": "list_spaces", "spaces.create": "create_space",
     "team.add": "add_team_member",
     "principals.create": "create_principal", "grants.create": "grant", "grants.revoke": "revoke_grant",
     "credentials.create": "create_credential", "credentials.revoke": "revoke_credential",

@@ -2,6 +2,8 @@
 
 This release implements MCP over stdio using the 2025-11-25 protocol version. The client launches a local subprocess, which can use a local Brain or bridge to an explicitly selected remote REST service. Messages are newline-delimited JSON-RPC and stdout contains only protocol messages. No remote MCP HTTP/OAuth transport is claimed.
 
+For the guided path, run `atmet-brain agent` and choose MCP. It prepares a scoped credential and displays/saves the entry to add to your client. See [agent setup](agent-setup.md) for local, remote and Join paths. The instructions below are the manual alternative.
+
 ## Set up a client
 
 1. [Create a company Brain](quickstart.md), then create a dedicated service credential as shown in the [company walkthrough](use-for-your-company.md). Keep its token file private and use absolute paths.

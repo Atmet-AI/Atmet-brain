@@ -9,7 +9,7 @@ For a continuous overview with commands and charts, read the [from-scratch READM
 1. [Install the CLI](install.md): use npx or install the command for regular use.
 2. [Create your first Brain](quickstart.md): initialize a company, ingest a source, run learning and request context.
 3. [Build a company workflow](use-for-your-company.md): add departments, publish instructions and give an agent its own credential.
-4. [Connect an agent with MCP](mcp.md) or [use Python/REST](api.md).
+4. [Use the guided agent wizard](agent-setup.md), or configure [MCP](mcp.md) / [Python/REST](api.md) manually.
 5. [Enable automatic task feedback](automatic-task-feedback.md) or [report selected tasks and learn skills](task-history-and-learning.md), then [keep sources current](connectors.md), [inspect history](history-walkthrough.md) and [back up the installation](backup-and-recovery.md).
 6. [Host a Brain and help teammates Join](team-server.md#guided-host-and-join) when several people need the same Brain.
 
@@ -19,6 +19,7 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 
 | What you want to do | Guide |
 | --- | --- |
+| Configure an agent with workspace names and scoped access | [Guided agent setup](agent-setup.md) |
 | Use terminal commands or a saved remote connection | [Terminal](terminal.md) |
 | Add information and understand learning/review | [Memory and learning](memory-and-learning.md) |
 | Create and update a business procedure | [Workflows](workflows.md) |

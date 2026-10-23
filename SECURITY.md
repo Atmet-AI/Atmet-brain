@@ -29,3 +29,5 @@ Use GitHub private vulnerability reporting if enabled by the repository owner. I
 Bearer tokens are stored as hashes; credentials supplied through files need private file permissions. Issued descendant tokens depend on their issuer remaining active. Raw provider credentials are read from the operator environment and must remain outside exports and logs.
 
 Future identity adapters must validate a trusted issuer and user binding rather than accept arbitrary role/name fields. Future runtime tools must separately authorize external side effects.
+
+Guided agent bundles derive a new scoped credential rather than copying the broad issuer. New service identities or current-identity child credentials are bounded by core grants and parent lineage; generated scopes exclude publish/manage/erase/process. Explicit CLI token-file selection overrides ambient tokens. Partial setup failures attempt revocation and disclose only the credential ID/paths needed for recovery, never the raw credential.

@@ -26,6 +26,8 @@ flowchart TD
 
 MCP provides a tool and instructions, not a guaranteed callback from every external agent. Use a host lifecycle hook for reliable delivery. Nothing monitors unrelated terminals, reads all conversations or installs client-specific hooks automatically. A killed process, KeyboardInterrupt or SystemExit does not produce a completion report through the Python wrapper.
 
+For guided provisioning and a ready configuration, run `atmet-brain agent` and choose reports/skill drafts. The [wizard](agent-setup.md) keeps publication separate; actual host hooks still require integration as described below.
+
 ## 1. Give the agent scoped access
 
 An administrator provisions a separate service identity for the selected space:

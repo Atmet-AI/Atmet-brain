@@ -61,3 +61,7 @@ Engine 0.4.0 upgrades schema-1 company data transactionally to schema 2. Back up
 ## Automatic agent feedback
 
 Configure `mcp-config --task-feedback` with a scoped reporter credential, or send selected completion JSON through `task-complete - --space SPACE_ID` from your agent application's lifecycle hook. Eligible results create pending skill candidates; a publisher approves the exact revision. MCP completion instructions require client cooperation and do not monitor unrelated agents. [One-time setup and Python/REST hooks](https://github.com/anashamad9/Atmet-brain/blob/main/docs/automatic-task-feedback.md).
+
+## Guided agent connection
+
+Run `npx atmet-brain@latest agent`. Choose the Brain, connection method, workspace names and read-only or learning access. The wizard creates/verifies scoped access, displays a copyable MCP entry and saves private next-step files. Add that configuration to the app and test it there; no application settings, API services or host task hooks are installed automatically. [Agent setup](https://github.com/anashamad9/Atmet-brain/blob/main/docs/agent-setup.md).
