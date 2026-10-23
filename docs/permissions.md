@@ -102,3 +102,9 @@ The reporter preset combines read/observe/contribute/history for completion feed
 `atmet-brain agent` restricts generated credentials to reader or reporter operations and selected spaces. An administrator may create a separate service; another caller may derive a narrower child for their current identity. It verifies current access before issuance and never includes publish/manage/erase/process. An explicit --token-file takes precedence over an ambient ATMET_TOKEN; saved connections use their own credential. See [agent setup](agent-setup.md).
 
 For rule-based future imports and exact human approvals, see [conversational administration](conversational-administration.md). Reader/User/Editor are everyday presets; company administration is separate. Keyword/model suggestions do not provide perfect salary detection.
+
+## Renaming departments and inspecting drafts
+
+Use spaces.rename with space_id, name and expected_name. The caller needs company administration and current workspace management; IDs, source bindings and grants remain unchanged. A stale name or duplicate slug fails.
+
+artifacts.list normally returns approved effective versions. Explicit include_pending true requires history plus contribute/review/publish and keeps audience/evidence checks. It lists current head state for review without making a draft available to ordinary agent context.

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Atmet Brain",
-    "version": "0.9.0"
+    "version": "0.10.0"
   },
   "components": {
     "securitySchemes": {
@@ -293,6 +293,39 @@
                         "additionalProperties": false,
                         "required": [
                           "name"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "spaces.rename"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "expected_name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id",
+                          "name",
+                          "expected_name"
                         ]
                       }
                     }
@@ -1327,6 +1360,9 @@
                           },
                           "kind": {
                             "type": "string"
+                          },
+                          "include_pending": {
+                            "type": "boolean"
                           }
                         },
                         "additionalProperties": false,
@@ -2397,6 +2433,120 @@
                         "properties": {
                           "connector_id": {
                             "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "connector_id"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "connectors.register_external"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "space_id": {
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "account": {
+                            "type": "string"
+                          },
+                          "audience": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "authority": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "space_id",
+                          "provider",
+                          "account"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "connectors.batch"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "connector_id": {
+                            "type": "string"
+                          },
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "deleted_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "checkpoint": {
+                            "type": "object"
+                          },
+                          "expected_checkpoint": {
+                            "type": "object"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "connector_id",
+                          "items"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "params"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "const": "connectors.purge"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "connector_id": {
+                            "type": "string"
+                          },
+                          "confirm": {
+                            "type": "boolean"
                           }
                         },
                         "additionalProperties": false,

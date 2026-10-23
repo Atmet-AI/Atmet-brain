@@ -2,7 +2,7 @@
 
 Update the installed software and open the same company data home. Your workspaces, documents, memory, workflows, skills, task history and permissions belong to that home. They are not stored in the npm package.
 
-Use the guided updater below for the npm terminal installation on macOS/Linux. Version 0.9.0 keeps schema 4; supported older schemas migrate only after their backup is verified. Read the target release's [changelog](../CHANGELOG.md) and [schema notes](versioning.md#schema-4-upgrade). Installing/preparing a runtime does not open the company database.
+Use the guided updater below for the npm terminal installation on macOS/Linux. Version 0.10.0 keeps schema 4; supported older schemas migrate only after their backup is verified. Read the target release's [changelog](../CHANGELOG.md) and [schema notes](versioning.md#schema-4-upgrade). Installing/preparing a runtime does not open the company database.
 
 ## Guided update
 
@@ -41,9 +41,9 @@ Global options go before update; update-specific flags go after it. Replace acme
 ```bash
 npx atmet-brain@latest --brain acme update
 npx atmet-brain@latest --home /absolute/company/path update
-npx atmet-brain@0.9.0 --brain acme update --to 0.9.0 \
-  --backup-dir /private/backup-storage/acme-before-0.9.0 \
-  --key-file /private/separate-keys/acme-before-0.9.0.key
+npx atmet-brain@0.10.0 --brain acme update --to 0.10.0 \
+  --backup-dir /private/backup-storage/acme-before-0.10.0 \
+  --key-file /private/separate-keys/acme-before-0.10.0.key
 ```
 
 Both destination names must be new. The key cannot be inside the backup folder, and neither can be inside the company data home. --to selects a reviewed exact release and avoids the latest-metadata lookup. The updater refuses a target older than its running version; it also refuses unknown/future schemas and a home still in recovery.
@@ -51,7 +51,7 @@ Both destination names must be new. The key cannot be inside the backup folder, 
 For deliberate unattended operator use only, after stopping every external reader/writer:
 
 ```bash
-npx atmet-brain@0.9.0 --json --brain acme update --to 0.9.0 --yes --confirm-stopped
+npx atmet-brain@0.10.0 --json --brain acme update --to 0.10.0 --yes --confirm-stopped
 ```
 
 JSON output contains paths and IDs, never raw tokens. --yes does not replace the explicit --confirm-stopped attestation. Each invocation creates a fresh backup; it does not automatically delete old snapshots or keys. Manage retention yourself.
@@ -61,7 +61,7 @@ JSON output contains paths and IDs, never raw tokens. --yes does not replace the
 After the guided update, npx atmet-brain@latest uses the selected new package. If you also use the global atmet-brain shortcut, update it explicitly:
 
 ```bash
-npm install --global atmet-brain@0.9.0
+npm install --global atmet-brain@0.10.0
 atmet-brain --version
 ```
 
@@ -104,7 +104,7 @@ Set these values in one terminal. The old version below is an example: replace i
 
 ```bash
 BRAIN_CURRENT_VERSION="0.8.0"
-BRAIN_NEW_VERSION="0.9.0"
+BRAIN_NEW_VERSION="0.10.0"
 BRAIN_HOME_PATH="$HOME/.atmet-brain"
 ```
 
@@ -143,8 +143,8 @@ An npm update alone does not stop a running Python server or MCP process. Do not
 Choose fresh output names for this update. The example creates private local backup/key folders; for protection against disk loss, put the encrypted snapshot and current recovery journal on independent storage, keeping the key separately protected.
 
 ```bash
-BRAIN_BACKUP_DIR="$HOME/Atmet-backups/before-0.9.0"
-BRAIN_KEY_FILE="$HOME/.atmet-backup-keys/before-0.9.0.key"
+BRAIN_BACKUP_DIR="$HOME/Atmet-backups/before-0.10.0"
+BRAIN_KEY_FILE="$HOME/.atmet-backup-keys/before-0.10.0.key"
 umask 077
 mkdir -p "$BRAIN_BACKUP_DIR" "$HOME/.atmet-backup-keys"
 
@@ -173,7 +173,7 @@ For npx users, no uninstall or fresh company setup is required:
 npx "atmet-brain@$BRAIN_NEW_VERSION" --version
 ```
 
-Expected output for this example: Atmet Brain 0.9.0. This command prepares the matching runtime without opening the company database.
+Expected output for this example: Atmet Brain 0.10.0. This command prepares the matching runtime without opening the company database.
 
 If you use a globally installed command, update that package too:
 

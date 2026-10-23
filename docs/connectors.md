@@ -75,3 +75,16 @@ The adapter does not send mail. It does not implement OAuth login, token refresh
 New adapters should return bounded records with stable IDs, titles, MIME and source text. Keep credentials outside business records, validate the complete snapshot before interpreting omissions, define update/delete/revocation behavior, and publish the provider's actual detection window. For large systems, implement durable cursors/history APIs rather than extending this bounded full-scan pattern indefinitely.
 
 Do not infer source permissions from content. Use supported identity/ACL mapping or an explicit isolated audience. An app integration's ability to fetch a record does not authorize every company member to read it.
+
+## External adapters
+
+The credential-free external binding lets your own adapter send normalized text from a selected app. The core does not discover OAuth credentials or fetch an arbitrary app automatically. Keep tokens in your adapter's secret store.
+
+1. Call connectors.register_external with space_id, provider (a slug) and account (a non-secret binding identifier). Select its audience and authority explicitly; the default authority is observation.
+2. Call connectors.batch with connector_id, items, deleted_ids, checkpoint and expected_checkpoint. Each item contains external_id, title, UTF-8 content and optional supported mime. Up to 500 total upserts/deletions are accepted per batch. Omitted IDs are not deletions.
+3. New or changed content uses the normal restricted intake and approved-rule classification. Run an authorized worker after release. Imported text cannot authorize its own publication or expand an audience.
+4. Persist the returned checkpoint only after success. The core compares the expected cursor and recognizes an exact repeated batch. A failure can leave individual source writes committed without advancing the checkpoint; retries remain subject to revisions, current access and tombstones. Serialize a connector's batches in your adapter.
+5. Explicit provider deletions revoke the source and invalidate derived context. Reappearance creates a fresh reviewed-intake revision. Permanent erasure tombstones are never revived by replay.
+6. Disconnect with connectors.disable. Use connectors.purge with confirm true to additionally erase captured bodies under current manage/erase/source-audience checks. External provider copies and historical backups have separate retention controls.
+
+All these operations are available through the authenticated RPC API and terminal rpc command. An external adapter owns provider authorization, format conversion, pagination, rate limits, event ordering and deployment. This interface does not include Nango credentials or a hosted platform.

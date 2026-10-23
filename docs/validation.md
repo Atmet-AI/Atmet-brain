@@ -2,6 +2,12 @@
 
 Use this page to judge what has been checked. For installation and daily operation, start with the [quickstart](quickstart.md). For the commands contributors run, use [testing](testing.md).
 
+## External adapters and department naming at 0.10.0
+
+The local suite passes 368 tests. Ten regression cases cover credential-free adapter registration, restricted batch intake, cursor compare-and-swap, identical-batch replay, explicit deletions, restricted reappearance, permanent tombstones, company/reader rejection, purge confirmation and stable department IDs after rename. Editors can explicitly list pending artifact heads; default artifact retrieval remains approved-only.
+
+These are provider-independent core interfaces. No Nango account, OAuth connection, hosted platform deployment or universal app mapping is implied by the core tests. Adapter callers must serialize batches and retry against the current checkpoint. Source upserts can commit before a failed batch finishes; the checkpoint advances only after the full batch succeeds. See [connectors](connectors.md).
+
 ## Guided updater at 0.9.0
 
 The complete suite passes 358 Python tests and 8 launcher tests, including 25 update checks for retained records/access, missing/future/recovering homes, cancellation, damaged/failed backup, migration failure, unexpected record changes, existing destinations, cooperative process/connection exclusion, service scope/port/running-state preservation, failure reports and exact npm handoff. Wheel/sdist metadata, exact npm archive inventory/digest and project/schema/diagram checks pass. The changed update chart renders without clipping.

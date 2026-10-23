@@ -6,7 +6,7 @@ Run this after creating a Brain, or choose Join inside the wizard to connect to 
 npx atmet-brain@latest agent
 ```
 
-The wizard requires engine 0.6.0+ at both ends; employee password enrollment needs 0.7.0. Current engine 0.9.0 uses schema 4. Before opening older data, run the [guided update](upgrading.md), including its external-process shutdown and verified pre-migration backup. Signed-in employees can use their saved password session; generated child credentials cannot outlive it.
+The wizard requires engine 0.6.0+ at both ends; employee password enrollment needs 0.7.0. Current engine 0.10.0 uses schema 4. Before opening older data, run the [guided update](upgrading.md), including its external-process shutdown and verified pre-migration backup. Signed-in employees can use their saved password session; generated child credentials cannot outlive it.
 
 The wizard creates a private connection bundle and verifies its identity/space permissions. It does not edit application settings, install task hooks, start API services or import project files. After adding the configuration, verify the connection in the chosen agent app.
 

@@ -1,6 +1,6 @@
 # Implementation status
 
-Atmet Brain 0.9.0 is a local/private-pilot alpha using database schema 4. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
+Atmet Brain 0.10.0 is a local/private-pilot alpha using database schema 4. Use this table to choose supported operations and identify features needing additional validation. Follow [installation](install.md) and the [company walkthrough](use-for-your-company.md) to use the core.
 
 | Capability | Evidence and scope |
 | --- | --- |
@@ -25,6 +25,7 @@ Atmet Brain 0.9.0 is a local/private-pilot alpha using database schema 4. Use th
 | History | Working artifact effective/known time lookup and retained source versions; no universal historical state replay |
 | REST and remote CLI | Local HTTP adapter; named HTTPS/manual SSH-loopback/automatic SSH client connections with identity pinning, private credential files, CA validation and no redirects; real loopback HTTP/TLS tests; no production gateway or SSO |
 | MCP | Local stdio and stdio-to-REST remote bridge with subprocess/revocation tests; generated client configuration; no remote MCP HTTP/OAuth transport or named-client certification |
+| External adapters | Provider-neutral credential-free bindings, bounded text batches, explicit deletions/checkpoint/replay checks, restricted intake and permissioned disconnect/purge; provider auth/fetching/mapping remains adapter-owned |
 | File connector | Working bounded POSIX selected-directory sync, changes, omissions and tombstones |
 | Gmail | Read-only selected-label adapter with fixture tests; no live account validation or token refresh |
 | Discovery | Working sequence drafts from explicit case-linked events; no general semantic process mining |

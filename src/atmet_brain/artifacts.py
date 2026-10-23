@@ -2,7 +2,7 @@
 
 import re
 
-from .auth import authorize, audience_allows, validate_audience
+from .auth import authorize, audience_allows, validate_audience, can
 from .config import validate_settings
 from .db import audit
 from .errors import BrainError, require
@@ -194,18 +194,24 @@ class ArtifactsMixin:
                 result[field] = loads(result[field])
             return result
 
-    def list_artifacts(self, actor, space_id, kind=None):
+    def list_artifacts(self, actor, space_id, kind=None, include_pending=False):
         require(kind is None or kind in KINDS, "invalid_kind", "Unknown artifact kind.")
+        require(type(include_pending) is bool, "invalid_input", "include_pending must be true or false.")
         with self.store.transaction() as conn:
             authorize(conn, actor, space_id, "read")
+            if include_pending:
+                authorize(conn, actor, space_id, "history")
+                require(any(can(conn, actor, space_id, operation) for operation in ("contribute", "review", "publish")),
+                        "forbidden", "Draft inspection needs contribute, review or publish permission.", 403)
             result = []
             for item in conn.execute("SELECT * FROM artifacts WHERE space_id=? ORDER BY kind,slug", (space_id,)):
                 if kind is not None and item["kind"] != kind:
                     continue
-                version = effective_version(conn, item["id"])
+                version = (conn.execute("SELECT * FROM artifact_versions WHERE artifact_id=? AND revision=?", (item["id"], item["head"])).fetchone()
+                           if include_pending else effective_version(conn, item["id"]))
                 if version and audience_allows(conn, actor, item["audience"]) \
                         and self._evidence_readable(conn, actor, space_id, version["evidence"]):
-                    result.append({"id": item["id"], "kind": item["kind"], "slug": item["slug"], "revision": version["revision"],
+                    result.append({"id": item["id"], "kind": item["kind"], "slug": item["slug"], "revision": version["revision"], "state": version["state"],
                                    "description": loads(version["body"]).get("description", ""), "content_hash": version["content_hash"]})
             return result
 

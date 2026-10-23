@@ -56,7 +56,7 @@ Automatic bootstrap targets macOS and glibc Linux, x64/arm64. Runtime tests have
 
 Use task-report to save selected outcomes with original source evidence, task-history/task-get to inspect permitted history and task-learn to create a pending skill from reported steps/corrections. History requires explicit grants; reports default private and never become approved company rules automatically. [Complete walkthrough](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/task-history-and-learning.md).
 
-Current engine 0.9.0 upgrades supported schema-1/2/3 data transactionally to schema 4. Use the guided update below before opening existing data; its manual fallback uses the old compatible engine for backup. Older engines cannot open schema 4. [Upgrade and recovery](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/versioning.md#schema-4-upgrade).
+Current engine 0.10.0 upgrades supported schema-1/2/3 data transactionally to schema 4. Use the guided update below before opening existing data; its manual fallback uses the old compatible engine for backup. Older engines cannot open schema 4. [Upgrade and recovery](https://github.com/Atmet-AI/Atmet-brain/blob/main/docs/versioning.md#schema-4-upgrade).
 
 ## Automatic agent feedback
 

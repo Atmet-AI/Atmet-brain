@@ -96,12 +96,12 @@ class SourcesMixin:
                 if existing["status"] == "intake" and not can(conn, actor, space_id, "manage"):
                     creator = conn.execute("SELECT requested_by FROM jobs WHERE source_id=? ORDER BY source_revision LIMIT 1", (existing["id"],)).fetchone()
                     require(creator and creator[0] == actor.principal_id, "forbidden", "Only the submitting employee or intake administrator may replace this pending document.", 403)
-                require(existing["status"] in {"active", "intake"}, "source_inactive", "Revalidate this source before writing.", 409)
+                require(existing["status"] in {"active", "intake"} or (_connector_id and existing["status"] == "revoked"), "source_inactive", "Revalidate this source before writing.", 409)
                 if dumps(allowed_audience) != existing["audience"] or authority != existing["authority"]:
                     authorize(conn, actor, space_id, "manage")
                 old = conn.execute("SELECT * FROM source_revisions WHERE source_id=? AND revision=?",
                                    (existing["id"], existing["revision"])).fetchone()
-                if old["content_hash"] == sha(content) and old["mime"] == mime and existing["title"] == title \
+                if existing["status"] in {"active", "intake"} and old["content_hash"] == sha(content) and old["mime"] == mime and existing["title"] == title \
                         and existing["audience"] == dumps(allowed_audience) and existing["authority"] == authority \
                         and (effective_at is None or old["effective_at"] == timestamp(effective_at)):
                     return {"id": existing["id"], "revision": existing["revision"], "status": "unchanged"}
@@ -121,6 +121,8 @@ class SourcesMixin:
                          (ident, revision, content.encode(), mime, sha(content), now(), timestamp(effective_at)))
             gate = self.settings.require_document_classification or policy_revision(conn, actor.org_id) > 0
             classification = None
+            if not gate and _connector_id:
+                conn.execute("UPDATE sources SET status='active' WHERE id=? AND status='revoked'", (ident,))
             if gate:
                 current = conn.execute("SELECT * FROM sources WHERE id=?", (ident,)).fetchone()
                 classification = evaluate(conn, actor.org_id, current, content)

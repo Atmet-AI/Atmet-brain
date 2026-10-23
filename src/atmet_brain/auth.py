@@ -222,6 +222,18 @@ class IdentityMixin:
             return [dict(s) for s in conn.execute("SELECT * FROM spaces WHERE org_id=? ORDER BY slug", (actor.org_id,))
                     if can(conn, actor, s["id"], "read") or can(conn, actor, s["id"], "manage")]
 
+    def rename_space(self, actor, space_id, name, expected_name):
+        name = slug(name)
+        with self.store.transaction(write=True) as conn:
+            organization_admin(conn, actor)
+            space = authorize(conn, actor, space_id, "manage")
+            require(space["slug"] == expected_name, "revision_conflict", "Workspace name changed. Refresh before renaming.", 409)
+            require(not conn.execute("SELECT 1 FROM spaces WHERE org_id=? AND slug=? AND id!=?", (actor.org_id, name, space_id)).fetchone(),
+                    "already_exists", "Workspace name already exists.", 409)
+            conn.execute("UPDATE spaces SET slug=? WHERE id=?", (name, space_id))
+            audit(conn, actor, "space.rename", space_id, space_id, {"previous": expected_name, "name": name})
+            return {"id": space_id, "slug": name}
+
     def create_principal(self, actor, name, kind="service", org_admin=False):
         require(kind in {"human", "service"} and type(org_admin) is bool, "invalid_principal", "Invalid principal type.")
         with self.store.transaction(write=True) as conn:

@@ -711,6 +711,10 @@ Automatic SSH mode opens and closes forwarding for each request after an adminis
 
 See the [full documentation index](docs/README.md) and [validation record](docs/validation.md).
 
+## Connect external apps
+
+External app adapters can use the core's credential-free incremental ingestion API. See [external adapter setup](docs/connectors.md#external-adapters) for normalized text batches, checkpoints, disconnect and erasure. OAuth setup and provider data mapping stay with the selected adapter.
+
 ## Development
 
 ```bash

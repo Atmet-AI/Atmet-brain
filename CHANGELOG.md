@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 0.10.0 - external ingestion and workspace administration, 2026-10-23
+
+### Added
+
+- Provider-neutral external connector registration and bounded incremental batches with optimistic checkpoints, replay detection, explicit deletions and persistent erasure tombstones. Credentials and provider fetching remain in the selected adapter.
+- Explicit connector purge with current management/erasure/audience checks, retained-body clearing and dependent-evidence invalidation.
+- Workspace rename with stable IDs/grants and a current-name concurrency check.
+- Explicit permissioned draft listings for review interfaces. Default retrieval continues to use approved effective instructions.
+
+### Scope
+
+- Schema 4 is unchanged. External ingestion uses the same restricted intake and human-approved rules. There is no universal provider adapter, automatic OAuth permission grant, new third-party runtime dependency or automatic skill publication. Partial failed batches do not advance their checkpoint; retry with the same data deliberately.
+
+
 ## 0.9.0 - guided backup-first company updates, 2026-10-23
 
 ### Added

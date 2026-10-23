@@ -9,6 +9,7 @@ METHODS = {
     "admin.overview": "admin_overview", "admin.propose": "propose_admin_change", "admin.get": "get_admin_change", "admin.list": "list_admin_changes",
     "control.create": "create_control_credential", "rules.list": "list_access_rules", "intake.list": "list_intake", "intake.inspect": "inspect_intake",
     "identity.me": "whoami", "access.check": "check_access", "spaces.list": "list_spaces", "spaces.create": "create_space",
+    "spaces.rename": "rename_space",
     "team.add": "add_team_member",
     "accounts.setup": "setup_account", "accounts.password": "change_password",
     "invites.create": "create_invite", "invites.list": "list_invites", "invites.revoke": "revoke_invite",
@@ -33,6 +34,7 @@ METHODS = {
     "skills.learn": "learn_skill_from_reports",
     "automations.discover": "discover_automation", "tasks.route": "route_task", "tasks.run": "run_task",
     "connectors.list": "list_connectors", "connectors.disable": "disable_connector", "connectors.sync": "sync_connector",
+    "connectors.register_external": "register_external_connector", "connectors.batch": "apply_connector_batch", "connectors.purge": "purge_connector",
 }
 
 AUTH_METHODS = {"login": "login", "accept": "accept_invite"}
@@ -74,15 +76,15 @@ def input_schema(brain, method):
     params = parameters(brain, method)
     properties = {}
     integers = {"limit", "max_jobs", "expected_revision", "revision", "target_revision", "from_revision", "to_revision", "max_chars", "min_runs", "ai_tokens"}
-    booleans = {"approve", "active", "org_admin", "include_pending", "include_payload", "succeeded", "learn"}
-    arrays = {"operations", "space_ids", "audience", "evidence", "dependencies", "artifact_ids", "principal_ids", "report_ids", "steps", "corrections", "checks", "access"}
+    booleans = {"approve", "active", "org_admin", "include_pending", "include_payload", "succeeded", "learn", "confirm"}
+    arrays = {"operations", "space_ids", "audience", "evidence", "dependencies", "artifact_ids", "principal_ids", "report_ids", "steps", "corrections", "checks", "access", "items", "deleted_ids"}
     for name in params:
-        kind = "integer" if name in integers else "boolean" if name in booleans else "array" if name in arrays else "object" if name in {"body", "inputs", "output", "params"} else "string"
+        kind = "integer" if name in integers else "boolean" if name in booleans else "array" if name in arrays else "object" if name in {"body", "inputs", "output", "params", "checkpoint", "expected_checkpoint"} else "string"
         properties[name] = {"type": kind}
         if "password" in name:
             properties[name].update(writeOnly=True, maxLength=128)
         if kind == "array":
-            properties[name]["items"] = {"type": "object" if name in {"evidence", "dependencies", "access"} else "string"}
+            properties[name]["items"] = {"type": "object" if name in {"evidence", "dependencies", "access", "items"} else "string"}
             if name == "access":
                 from .auth import ROLES
                 properties[name]["items"].update(additionalProperties=False, required=["space_id", "role"],
