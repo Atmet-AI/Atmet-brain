@@ -20,7 +20,7 @@ command -v curl >/dev/null 2>&1 || { printf '%s\n' 'curl is required.' >&2; exit
 temporary=$(mktemp -d)
 trap 'rm -rf "$temporary"' EXIT HUP INT TERM
 wheel="atmet_brain-${version}-py3-none-any.whl"
-base="https://github.com/anashamad9/Atmet-brain/releases/download/v${version}"
+base="https://github.com/Atmet-AI/Atmet-brain/releases/download/v${version}"
 printf '%s\n' "Installing Atmet Brain ${version} for this user..."
 curl --proto '=https' --tlsv1.2 -fsSL "$base/$wheel" -o "$temporary/$wheel"
 curl --proto '=https' --tlsv1.2 -fsSL "$base/SHA256SUMS.txt" -o "$temporary/SHA256SUMS.txt"

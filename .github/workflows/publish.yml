@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.repository == 'anashamad9/Atmet-brain'
+    if: github.repository == 'Atmet-AI/Atmet-brain'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

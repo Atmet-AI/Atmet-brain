@@ -32,12 +32,12 @@
   "author": "Atmet",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anashamad9/Atmet-brain.git",
+    "url": "git+https://github.com/Atmet-AI/Atmet-brain.git",
     "directory": "npm/atmet-brain"
   },
-  "homepage": "https://github.com/anashamad9/Atmet-brain#readme",
+  "homepage": "https://github.com/Atmet-AI/Atmet-brain#readme",
   "bugs": {
-    "url": "https://github.com/anashamad9/Atmet-brain/issues"
+    "url": "https://github.com/Atmet-AI/Atmet-brain/issues"
   },
   "publishConfig": {
     "access": "public",

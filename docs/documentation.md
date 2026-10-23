@@ -10,6 +10,8 @@ Describe current behavior directly: "Run atmet-brain to see setup and status com
 
 Keep required platform/support boundaries visible, but put installer internals and version-pinning details in install.md. A terminal preview illustrates usage; it is not a release announcement. Documentation-only README edits do not require a runtime version bump or a new npm release when the published launcher README and behavior are unaffected.
 
+The README uses the supplied Atmet Brain SVG with a white dark-mode variant. Keep their paths and geometry together. Its version badge reads the public npm version automatically; it must not advertise an unpublished version.
+
 ## Keep guides useful when versions change
 
 Updating documentation means keeping the current setup steps, examples, expected results, architecture and supported boundaries accurate. It does not mean appending what the team just changed to every page. Review all affected guides when behavior changes; leave unrelated guides alone.

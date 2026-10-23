@@ -23,7 +23,7 @@ With Node 24 and npm 11.17.0 or newer, signed in as the package owner:
 
 ```bash
 npm whoami --registry=https://registry.npmjs.org
-npm trust github atmet-brain --repo anashamad9/Atmet-brain --file publish.yml --env npm --allow-publish
+npm trust github atmet-brain --repo Atmet-AI/Atmet-brain --file publish.yml --env npm --allow-publish
 ```
 
 Run this command in your own terminal and keep it open until npm reports that trust was created. Complete npm's private verification when prompted. An approved browser page alone does not confirm that configuration was saved: if a waiting CLI request expires, use the local command again or the stable package settings form. The same configuration can be added in npm package settings under Trusted Publisher:
@@ -31,7 +31,7 @@ Run this command in your own terminal and keep it open until npm reports that tr
 | Field | Exact value |
 | --- | --- |
 | Package | atmet-brain |
-| GitHub owner | anashamad9 |
+| GitHub owner | Atmet-AI |
 | Repository | Atmet-brain |
 | Workflow filename | publish.yml |
 | Environment | npm |
@@ -42,8 +42,8 @@ Direct publishing is required for releases without individual staged approvals. 
 After trust is configured, prepare a new unused release with the [release procedure](releasing.md). Set RELEASE_VERSION to that package version, then activate the repository switch and publish its reviewed tag:
 
 ```bash
-gh variable set NPM_PUBLISH_ENABLED --body true --repo anashamad9/Atmet-brain
-gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=true
+gh variable set NPM_PUBLISH_ENABLED --body true --repo Atmet-AI/Atmet-brain
+gh workflow run publish.yml --repo Atmet-AI/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=true
 ```
 
 Manual dispatch is for activation or recovery before an upload has been accepted. Never select a version npm already accepted. Subsequent new tag pushes publish automatically. No npm publishing secret or PyPI job is used. The workflow uses GitHub-hosted Ubuntu, Node 24, npm 11.17.0 and a job-scoped OIDC identity. Keep the workflow filename/environment consistent with npm trust.
@@ -53,7 +53,7 @@ Manual dispatch is for activation or recovery before an upload has been accepted
 Before account setup, leave NPM_PUBLISH_ENABLED absent or false. Tag pushes still build/test the exact release but skip the npm job. A manual build-only run works with an existing reviewed tag. Set RELEASE_VERSION to that tag's version:
 
 ```bash
-gh workflow run publish.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=false
+gh workflow run publish.yml --repo Atmet-AI/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION" -f publish_npm=false
 ```
 
 Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete checked tgz). Successful publication additionally saves `npm-publication-receipt`. A delayed registry response never triggers another upload; a digest/identity mismatch fails immediately. Generated vendor files stay out of Git; [local build commands](releasing.md#npm-distribution) describe preparing the exact archive.
@@ -78,7 +78,18 @@ If trusted publishing is unavailable, the owner can publish the exact checked tg
 When npm accepted the upload, rerun only verification. The separate workflow has read-only permissions and no publishing step. It checks the immutable tag, downloads the exact GitHub release archive, compares public registry integrity/latest and installs anonymously on Ubuntu and macOS. Set RELEASE_VERSION to the existing current published version:
 
 ```bash
-gh workflow run verify-release.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION"
+gh workflow run verify-release.yml --repo Atmet-AI/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION"
 ```
 
 Inspect the run and its public-install artifacts. The original failed run remains part of the record; a successful verification does not rewrite its result. No npm account verification or upload is needed. This check expects the selected release to remain npm latest; older historical versions require a separately scoped check.
+
+## Moving the repository to another owner
+
+GitHub repository transfers preserve the repository history and redirect its old URL. npm trust identifies an exact GitHub owner, repository, workflow and environment; update that account setting after a transfer before creating another release tag. A GitHub redirect does not update the npm trusted publisher.
+
+1. Save a Git bundle and record branch/tag SHAs, release IDs/assets and the repository ID before transferring the existing repository. Do not create a replacement repository or rewrite tags.
+2. Transfer through GitHub, verify the same repository ID/history/releases, then update local origin, live documentation/package URLs and the publish workflow's repository guard. Keep historical release evidence unchanged.
+3. Pause NPM_PUBLISH_ENABLED while trust is being changed. In the npm package's Publishing access settings, replace the trusted publisher with Atmet-AI/Atmet-brain, publish.yml, environment npm, with direct publishing allowed. Complete private npm verification yourself.
+4. Verify npm trust and the retained GitHub npm environment, then re-enable the switch. The next fresh version tag tests the complete publishing path. Do not republish an existing version to test the move.
+
+The package remains atmet-brain, so users keep the same npx command. Existing published versions remain immutable. Historical provenance names the original repository identity used for that release. See [GitHub transfers](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository) and [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).

@@ -18,7 +18,7 @@ Install the wheel into a fresh environment and run a first task. Verify the lice
 
 ## Commit and tag
 
-The source repository is [anashamad9/Atmet-brain](https://github.com/anashamad9/Atmet-brain). Keep the Git author configured to the actual maintainer. Review source, license, supported scope and version consistency before committing. Prepare a new unused package version first, following [release versioning](release-versioning.md). Then read it from package metadata and create its matching tag:
+The source repository is [Atmet-AI/Atmet-brain](https://github.com/Atmet-AI/Atmet-brain). Keep the Git author configured to the actual maintainer. Review source, license, supported scope and version consistency before committing. Prepare a new unused package version first, following [release versioning](release-versioning.md). Then read it from package metadata and create its matching tag:
 
 ```bash
 RELEASE_VERSION=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')

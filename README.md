@@ -1,6 +1,24 @@
-# Atmet Brain
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/atmet-brain-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/atmet-brain-logo.svg">
+    <img src="docs/assets/atmet-brain-logo.svg" alt="Atmet Brain" width="560" height="73">
+  </picture>
+</h1>
 
-**Company memory, workflows and skills that your agents can use.**
+<p align="center"><strong>The open-source company Brain for your AI agents.</strong></p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/atmet-brain"><img src="https://img.shields.io/npm/v/atmet-brain?style=flat-square&amp;label=version&amp;color=F55314" alt="Current published version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-555555?style=flat-square" alt="License: Apache 2.0"></a>
+  <a href="docs/implementation-status.md"><img src="https://img.shields.io/badge/status-alpha-555555?style=flat-square" alt="Status: alpha"></a>
+  <a href="https://github.com/Atmet-AI"><img src="https://img.shields.io/badge/by-Atmet-555555?style=flat-square" alt="By Atmet"></a>
+</p>
+
+<p align="center">
+  Company memory. Approved workflows. Reusable skills.<br>
+  One core, accessed from your terminal, Python, REST or MCP.
+</p>
 
 Atmet Brain is the open-source core for keeping business context in one place: company facts, source evidence, approved procedures and reusable task methods. Give an agent the context it is allowed to read, then keep that context current as the business changes.
 
@@ -256,7 +274,7 @@ The context now includes the approved workflow and its source evidence. A pendin
 For a disposable demonstration or code changes, use a source checkout:
 
 ```bash
-git clone https://github.com/anashamad9/Atmet-brain.git
+git clone https://github.com/Atmet-AI/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate

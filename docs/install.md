@@ -36,7 +36,7 @@ Versioned GitHub release wheels are an alternative for Python/uv users. The foll
 With [uv installed](https://docs.astral.sh/uv/getting-started/installation/) and curl available, download the versioned installer, inspect it if desired, then run it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/anashamad9/Atmet-brain/v0.8.0/install.sh -o install-atmet.sh
+curl -fsSL https://raw.githubusercontent.com/Atmet-AI/Atmet-brain/v0.8.0/install.sh -o install-atmet.sh
 sh install-atmet.sh 0.8.0
 atmet-brain setup
 ```
@@ -49,7 +49,7 @@ First [install uv](https://docs.astral.sh/uv/getting-started/installation/). The
 
 ```bash
 uv tool install --python 3.12 \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
+  "https://github.com/Atmet-AI/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
 atmet-brain --help
 ```
 
@@ -59,7 +59,7 @@ uv installs the tool into an isolated environment and exposes its executable. If
 
 ```bash
 uvx --python 3.12 \
-  --from "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl" \
+  --from "https://github.com/Atmet-AI/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl" \
   atmet-brain --help
 ```
 
@@ -69,7 +69,7 @@ To use a Git source instead, this also works with Git installed:
 
 ```bash
 uvx --python 3.12 \
-  --from "git+https://github.com/anashamad9/Atmet-brain.git@v0.8.0" \
+  --from "git+https://github.com/Atmet-AI/Atmet-brain.git@v0.8.0" \
   atmet-brain --help
 ```
 
@@ -81,7 +81,7 @@ Inside your own Python 3.11+ project:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install \
-  "https://github.com/anashamad9/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
+  "https://github.com/Atmet-AI/Atmet-brain/releases/download/v0.8.0/atmet_brain-0.8.0-py3-none-any.whl"
 ```
 
 The package provides `from atmet_brain import Brain` and the `atmet-brain` executable. Keep this environment activated when using its CLI. On Windows, the activation command is `.venv\Scripts\activate`; Windows support still needs validation.
@@ -89,7 +89,7 @@ The package provides `from atmet_brain import Brain` and the `atmet-brain` execu
 ## Source, examples and contributions
 
 ```bash
-git clone https://github.com/anashamad9/Atmet-brain.git
+git clone https://github.com/Atmet-AI/Atmet-brain.git
 cd Atmet-brain
 python3 -m venv .venv
 source .venv/bin/activate

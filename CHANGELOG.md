@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Documentation and maintenance
+
+- Add the Atmet Brain logo, product summary and live package-version badge to the README, with light and dark logo variants.
+- Move the existing repository to Atmet-AI/Atmet-brain and update active project links and release configuration. Published versions and historical tags remain unchanged.
+
 ## 0.8.0 - approved agent administration and restricted document intake, 2026-10-23
 
 ### Added

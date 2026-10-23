@@ -24,9 +24,9 @@ classifiers = [
 atmet-brain = "atmet_brain.cli:main"
 
 [project.urls]
-Repository = "https://github.com/anashamad9/Atmet-brain"
-Issues = "https://github.com/anashamad9/Atmet-brain/issues"
-Changelog = "https://github.com/anashamad9/Atmet-brain/blob/main/CHANGELOG.md"
+Repository = "https://github.com/Atmet-AI/Atmet-brain"
+Issues = "https://github.com/Atmet-AI/Atmet-brain/issues"
+Changelog = "https://github.com/Atmet-AI/Atmet-brain/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
