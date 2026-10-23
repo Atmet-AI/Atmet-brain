@@ -27,6 +27,7 @@ The examples use the installed `atmet-brain` command. Install it globally as sho
 | Turn supported repeated work into reviewed Python | [Automations](automations.md) |
 | Automatically report agent results and request reviewed skills | [Automatic task feedback](automatic-task-feedback.md) |
 | Report task outcomes and search/learn from past work | [Task history and learning](task-history-and-learning.md) |
+| Understand team identity, department access and private payroll | [Team access explained](team-access-explained.md) |
 | Give a person or service limited access | [Permissions](permissions.md) |
 | Configure budgets and remote processing | [Configuration](configuration.md) |
 | Inspect, compare and restore revisions | [History walkthrough](history-walkthrough.md), [revision rules](versioning.md) |

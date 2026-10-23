@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.6.1 - existing Brain setup recovery, 2026-10-23
+
+### Fixed
+
+- Local setup detects an existing Brain before company questions and offers Open existing, Create separate or Cancel. Reuse preserves the owner, workspaces and records; a separate Brain requires a new private directory.
+- Explicit creation flags against an existing home fail before the interview with recovery instructions. Non-interactive local setup without creation flags opens the existing Brain.
+- Setup/Host/Join next commands use the installed interpreter so npm-only users do not need a global CLI executable.
+
+### Documentation
+
+- Explain explicit workspace access, remote network reachability, reusable bearer authentication, restricted payroll sources and the distinction between company discovery IDs and login.
+
+### Compatibility
+
+- Schema remains 2. No migration from 0.6.0. No existing Brain is reset or renamed. Login/SSO and numeric company discovery are not added by this patch.
+
 ## 0.6.0 - guided agent connection, 2026-10-23
 
 ### Added

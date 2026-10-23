@@ -3,6 +3,7 @@
 import sys
 import shlex
 from functools import partial
+from pathlib import Path
 
 from .auth import ROLES
 from .errors import require
@@ -26,7 +27,7 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         console.option("join", "Join my team", "Open the private connection file from your administrator.")
         mode = ask("Choose a setup", "local", ["local", "host", "join", "team", "connect"])
     mode = {"team": "host"}.get(mode, mode)
-    base = ["atmet-brain", "--home", str(args.home.expanduser().resolve())]
+    base = [str(Path(sys.executable).absolute()), "-m", "atmet_brain", "--home", str(args.home)]
     if mode == "join" or (mode == "connect" and args.file):
         path = args.file or (ask("Private team connection file") if interactive else None)
         require(path, "setup_answers_required", "Use join --file PATH, or run join interactively.")
@@ -53,13 +54,33 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         require(name and endpoint and token_file, "setup_answers_required", "Connect setup needs --name, --endpoint and --token-file.")
         return connect_remote(name, endpoint, token_file, args.ca_file)
 
-    existing = mode == "host" and (args.home / "brain.sqlite3").is_file()
+    existing = (args.home / "brain.sqlite3").is_file()
+    if existing and mode == "local":
+        require(not args.organization and not args.spaces and not args.owner, "already_initialized",
+                "A Brain already exists at " + str(args.home) + ". Run setup without creation flags to open it, use space NAME to add a department, or choose a different --home for a separate Brain.")
+        if interactive:
+            console.line("  A Brain already exists on this device.", accent=True)
+            console.wrapped("Data home: " + str(args.home), "  ")
+            console.option("reuse", "Open the existing Brain", "Keep its company, owner, workspaces and data.")
+            console.option("new", "Create a separate Brain", "Choose a new data folder. The existing Brain stays intact.")
+            console.option("cancel", "Leave setup", "Make no setup changes.")
+            choice = ask("Existing Brain", "reuse", ["reuse", "new", "cancel"])
+            require(choice != "cancel", "setup_cancelled", "Setup cancelled. Existing Brain kept.")
+            if choice == "new":
+                target = Path(ask("New private data folder", str(args.home.with_name(args.home.name + "-other")))).expanduser()
+                require(not target.exists() and not target.is_symlink(), "already_exists",
+                        "Choose a new folder that does not exist. Existing folders are never overwritten.")
+                args.home = target.resolve()
+                base = [str(Path(sys.executable).absolute()), "-m", "atmet_brain", "--home", str(args.home)]
+                existing = False
     if existing:
-        require(not args.organization and not args.spaces and not args.owner, "existing_brain",
-                "Host reuses this Brain. Omit organization/owner/spaces flags; use space to add a department first.")
+        if mode == "host":
+            require(not args.organization and not args.spaces and not args.owner, "existing_brain",
+                    "Host reuses this Brain. Omit organization/owner/spaces flags; use space to add a department first.")
         result = inspect_local()
         spaces = [space["slug"] for space in result["spaces"]]
-        require(spaces, "no_spaces", "Create a workspace with: atmet-brain space WORKSPACE_NAME, then run host.")
+        if mode == "host":
+            require(spaces, "no_spaces", "Create a workspace with: atmet-brain space WORKSPACE_NAME, then run host.")
         if interactive:
             console.line("  1 / Reuse your existing Brain", accent=True)
             console.result({"home": result["home"], "signed_in_as": result["identity"]["name"], "workspaces": spaces})
@@ -124,7 +145,8 @@ def guided_setup(args, initialize, connect_remote, *, inspect_local=None, share=
         result = initialize(organization, owner, spaces)
     result["reused"] = existing
     result["access"] = "The API stays on loopback. SSH accounts and HTTPS ingress are configured by your administrator."
-    result["next"] = [shlex.join(base + ["serve"]), shlex.join(base + ["status"])]
+    result["next"] = [shlex.join(base + ["status"]), shlex.join(base + ["space"])]
+    result["departments"] = "Add a department without repeating company setup: " + shlex.join(base + ["space", "DEPARTMENT_NAME"])
     if mode == "host":
         if member:
             result["team"] = share(member, selected, role, output, endpoint=endpoint, ssh=ssh)

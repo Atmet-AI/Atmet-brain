@@ -15,6 +15,8 @@ flowchart TB
     Check --> Finance["Finance space"]
 ```
 
+For a plain-language explanation of department access, private payroll, different networks and the current credential authentication, read [team access explained](team-access-explained.md). A numeric company ID cannot locate a private server without a separately configured resolver, and never grants access by itself.
+
 ## Guided Host and Join
 
 There are two jobs: the company administrator hosts the Brain, and each teammate joins it. A workspace named `shared` is a memory space, not a network-sharing switch. Access always needs explicit grants.

@@ -4,7 +4,7 @@
 
 ## Initialize
 
-You can run `atmet-brain setup` for guided company/department setup. If it already created your Sales space, list it with `atmet-brain space` and skip initialization below. Otherwise follow this manual path in a fresh data home:
+You can run `atmet-brain setup` for guided company/department setup. If it already created your Sales space, list it with `atmet-brain space` and skip initialization below. If Local finds an existing Brain, choose reuse to open it, or new to create an independent Brain in a different fresh data folder. Add departments with `atmet-brain space NAME`. Otherwise follow this manual path in a fresh data home:
 
 ```bash
 atmet-brain --help

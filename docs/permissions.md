@@ -5,6 +5,14 @@ For guided team access, run `atmet-brain host` on the company device. It accepts
 
 The core authorizes each operation before it returns content. A client supplies a credential; it cannot supply its own privileged identity.
 
+## Choose a practical access structure
+
+A workspace is an explicit scope, not necessarily one department. Grant someone every space they need; no other department or shared space is automatically included. A simple payroll arrangement uses finance-general for Operations/Finance and payroll for Finance/authorized administrators. Sources imported into each space use that space's audience by default, so ordinary setup does not need per-person rules for each file. Selected-directory connectors can apply an explicit target space/audience to a batch. Avoid importing confidential originals into broader spaces.
+
+Alternatively keep one Finance workspace and restrict payroll source audiences to Finance and explicitly authorized admin groups. A document's group membership still requires space/operation permission. There is no automatic row/column salary redaction, folder ACL inheritance or classification from a filename. Keep mixed-access information in separate sources. Groups create no space grants by themselves.
+
+Current authentication proves possession of a credential bound to a principal. A display name or company ID does not verify a human, and a shared service credential does not identify each employee using it. Company SSO, login/MFA and delegated user authentication are not implemented. [Worked team example and current limits](team-access-explained.md).
+
 ## Give a reader access and verify it
 
 An administrator first initializes the company and creates its spaces through [setup](quickstart.md). Save a permitted Sales ID as SALES_SPACE. Create a separate expiring reader credential:

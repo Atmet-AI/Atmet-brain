@@ -22,6 +22,86 @@ class GuidedSharingCase(unittest.TestCase):
     server = fixtures.TerminalTeamCase.server
     cli = fixtures.TerminalTeamCase.cli
 
+    def test_local_setup_opens_existing_brain_before_asking_company_details(self):
+        before = (self.home / "owner.token").read_bytes()
+        args = parser().parse_args(["--home", str(self.home), "setup"])
+        with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=["local", "reuse"]) as answers, contextlib.redirect_stderr(io.StringIO()) as screen:
+            result = execute(args)
+        self.assertTrue(result["reused"])
+        self.assertEqual(2, answers.call_count)
+        self.assertEqual(self.actor.principal_id, result["identity"]["principal_id"])
+        self.assertEqual(before, (self.home / "owner.token").read_bytes())
+        self.assertEqual({"sales", "finance"}, {s["slug"] for s in result["spaces"]})
+        self.assertIn("A Brain already exists", screen.getvalue())
+        self.assertNotIn("Company slug", screen.getvalue())
+
+    def test_noninteractive_local_reuse_has_runnable_npm_only_next_commands(self):
+        import shlex
+        import subprocess
+        run = self.cli(self.home, "setup", "--mode", "local")
+        self.assertEqual(0, run.returncode, run.stderr)
+        result = json.loads(run.stdout)
+        self.assertTrue(result["reused"])
+        command = shlex.split(result["next"][0])
+        self.assertEqual(["-m", "atmet_brain"], command[1:3])
+        checked = subprocess.run(command, text=True, capture_output=True, timeout=15)
+        self.assertEqual(0, checked.returncode, checked.stderr)
+        self.assertEqual(self.actor.principal_id, json.loads(checked.stdout)["identity"]["principal_id"])
+
+    def test_local_creation_flags_fail_before_interview_and_preserve_company(self):
+        args = parser().parse_args(["--home", str(self.home), "setup", "--mode", "local", "--organization", "other"])
+        with patch("sys.stdin.isatty", return_value=True), patch("builtins.input") as answers, contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(BrainError) as caught:
+                execute(args)
+        self.assertEqual("already_initialized", caught.exception.code)
+        self.assertIn("different --home", caught.exception.message)
+        answers.assert_not_called()
+        self.assertEqual(self.actor.principal_id, self.brain.whoami(self.actor)["principal_id"])
+
+    def test_local_new_choice_creates_independent_home_and_keeps_original(self):
+        from atmet_brain import Brain
+        target = self.root / "separate"
+        before = (self.home / "owner.token").read_bytes()
+        args = parser().parse_args(["--home", str(self.home), "setup", "--mode", "local"])
+        with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=["new", str(target), "new-company", "New owner", "shared,operations"]), contextlib.redirect_stderr(io.StringIO()):
+            result = execute(args)
+        self.assertFalse(result["reused"])
+        new = Brain(target); actor = new.authenticate((target / "owner.token").read_text().strip())
+        self.assertNotEqual(self.actor.org_id, actor.org_id)
+        self.assertEqual({"shared", "operations"}, {s["slug"] for s in new.list_spaces(actor)})
+        self.assertEqual(before, (self.home / "owner.token").read_bytes())
+        self.assertTrue(all(str(target) in command for command in result["next"]))
+
+    def test_local_separate_home_refuses_existing_directory_and_symlink(self):
+        folder = self.root / "keep"; folder.mkdir(); (folder / "note.txt").write_text("keep")
+        link = self.root / "link"; link.symlink_to(self.root / "absent", target_is_directory=True)
+        for target in [folder, link]:
+            args = parser().parse_args(["--home", str(self.home), "setup", "--mode", "local"])
+            with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=["new", str(target)]), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(BrainError) as caught:
+                    execute(args)
+            self.assertEqual("already_exists", caught.exception.code)
+        self.assertEqual("keep", (folder / "note.txt").read_text())
+        self.assertFalse((folder / "brain.sqlite3").exists())
+
+    def test_local_existing_cancel_and_eof_preserve_owner(self):
+        before = (self.home / "owner.token").read_bytes()
+        for answer, code in [("cancel", "setup_cancelled"), (EOFError(), "setup_interrupted")]:
+            args = parser().parse_args(["--home", str(self.home), "setup", "--mode", "local"])
+            with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", side_effect=[answer]), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(BrainError) as caught:
+                    execute(args)
+            self.assertEqual(code, caught.exception.code)
+        self.assertEqual(before, (self.home / "owner.token").read_bytes())
+
+    def test_local_reuse_checks_existing_credential_without_reinitializing(self):
+        bad = self.root / "wrong.token"; bad.write_text("not-an-atmet-credential-with-valid-length")
+        args = parser().parse_args(["--home", str(self.home), "--token-file", str(bad), "--json", "setup", "--mode", "local"])
+        with self.assertRaises(BrainError) as caught:
+            execute(args)
+        self.assertEqual("unauthenticated", caught.exception.code)
+        self.assertEqual(self.actor.principal_id, self.brain.whoami(self.actor)["principal_id"])
+
     def share(self, **options):
         output = options.pop("output", self.root / "sales.atmet-join.json")
         return create_share(self.brain, self.actor, "Sales employee", ["sales"], "reader", output, **options)

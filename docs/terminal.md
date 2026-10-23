@@ -16,7 +16,9 @@ Run `atmet-brain agent` after setup, or choose Join within it for a company Brai
 atmet-brain setup
 ```
 
-The wizard offers local, Host and Join. Local creates a fresh private Brain. Host creates or reuses a company Brain, selects a secure route and prepares scoped teammate access. Join imports a private connection file and verifies it against the server. Local initialization still refuses an existing installation; Host reuses it without replacing its owner credential.
+The wizard offers local, Host and Join. Local creates a fresh private Brain. Host creates or reuses a company Brain, selects a secure route and prepares scoped teammate access. Join imports a private connection file and verifies it against the server. If Local finds an existing Brain, it offers reuse, a separate new data folder, or cancellation before company questions. Reuse keeps its company, owner, workspaces and data. Host reuses it without replacing its owner credential. Non-interactive Local without creation flags reuses the current Brain; creation flags against an existing Brain stop early with instructions.
+
+To add a department to an existing Brain, use `atmet-brain space marketing`; company setup is not repeated. A separate company can use `atmet-brain --home /private/another-company setup`. Choose a fresh private home outside source control. Generated next commands include the selected home and installed Python runtime.
 
 For scripts:
 

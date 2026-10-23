@@ -49,3 +49,9 @@ Enable the agent's host completion hook or MCP --task-feedback configuration. A 
 ## Agent setup cannot finish
 
 Run agent interactively, or provide name/method/spaces/access/identity flags with --json. A missing local Brain needs setup first; a team server can be selected through Join. Guided setup requires engine 0.6.0+ at both ends. Read credentials cannot choose learning mode, and non-administrators cannot create a separate service identity. Current-identity mode derives a narrower child only. Existing folders/profiles are protected. On partial failure, read the revocation result before choosing a new setup name. [Wizard steps and recovery](agent-setup.md).
+
+## Setup says already_initialized
+
+The selected data home already contains a Brain. In 0.6.1+, run `npx atmet-brain@latest setup`, choose local, then reuse to open it. The wizard checks before asking company details. Choose new only when you want an independent company Brain in a fresh data directory; the existing Brain stays intact. Cancellation changes nothing.
+
+To add Marketing to the existing company, run `npx atmet-brain@latest space marketing`. To inspect its company identity and spaces, run status and space. For a custom data location, pass the same --home before each command. Do not delete the database or owner token to get past setup. Explicit organization/owner/spaces creation flags against an existing home are rejected with these recovery choices.

@@ -1,6 +1,6 @@
 {
   "name": "atmet-brain",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Run the Atmet Brain company memory core from your terminal.",
   "type": "module",
   "bin": {
@@ -44,7 +44,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "atmetBrain": {
-    "engineVersion": "0.6.0",
+    "engineVersion": "0.6.1",
     "python": "3.12",
     "uv": "0.13.5"
   }

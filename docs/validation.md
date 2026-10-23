@@ -4,11 +4,9 @@ Use this page to judge what has been checked. For installation and daily operati
 
 ## Current engine verification
 
-Atmet Brain 0.6.0 uses schema 2. The local suite passed 228 Python tests and 8 launcher tests. Its 26 agent-setup regressions cover actual core scope preflight, local/shared/Join routes, narrowed service/child identities, expiry and parent revocation, cancellation, private files, partial-failure revocation and explicit token-file precedence over ambient owner credentials. Existing source, skill, reporting, recovery, migration, SSH and Host/Join checks remain in the full suite.
+Atmet Brain 0.6.1 uses schema 2. The local suite passed 235 Python tests and 8 launcher tests. Seven setup-recovery regressions cover early existing-Brain detection, reuse without repeating company questions, independent new-home creation, existing-folder/symlink protection, cancellation/EOF, credential checks and executable npm-only next commands. The 26 agent-connection regressions and existing source/audience, reporting, history, recovery, migration, SSH and Host/Join tests remain in the full suite.
 
-A fresh anonymous macOS arm64 npm archive installation passed. Its installed engine exercised all four generated bundles, executed Python and MCP examples, retained Sales-only access under an ambient owner token, recorded a pending skill and required a separate publisher. The guided wizard ran through a real pseudo-terminal; all 25 diagrams rendered. External agent application settings and real business outcomes are separate acceptance checks. The [immutable tag-push workflow](https://github.com/anashamad9/Atmet-brain/actions/runs/39969275448) passed OIDC publication, public identity/integrity/latest and a fresh Ubuntu install. Independent anonymous macOS pinned/latest installation, public agent setup and its generated terminal command passed; installed PTY/MCP/Python/approval checks repeated against that public wheel. [Core CI](https://github.com/anashamad9/Atmet-brain/actions/runs/39969275433) passed Python 3.11, 3.12 and 3.13.
-
-The existing Host/Join, automation, source, permissions, connector and recovery regressions remain required. Live customer applications, model quality and independently verified business outcomes are outside these tests. Read the [support matrix](implementation-status.md).
+The setup fix preserves the existing company, owner credential and workspaces. A different company is initialized only in a new private directory. Current public release/install observations are added after independent verification; historical 0.6.0 connection and distribution proof remains in [release validation](release-validation.md).
 
 ## Documentation checks
 

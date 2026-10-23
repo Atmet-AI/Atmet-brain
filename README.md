@@ -39,6 +39,10 @@ The Sales walkthrough and existing-project walkthrough are alternative starting 
 
 Already have code, project notes or memory files? Start with [add the Brain to an existing project](#add-the-brain-to-an-existing-project). A coding agent with terminal access can perform the setup when instructed. An ordinary chat without tools cannot install the Brain or attach it to your application. MCP settings may need to be added in the client and the client restarted.
 
+Already set up a Brain? Run setup and choose Local, then Open existing. To add a department use `npx atmet-brain@latest space marketing`. Create a separate Brain only in a different private data home. See [setup recovery](docs/troubleshooting.md#setup-says-already_initialized).
+
+For teammates on other networks and the Finance/payroll example, read [team access explained](docs/team-access-explained.md). Workspace grants control access, source audiences restrict selected information, and authentication uses individual credentials. Login/SSO and numeric company discovery remain planned.
+
 ## What your company builds
 
 Start with one department and one workflow. For example, a sales agent can retrieve the current catalogue, quotation instructions and approval policy before preparing a draft. A finance agent can work in a separate space with different source access.
