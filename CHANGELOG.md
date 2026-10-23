@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Release tooling: bounded fresh-cache retries for npm metadata propagation and a read-only verification workflow for already accepted versions. No engine, schema or launcher change; accepted tags/packages remain immutable.
+
 ## 0.7.0 - employee accounts, invitations and company selection, 2026-10-23
 
 ### Added

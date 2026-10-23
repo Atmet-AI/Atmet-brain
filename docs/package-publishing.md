@@ -64,7 +64,7 @@ Artifacts are `python-package` (wheel/sdist) and `npm-launcher` (the complete ch
 - npm job skipped: inspect NPM_PUBLISH_ENABLED. A missing switch intentionally leaves publishing disabled.
 - OIDC rejection: check package owner/repository/workflow/environment, direct-publish permission and the initial two-day window. A provenance signing message followed by an npm PUT rejection is not a successful upload. Pause NPM_PUBLISH_ENABLED until account trust is confirmed. Do not repeatedly request interactive uploads or add a token as a workaround.
 - Publish failed before upload: confirm the version is absent using npm view, then retry the same immutable tag via manual dispatch with publish_npm=true.
-- Publish succeeded but verification/install failed: inspect the public version, latest and digest. Do not upload the accepted version again. Fix bootstrap defects in a new release; preserve the failed run as evidence.
+- Publish succeeded but verification/install failed: inspect the public version, latest and digest. Do not upload the accepted version again. A package-version endpoint and npm's package-list metadata can propagate at different times; the fresh install check retries only ETARGET/E404 with new temporary caches for up to two minutes. Other install errors fail immediately. Fix actual bootstrap defects in a new release; preserve the failed run as evidence.
 - Pause future uploads: set NPM_PUBLISH_ENABLED=false. This does not remove existing releases.
 
 Public npm versions and tags remain immutable. Package publication does not launch the hosted platform or Playground. First use can still download uv, Python and third-party dependencies, so npm-only distribution is not a fully offline installer.
@@ -72,3 +72,13 @@ Public npm versions and tags remain immutable. Package publication does not laun
 ## Manual fallback
 
 If trusted publishing is unavailable, the owner can publish the exact checked tgz privately with npm publish and complete npm's verification. For an approval that must outlive a CLI request, npm stage publish can save a reviewed archive for later Staged Packages approval. Check npm view and npm stage list before retrying any version; staging reserves that version without making it public. [npm staging](https://docs.npmjs.com/staged-publishing/). The normal automated workflow uses direct publishing instead.
+
+## Verify an already published version
+
+When npm accepted the upload, rerun only verification. The separate workflow has read-only permissions and no publishing step. It checks the immutable tag, downloads the exact GitHub release archive, compares public registry integrity/latest and installs anonymously on Ubuntu and macOS. Set RELEASE_VERSION to the existing current published version:
+
+```bash
+gh workflow run verify-release.yml --repo anashamad9/Atmet-brain --ref main -f release_tag="v$RELEASE_VERSION"
+```
+
+Inspect the run and its public-install artifacts. The original failed run remains part of the record; a successful verification does not rewrite its result. No npm account verification or upload is needed. This check expects the selected release to remain npm latest; older historical versions require a separately scoped check.
