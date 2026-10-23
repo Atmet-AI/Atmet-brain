@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Record the verified 0.5.0 public npm release workflow in the validation reference.
+
 ## 0.5.0 - automatic task completion feedback, 2026-10-23
 
 ### Added
